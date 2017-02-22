@@ -1,0 +1,36 @@
+html {
+    height: 100%;
+    width: 100%;
+}
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: normal;
+    text-decoration: none;
+    height: 100%;
+}
+div {
+    margin: 0;
+    padding: 0;
+}
+
+/* top-toolbar region start */
+.top-toolbar{
+    width: 100%;
+    height: 3em;
+    background-color: #0f4071;
+    position:relative
+}
+.palladium-name{
+    font-size: larger;
+    color: #ffffff;
+    font-weight: bold;
+    float: left;
+    box-sizing: border-box;
+    position:absolute;
+    top: 50%;
+    margin-top: -0.625em;
+    padding-left: 1em;
+}
+/* top-toolbar region end */
