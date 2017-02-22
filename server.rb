@@ -1,5 +1,12 @@
 require 'sinatra'
-configure { set :server, :puma } # use puma like default web server
+configure {
+  set :server, :puma
+  set :root, File.dirname(__FILE__)
+  enable :static
+  enable :logging
+  enable :dump_errors
+}
+
 get '/' do
   erb :index
 end
