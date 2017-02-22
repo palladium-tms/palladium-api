@@ -1,8 +1,7 @@
 require 'sinatra'
 configure { set :server, :puma } # use puma like default web server
 get '/' do
-  code = "<%= Time.now %>"
-  erb code
+  erb :index
 end
 
 not_found do
