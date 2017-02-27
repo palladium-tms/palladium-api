@@ -6,6 +6,7 @@ require_relative 'database/database'
 
 # models
 require_relative 'database/models/User'
+require_relative 'database/models/Product'
 
 # core moduls
 require_relative 'core/auth'

@@ -4,7 +4,6 @@ configure {
   set :server, :puma
   set :root, File.dirname(__FILE__)
   enable :static
-  enable :logging
   enable :dump_errors
   set :sessions, key: 'N&wedhSDF',
       domain: "localhost",
@@ -35,8 +34,9 @@ end
 error do
   'Sorry there was a nasty error - ' + env['sinatra.error'].message
 end
-# region pages end
+# endregion pages
 
+# region auth
 get '/logout' do
   session[:user] = nil
   redirect '/'
@@ -65,11 +65,27 @@ post '/login' do
   else
     status 201
     content_type :json
-    {error: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+    {user_data: user_data, errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
+# endregion auth
+
+# region product
+post '/product_new' do
+  if access_available?
+    product = Product.create_new(product_data)
+    content_type :json
+    status 200
+    {'product': product.values, "errors": product.errors}.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
   end
 end
 
-# Protect pages
+# endregion product
+
+
 def login_required
   if session[:user]
     return true
@@ -79,7 +95,6 @@ def login_required
   end
 end
 
-# Get the username of the logged in user
 def current_user
   if session[:user]
     session[:user]
@@ -91,5 +106,25 @@ def user_data
     params['user_data']
   rescue Exception
     error
+  end
+end
+
+def product_data
+    params['product_data']
+end
+
+def access_available?
+  auth_status = false
+  if user_data_strong?
+    auth_status = auth_success?(user_data)
+  end
+  !session[:user].nil? || auth_status
+end
+
+def user_data_strong?
+  if params.key?('user_data')
+    params['user_data'].key?('email') && params['user_data'].key?('password')
+  else
+    false
   end
 end
