@@ -1,0 +1,37 @@
+<html>
+<head>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+</head>
+<form id="registration-form" method="post" action="/registration">
+  <p><label>Username</label><input id="user-email-field" name="post[user_data][email]"/></p>
+  <p><label>Password</label><input id="user-password-field" name="post[user_data][password]"
+                                   type="password"/></p>
+  <p><button type="submit">Login</button></p>
+</form>
+</html>
+<script>
+    $(function() {
+        $("form#registration-form").submit(function(e){
+            $form = $(this);
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: $form.attr('action'),
+                data: ({user_data: {email: $("#user-email-field").val(), password: $("#user-password-field").val()}}),
+                statusCode: {
+                    200: function () {
+                        // block if registration is success
+                        window.location.href="/";
+                    },
+                    201: function (data) {
+                        // block if registration is wrong
+                        console.log(data); // print error to log
+                        $("#message").html("See errors in log")
+                    },
+                }
+
+            });
+        });
+    });
+</script>
+<div id="message"></div>
