@@ -95,7 +95,17 @@ get '/products' do
   end
 end
 
-
+delete '/product_delete' do
+  if access_available?
+    result = Product.where(:id => product_data['id']).destroy
+    content_type :json
+    status 200
+    {'product': product_data['id'],'product_deleted': result == 1 }.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
 # endregion product
 
 

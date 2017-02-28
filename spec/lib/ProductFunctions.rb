@@ -25,4 +25,10 @@ class ProductFunctions
                                                            "updated_at" => current_product['updated_at']}})}
     hash_with_products
   end
+
+  def self.delete_product(account, id)
+    uri = URI(StaticData::MAINPAGE + '/product_delete')
+    uri.query = URI.encode_www_form({"user_data[email]": account[:email], "user_data[password]":  account[:password], "product_data[id]": id})
+    Net::HTTP::Delete.new(uri)
+  end
 end
