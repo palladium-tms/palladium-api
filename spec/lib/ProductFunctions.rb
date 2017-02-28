@@ -20,9 +20,9 @@ class ProductFunctions
     hash_with_products = {}
     JSON.parse(Net::HTTP.get_response(uri).body)['products'].
         map {|current_product|
-      hash_with_products.merge!({current_product['id'] => {"name" => current_product['name'],
-                                                           "created_at" => current_product['created_at'],
-                                                           "updated_at" => current_product['updated_at']}})}
+      hash_with_products.merge!({current_product['id'] => {'name' => current_product['name'],
+                                                           'created_at' => current_product['created_at'],
+                                                           'updated_at' => current_product['updated_at']}})}
     hash_with_products
   end
 
@@ -34,5 +34,14 @@ class ProductFunctions
     uri = URI(StaticData::MAINPAGE + '/product_delete')
     uri.query = URI.encode_www_form({"user_data[email]": account[:email], "user_data[password]":  account[:password], "product_data[id]": id})
     Net::HTTP::Delete.new(uri)
+  end
+
+  # @param [Hash] account like a {:email => 'email_from_account', :password => 'password_from_account'}
+  # @param [Hash] product_data like a {:id => product_id, :name => product_name}
+  def self.update_product(account, product_data)
+    request = Net::HTTP::Post.new('/product_edit', 'Content-Type' => 'application/json')
+    request.set_form_data({"user_data[email]": account[:email], "user_data[password]":  account[:password],
+                           "product_data[id]": product_data[:id], "product_data[name]": product_data[:name]})
+    request
   end
 end

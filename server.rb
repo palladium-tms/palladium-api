@@ -106,6 +106,24 @@ delete '/product_delete' do
     {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
   end
 end
+
+# you can change only name of product now
+post '/product_edit' do
+  if access_available?
+    product = Product.new(:name => product_data['name'])
+    content_type :json
+    status 200
+    if product.valid?
+      Product.where(:id => product_data['id']).update(:name => product_data['name'])
+      {'product': product_data['id'],'errors': [] }.to_json
+    else
+      {'product': product_data['id'],'errors': product.errors }.to_json
+    end
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
 # endregion product
 
 

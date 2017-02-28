@@ -7,6 +7,7 @@ $(function() {
     $("button#delete-product").click(function (e) {
         DeleteProduct({product_data: {id: $("input#delete-product-id").val()}},  function(data){console.log(data)})
     });
+
     $("button#show-all-products").click(function (e) {
         GetAllProducts(function(data){
             console.log(data);

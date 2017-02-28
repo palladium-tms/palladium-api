@@ -145,4 +145,71 @@ describe 'Smoke' do
       expect(JSON.parse(response.body)['product_deleted']).to be_truthy
     end
   end
+
+  describe 'Edit product' do
+    it 'edit product after creating' do
+      product = ProductFunctions.create_new_product(account)
+      product_name_for_updating = 30.times.map { StaticData::ALPHABET.sample }.join
+      new_product_data = http.request(product[0])
+      product_data = {id: JSON.parse(new_product_data.body)['product']['id'], name: product_name_for_updating}
+      request = ProductFunctions.update_product(account, product_data)
+      response = http.request(request)
+      products = ProductFunctions.get_all_products(account)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(products[JSON.parse(new_product_data.body)['product']['id']]['name']).to eq(product_name_for_updating)
+    end
+
+    it 'edit product without user_data' do
+      product = ProductFunctions.create_new_product(account)
+      product_name_for_updating = 30.times.map { StaticData::ALPHABET.sample }.join
+      new_product_data = http.request(product[0])
+      request = Net::HTTP::Post.new('/product_edit', 'Content-Type' => 'application/json')
+      request.set_form_data({"product_data[id]": JSON.parse(new_product_data.body)['product']['id'], "product_data[name]": product_name_for_updating})
+      response = http.request(request)
+      products = ProductFunctions.get_all_products(account)
+      expect(response.code).to eq('201')
+      expect(JSON.parse(response.body)['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
+      expect(products[JSON.parse(new_product_data.body)['product']['id']]['name']).not_to eq(product_name_for_updating)
+    end
+
+    it 'edit product with uncorrect user_data' do
+      product = ProductFunctions.create_new_product(account)
+      product_name_for_updating = 30.times.map { StaticData::ALPHABET.sample }.join
+      email = 10.times.map { StaticData::ALPHABET.sample }.join
+      password = 7.times.map { StaticData::ALPHABET.sample }.join
+      new_product_data = http.request(product[0])
+      fake_account = {email: email, password: password}
+      product_data = {id: JSON.parse(new_product_data.body)['product']['id'],name: product_name_for_updating}
+      request = ProductFunctions.update_product(fake_account, product_data)
+      response = http.request(request)
+      products = ProductFunctions.get_all_products(account)
+      expect(response.code).to eq('201')
+      expect(JSON.parse(response.body)['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
+      expect(products[JSON.parse(new_product_data.body)['product']['id']]['name']).not_to eq(product_name_for_updating)
+    end
+
+    it 'edit product with uncorrect product_data | very big' do
+      product = ProductFunctions.create_new_product(account)
+      product_name_for_updating = 35.times.map { StaticData::ALPHABET.sample }.join
+      new_product_data = http.request(product[0])
+      product_data = {id: JSON.parse(new_product_data.body)['product']['id'],name: product_name_for_updating}
+      request = ProductFunctions.update_product(account, product_data)
+      response = http.request(request)
+      products = ProductFunctions.get_all_products(account)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors']['name']).to eq([ErrorMessages::UNCORRECT_PRODUCT_NAME])
+      expect(products[JSON.parse(new_product_data.body)['product']['id']]['name']).not_to eq(product_name_for_updating)
+    end
+
+    it 'edit product with uncorrect product_data | not uniq' do
+      product = ProductFunctions.create_new_product(account)
+      new_product_data = http.request(product[0])
+      product_data = {id: JSON.parse(new_product_data.body)['product']['id'],name: product[1]}
+      request = ProductFunctions.update_product(account, product_data)
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors']['name']).to eq([ErrorMessages::NOT_UNIQ_PRODUCT_NAME])
+    end
+  end
 end
