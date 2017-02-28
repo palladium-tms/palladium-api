@@ -44,4 +44,15 @@ class ProductFunctions
                            "product_data[id]": product_data[:id], "product_data[name]": product_data[:name]})
     request
   end
+
+  def self.show_product(account, id)
+    uri = URI(StaticData::MAINPAGE + '/product')
+    uri.query = URI.encode_www_form({"user_data[email]": account[:email], "user_data[password]":  account[:password], "product_data[id]": id})
+    result = JSON.parse(Net::HTTP.get_response(uri).body)
+    if result['product'].empty?
+      {'product': [], 'errors': result['errors']}
+    else
+      {id: result['product']['id'], name: result['product']['name'], created_at: result['product']['created_at'], updated_at: result['product']['updated_at']}
+    end
+  end
 end

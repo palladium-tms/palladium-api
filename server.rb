@@ -95,6 +95,26 @@ get '/products' do
   end
 end
 
+
+get '/product' do
+  if access_available?
+    product = Product.where[id: product_data['id']]
+    content_type :json
+    status 200
+    errors = []
+    if product
+      product = product.values
+    else
+      product = []
+      errors = ["product is not found"]
+    end
+    {'product': product, 'errors': errors}.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
+
 delete '/product_delete' do
   if access_available?
     result = Product.where(:id => product_data['id']).destroy

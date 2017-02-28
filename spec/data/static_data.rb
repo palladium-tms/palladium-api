@@ -13,5 +13,6 @@ class ErrorMessages
   #region product
   UNCORRECT_PRODUCT_NAME = "is invalid"
   NOT_UNIQ_PRODUCT_NAME = "is already taken"
+  PRODUCT_NOT_FOUND = "product is not found"
   #endregion product
 end
