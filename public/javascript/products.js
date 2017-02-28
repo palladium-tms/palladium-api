@@ -1,29 +1,42 @@
-$(function () {
-    $("button#create-new-product").click(function (e) {
-        e.preventDefault();
-        $.ajax({
-            type: "POST",
-            url: $(this).attr('action'),
-            data: ({product_data: {name: $("input#new-product-name").val()}}),
-            statusCode: {
-                200: function (data) {
-                    console.log(data)
-                },
-            }
-        });
+// data = {product_data: {name: 'product name'}}
+// callback = function(data){console.log(data)}. Feel free to replace console.log(data) to any code
+function CreateNewProduct(data, callback) {
+    $.ajax({
+        type: "POST",
+        url: 'product_new',
+        data: (data),
+        statusCode: {
+            200: function (data) {
+                callback(data);
+            },
+        }
     });
+};
 
-    $("button#delete-product").click(function (e) {
-        e.preventDefault();
-        $.ajax({
-            type: "DELETE",
-            url: $(this).attr('action'),
-            data: ({product_data: {id: $("input#delete-product-id").val()}}),
-            statusCode: {
-                200: function (data) {
-                    console.log(data)
-                },
+// data= {product_data: {id: product_id}}, product_id is number
+// callback = function(data){console.log(data)}. Feel free to replace console.log(data) to any code
+function DeleteProduct(data, callback) {
+    $.ajax({
+        type: "DELETE",
+        url: 'product_delete',
+        data: (data),
+        statusCode: {
+            200: function (data) {
+                callback(data);
             }
-        });
+        }
     });
-});
+};
+
+// callback = function(data){console.log(data)}. Feel free to replace console.log(data) to any code
+function GetAllProducts(callback) {
+    $.ajax({
+        type: "GET",
+        url: 'products',
+        statusCode: {
+            200: function (data) {
+                callback(data);
+            }
+        }
+    });
+};

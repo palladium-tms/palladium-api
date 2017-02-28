@@ -3,8 +3,8 @@
 <head>
     <link rel="stylesheet" type="text/css" href="css/main-styles.css">
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-  <script src="javascript/sdk.js"></script>
   <script src="javascript/products.js"></script>
+  <script src="javascript/sdk.js"></script>
     <meta charset="UTF-8">
     <title>Palladium</title>
 </head>
@@ -16,14 +16,25 @@
 <!--Top toolbar region end-->
 
 <!--Products region start-->
-<button id="create-new-product" action="product_new">Create New Product</button>
+<button id="create-new-product">Create New Product</button>
 <p><label>Product name</label><input id="new-product-name"/></p>
 <p>----------------------------------------<p/>
 
-<button id="delete-product" action="product_delete">Delete Product</button>
+<button id="delete-product">Delete Product</button>
 <p><label>Product id</label><input id="delete-product-id"/></p>
 
-
+<p>----------------------------------------<p/>
+<button id="show-all-products" action="products">Show All Products</button>
+  <table id="products-list">
+    <tbody>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Time</th>
+    </tr>
+    </tbody>
+  </table>
+<div id="message"></div>
 <!--Products region end-->
 </body>
 </html>
