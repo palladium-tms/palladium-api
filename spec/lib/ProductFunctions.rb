@@ -26,6 +26,10 @@ class ProductFunctions
     hash_with_products
   end
 
+
+  # @param [Hash] account like a {:email => 'email_from_account', :password => 'password_from_account'}
+  # @param [Integer] id is a id of product for deleting
+  # return hash which keys - id of product, values - is a hash {'name': 'product_name'}
   def self.delete_product(account, id)
     uri = URI(StaticData::MAINPAGE + '/product_delete')
     uri.query = URI.encode_www_form({"user_data[email]": account[:email], "user_data[password]":  account[:password], "product_data[id]": id})

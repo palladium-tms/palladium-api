@@ -86,6 +86,16 @@ describe 'Smoke' do
       products = ProductFunctions.get_all_products(account)
       expect(products[product['id']]['name']).to eq(product_data[1])
     end
+
+    it 'check getting all products if its empty' do
+      products = ProductFunctions.get_all_products(account)
+      products.keys.each do |current_product_id|
+        request = ProductFunctions.delete_product(account, current_product_id)
+        http.request(request)
+      end
+      products = ProductFunctions.get_all_products(account)
+      expect(products.empty?).to be_truthy
+    end
   end
 
   describe 'Delete product' do
@@ -111,6 +121,19 @@ describe 'Smoke' do
       expect(JSON.parse(response.body)['product_deleted']).to be_falsey
     end
 
+    it 'check deleting product after product create. Its not in all product list' do
+      product = ProductFunctions.create_new_product(account)
+      new_product_response = http.request(product[0])
+      product_id_for_deleting = JSON.parse(new_product_response.body)['product']['id']
+      request = ProductFunctions.delete_product(account, product_id_for_deleting)
+      response = http.request(request)
+      products = ProductFunctions.get_all_products(account)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['product']).to eq(product_id_for_deleting.to_s)
+      expect(JSON.parse(response.body)['product_deleted']).to be_truthy
+      expect(products.key?(product_id_for_deleting)).to be_falsey
+    end
+
     it 'check deleting product after product create' do
       product = ProductFunctions.create_new_product(account)
       new_product_response = http.request(product[0])
@@ -123,4 +146,3 @@ describe 'Smoke' do
     end
   end
 end
-#TODO: add tests for check product after deliting in "all_products" list
