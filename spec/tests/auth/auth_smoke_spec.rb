@@ -70,7 +70,7 @@ describe 'Smoke' do
     it 'check / page loading without login' do
       response = Net::HTTP.get_response(StaticData::ADDRESS, '/', StaticData::PORT)
       expect(response.code).to eq('302')
-      expect(response['location']).to eq("http://#{StaticData::MAINPAGE}/login")
+      expect(response['location']).to eq("#{StaticData::MAINPAGE}/login")
     end
   end
 end

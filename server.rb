@@ -83,6 +83,19 @@ post '/product_new' do
   end
 end
 
+get '/products' do
+  if access_available?
+    products = Product.all
+    content_type :json
+    status 200
+    {'products': products.map{|current| current.values }}.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
+
+
 # endregion product
 
 

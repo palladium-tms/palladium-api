@@ -8,7 +8,7 @@ require_relative 'database/database'
 require_relative 'database/models/User'
 require_relative 'database/models/Product'
 
-# core moduls
+# core modules
 require_relative 'core/auth'
 
 # utilits
