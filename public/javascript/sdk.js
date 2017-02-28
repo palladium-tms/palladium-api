@@ -18,5 +18,9 @@ $(function() {
             });
         });
     });
+
+    $("button#update-product").click(function (e) {
+        EditProduct({product_data: {id: $("input#edit-product-id").val(), name: $("input#edit-product-name").val()}}, function(data){console.log(data)});
+    });
         // endregion Products
 });

@@ -40,3 +40,17 @@ function GetAllProducts(callback) {
         }
     });
 };
+
+// callback = function(data){console.log(data)}. Feel free to replace console.log(data) to any code
+function EditProduct(data, callback) {
+    $.ajax({
+        type: "POST",
+        data: (data),
+        url: 'product_edit',
+        statusCode: {
+            200: function (data) {
+                callback(data);
+            }
+        }
+    });
+};
