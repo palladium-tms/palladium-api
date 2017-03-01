@@ -13,7 +13,7 @@ $(function() {
             console.log(data);
             $( "tr#all-product-element" ).remove();
             $.each( data['products'], function( key, value ) {
-                $("table#products-list tbody").append(GenerateRowForProdict(value['id'], value['name'],  value['created_at']));
+                $("table#products-list tbody").append(GenerateRowForProduct(value['id'], value['name'],  value['created_at']));
             });
         });
     });
