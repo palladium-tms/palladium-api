@@ -45,6 +45,8 @@ class ProductFunctions
     request
   end
 
+  # @param [Hash] account like a {:email => 'email_from_account', :password => 'password_from_account'}
+  # @param [Integer] id is a id of product for deleting
   def self.show_product(account, id)
     uri = URI(StaticData::MAINPAGE + '/product')
     uri.query = URI.encode_www_form({"user_data[email]": account[:email], "user_data[password]":  account[:password], "product_data[id]": id})

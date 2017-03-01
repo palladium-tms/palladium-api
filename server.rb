@@ -102,11 +102,11 @@ get '/product' do
     content_type :json
     status 200
     errors = []
-    if product
-      product = product.values
-    else
+    if product.nil?
       product = []
       errors = ["product is not found"]
+    else
+      product = product.values
     end
     {'product': product, 'errors': errors}.to_json
   else

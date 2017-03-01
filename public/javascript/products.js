@@ -54,3 +54,18 @@ function EditProduct(data, callback) {
         }
     });
 };
+
+// data= {product_data: {id: product_id}}, product_id is number
+// callback = function(data){console.log(data)}. Feel free to replace console.log(data) to any code
+function ShowProduct(data, callback) {
+    $.ajax({
+        type: "GET",
+        data: (data),
+        url: 'product',
+        statusCode: {
+            200: function (data) {
+                callback(data);
+            }
+        }
+    });
+};
