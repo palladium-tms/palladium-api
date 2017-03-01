@@ -34,3 +34,9 @@ div {
     padding-left: 1em;
 }
 /* top-toolbar region end */
+
+/* Products region start */
+.product-region{
+    background-color: #89acff;
+}
+/* Products region end */
