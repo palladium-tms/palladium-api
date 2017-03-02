@@ -13,3 +13,11 @@ DB.create_table? :products do
   DateTime :created_at
   DateTime :updated_at
 end
+
+DB.create_table? :plans do
+  primary_key :id
+  foreign_key :product_id, :products
+  String :name
+  DateTime :created_at
+  DateTime :updated_at
+end

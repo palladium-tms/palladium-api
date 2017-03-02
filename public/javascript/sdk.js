@@ -33,5 +33,11 @@ $(function() {
             console.log(data)
         });
     });
-        // endregion Products
+    // endregion Products
+
+    // region Plans
+    $("button#create-new-plan").click(function () {
+        CreateNewPlan({plan_data: {name: $("input#new-plan-name").val(), product_id: $("input#new-plan-product_id").val()}}, function(data){console.log(data)});
+    });
+    // endregion Plans
 });

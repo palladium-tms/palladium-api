@@ -118,7 +118,7 @@ describe 'Smoke' do
       response = http.request(req)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['product']).to eq(uncorrect_product_id)
-      expect(JSON.parse(response.body)['product_deleted']).to be_falsey
+      expect(JSON.parse(response.body)['errors']['product_id']).to eq([ErrorMessages::PRODUCT_ID_WRONG])
     end
 
     it 'check deleting product after product create. Its not in all product list' do
@@ -130,7 +130,7 @@ describe 'Smoke' do
       products = ProductFunctions.get_all_products(account)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['product']).to eq(product_id_for_deleting.to_s)
-      expect(JSON.parse(response.body)['product_deleted']).to be_truthy
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
       expect(products.key?(product_id_for_deleting)).to be_falsey
     end
 
@@ -142,7 +142,7 @@ describe 'Smoke' do
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['product']).to eq(product_id_for_deleting.to_s)
-      expect(JSON.parse(response.body)['product_deleted']).to be_truthy
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
     end
   end
 

@@ -14,5 +14,12 @@ class ErrorMessages
   UNCORRECT_PRODUCT_NAME = "is invalid"
   NOT_UNIQ_PRODUCT_NAME = "is already taken"
   PRODUCT_NOT_FOUND = "product is not found"
+  PRODUCT_ID_WRONG = "product_id is not belongs to any product"
   #endregion product
+
+  #region plan
+  CANT_BE_EMPTY_PLAN_NAME = 'cannot be empty'
+  PRODUCT_ID_CANT_BE_NIL_PLAN_NAME = "product_id can't be nil"
+  PRODUCT_ID_CANT_BE_EMPTY_PLAN_NAME = "product_id can't be empty"
+  #endregion plan
 end
