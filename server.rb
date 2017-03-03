@@ -160,6 +160,21 @@ post '/plan_new' do
     {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
   end
 end
+
+# returs ann plans from one product (product_id)
+get '/plans' do
+  if access_available?
+    errors = Product.product_id_validation(plan_data['product_id'])
+    plans = []
+    plans = Product[:id => plan_data['product_id']].plans if errors.empty?
+    content_type :json
+    status 200
+    {'plans': plans.map{|plan| plan.values}, "errors": errors}.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
 # endregion plans
 
 def login_required

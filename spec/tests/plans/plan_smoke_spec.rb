@@ -8,6 +8,8 @@ require_relative '../../lib/PlanFunctions'
 http = nil
 account = nil
 product_id = nil
+plan_name = nil
+plan = nil
 describe 'Smoke' do
   before :all do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
@@ -76,6 +78,40 @@ describe 'Smoke' do
       response = http.request(request[0])
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors']['product_id']).to eq([ErrorMessages::PRODUCT_ID_CANT_BE_EMPTY_PLAN_NAME])
+    end
+  end
+
+  describe 'Show plans' do
+    before :each do
+      product = ProductFunctions.create_new_product(account)
+      product_id = JSON.parse(http.request(product[0]).body)['product']['id']
+      plan_name = "plan_for_#{product_id}_product"
+      request = PlanFunctions.create_new_plan({"user_data[email]" => account[:email],
+                                               "user_data[password]" =>  account[:password],
+                                               "plan_data[product_id]" => product_id,
+                                               "plan_data[name]" => plan_name})
+      plan = JSON.parse(http.request(request[0]).body)['plan']
+    end
+
+    it 'get plans by product id' do
+      uri = URI(StaticData::MAINPAGE + '/plans')
+      params = {"user_data[email]": account[:email], "user_data[password]":  account[:password], "plan_data[product_id]": product_id}
+      uri.query = URI.encode_www_form(params)
+      response = Net::HTTP.get_response(uri)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors']).to be_empty
+      expect(JSON.parse(response.body)['plans'].count).to eq(1)
+      expect(JSON.parse(response.body)['plans'][0]['name']).to eq(plan_name)
+      expect(JSON.parse(response.body)['plans'][0]['product_id']).to eq(product_id)
+    end
+
+    it 'get plans by product id without user_data' do
+      plans = PlanFunctions.get_plans({"user_data[email]": account[:email],
+                                         "user_data[password]":  account[:password],
+                                         "plan_data[product_id]": product_id})
+      plans
+      expect(plans.empty?).to be_falsey
+      expect(plans[plan['id']]).to eq(plan)
     end
   end
 end
