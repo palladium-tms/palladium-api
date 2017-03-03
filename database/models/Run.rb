@@ -17,7 +17,7 @@ class Run < Sequel::Model
       when plan_id.empty?
         run.errors.add('plan_id', "plan_id can't be empty")
         return run
-      when Product[id: plan_id].nil?
+      when Plan[id: plan_id].nil?
         run.errors.add('plan_id', "plan_id is not belongs to any product")
         return run
     end
