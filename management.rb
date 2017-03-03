@@ -8,6 +8,7 @@ require_relative 'database/database'
 require_relative 'database/models/User'
 require_relative 'database/models/Product'
 require_relative 'database/models/Plan'
+require_relative 'database/models/Run'
 
 # core modules
 require_relative 'core/auth'

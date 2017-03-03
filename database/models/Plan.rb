@@ -1,5 +1,6 @@
 class Plan < Sequel::Model
   many_to_one :product
+  one_to_many :runs
   plugin :validation_helpers
   self.raise_on_save_failure = false
   self.plugin :timestamps

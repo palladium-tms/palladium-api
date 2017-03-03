@@ -208,6 +208,22 @@ post '/plan_edit' do
 end
 # endregion plans
 
+# region runs
+post '/run_new' do
+  if access_available?
+    run = Run.create_new(run_data)
+    content_type :json
+    status 200
+    {'run': run.values, "errors": run.errors}.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
+
+
+# endregion runs
+
 def login_required
   if session[:user]
     return true
@@ -237,6 +253,10 @@ end
 
 def plan_data
     params['plan_data']
+end
+
+def run_data
+    params['run_data']
 end
 
 def access_available?

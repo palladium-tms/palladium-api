@@ -21,3 +21,12 @@ DB.create_table? :plans do
   DateTime :created_at
   DateTime :updated_at
 end
+
+DB.create_table? :runs do
+  primary_key :id
+  foreign_key :plan_id, :plans
+  String :name
+  DateTime :created_at
+  DateTime :updated_at
+end
+
