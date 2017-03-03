@@ -208,7 +208,6 @@ describe 'Smoke' do
   end
 
   describe 'Show Product' do
-
     it 'get product after creating with without user_data' do
       email = 10.times.map { StaticData::ALPHABET.sample }.join
       password = 7.times.map { StaticData::ALPHABET.sample }.join

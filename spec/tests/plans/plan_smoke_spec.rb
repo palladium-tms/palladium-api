@@ -14,8 +14,8 @@ describe 'Smoke' do
     end
 
     it 'check creating new plan' do
-      request = PlanFunctions.create_new_plan({"user_data[email]": account[:email], "user_data[password]":  account[:password],
-                                     "plan_data[product_id]": product_id})
+      request = PlanFunctions.create_new_plan({"user_data[email]": account[:email], "user_data[password]": account[:password],
+                                               "plan_data[product_id]": product_id})
       response = http.request(request[0])
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
@@ -37,7 +37,7 @@ describe 'Smoke' do
       request = Net::HTTP::Post.new('/plan_new', 'Content-Type' => 'application/json')
       plan_name = 30.times.map { StaticData::ALPHABET.sample }.join
       user_name = 30.times.map { StaticData::ALPHABET.sample }.join
-      request.set_form_data({"user_data[email]": user_name, "user_data[password]":  account[:password],
+      request.set_form_data({"user_data[email]": user_name, "user_data[password]": account[:password],
                              "plan_data[name]": plan_name, "plan_data[product_id]": product_id})
       response = http.request(request)
       expect(response.code).to eq('201')
@@ -46,7 +46,7 @@ describe 'Smoke' do
 
     it 'check creating new plan without plan_data' do
       request = Net::HTTP::Post.new('/plan_new', 'Content-Type' => 'application/json')
-      request.set_form_data({"user_data[email]": account[:email], "user_data[password]":  account[:password]})
+      request.set_form_data({"user_data[email]": account[:email], "user_data[password]": account[:password]})
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors']['name']).to eq([ErrorMessages::CANT_BE_EMPTY_PLAN_NAME])
@@ -56,7 +56,7 @@ describe 'Smoke' do
 
     it 'check creating new plan without plan_data' do
       request = PlanFunctions.create_new_plan({"user_data[email]": account[:email],
-                                               "user_data[password]":  account[:password]})
+                                               "user_data[password]": account[:password]})
       response = http.request(request[0])
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors']['product_id']).to eq([ErrorMessages::PRODUCT_ID_CANT_BE_NIL_PLAN_NAME])
@@ -64,7 +64,7 @@ describe 'Smoke' do
 
     it 'check creating new plan if plan_data[product_id] is empty' do
       request = PlanFunctions.create_new_plan({"user_data[email]": account[:email],
-                                               "user_data[password]":  account[:password], "plan_data[product_id]": ''})
+                                               "user_data[password]": account[:password], "plan_data[product_id]": ''})
       response = http.request(request[0])
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors']['product_id']).to eq([ErrorMessages::PRODUCT_ID_CANT_BE_EMPTY_PLAN_NAME])
@@ -77,7 +77,7 @@ describe 'Smoke' do
       product_id = JSON.parse(http.request(product[0]).body)['product']['id']
       plan_name = "plan_for_#{product_id}_product"
       request = PlanFunctions.create_new_plan({"user_data[email]" => account[:email],
-                                               "user_data[password]" =>  account[:password],
+                                               "user_data[password]" => account[:password],
                                                "plan_data[product_id]" => product_id,
                                                "plan_data[name]" => plan_name})
       plan = JSON.parse(http.request(request[0]).body)['plan']
@@ -85,7 +85,7 @@ describe 'Smoke' do
 
     it 'get plans by product id' do
       uri = URI(StaticData::MAINPAGE + '/plans')
-      params = {"user_data[email]": account[:email], "user_data[password]":  account[:password], "plan_data[product_id]": product_id}
+      params = {"user_data[email]": account[:email], "user_data[password]": account[:password], "plan_data[product_id]": product_id}
       uri.query = URI.encode_www_form(params)
       response = Net::HTTP.get_response(uri)
       expect(response.code).to eq('200')
@@ -96,12 +96,26 @@ describe 'Smoke' do
     end
 
     it 'get plans by product id without user_data' do
+      plans = PlanFunctions.get_plans({"plan_data[product_id]": product_id})
+      expect(plans['errors'].empty?).to be_falsey
+      expect(plans['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
+    end
+
+    it 'get plans by product id with uncorrect user_data' do
+      user_name = 30.times.map { StaticData::ALPHABET.sample }.join
+      plans = PlanFunctions.get_plans({"user_data[email]": user_name,
+                                       "user_data[password]": account[:password],
+                                       "plan_data[product_id]": product_id})
+      expect(plans['errors'].empty?).to be_falsey
+      expect(plans['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
+    end
+
+    it 'get plans by product id with uncorrect plan_data' do
+      uncorrect_product_id = 30.times.map { StaticData::ALPHABET.sample }.join
       plans = PlanFunctions.get_plans({"user_data[email]": account[:email],
-                                         "user_data[password]":  account[:password],
-                                         "plan_data[product_id]": product_id})
-      plans
-      expect(plans.empty?).to be_falsey
-      expect(plans[plan['id']]).to eq(plan)
+                                       "user_data[password]": account[:password],
+                                       "plan_data[product_id]": uncorrect_product_id})
+      expect(plans['errors']['product_id']).to eq([ErrorMessages::PRODUCT_ID_WRONG])
     end
   end
 end
