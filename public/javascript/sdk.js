@@ -54,11 +54,14 @@ $(function() {
         });
     });
 
+    $("button#update-plan").click(function () {
+        EditPlan({plan_data: {id: $("input#edit-plan-id").val(), name: $("input#edit-plan-name").val()}}, function(data){console.log(data)});
+    });
+
     $("button#delete-plan").click(function () {
         DeletePlan({plan_data: {id: $("input#delete-plan-id").val()}},  function(data){console.log(data)})
     });
     // endregion Plans
-
     // region Runs
     $("button#create-new-run").click(function () {
         CreateNewRun({run_data: {name: $("input#new-run-name").val(), plan_id: $("input#new-run-plan_id").val()}}, function(data){console.log(data)});

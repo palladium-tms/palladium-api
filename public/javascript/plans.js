@@ -28,6 +28,19 @@ function ShowPlans(data, callback) {
     });
 };
 
+function EditPlan(data, callback) {
+    $.ajax({
+        type: "POST",
+        data: (data),
+        url: 'plan_edit',
+        statusCode: {
+            200: function (data) {
+                callback(data);
+            }
+        }
+    });
+};
+
 
 // data= {plan_data: {id: plan_id}}, plan_id is number
 // callback = function(data){console.log(data)}. Feel free to replace console.log(data) to any code

@@ -33,7 +33,7 @@ describe 'Run Smoke' do
       expect(JSON.parse(response.body)['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
     end
 
-    it 'check creating new run with uncorrect run_data' do
+    it 'check creating new run with uncorrect run_data | plan_id' do
       uncorrect_plan_id = 30.times.map { StaticData::ALPHABET.sample }.join
       request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => uncorrect_plan_id}))
       response = http.request(request[0])
