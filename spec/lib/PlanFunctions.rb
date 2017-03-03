@@ -37,6 +37,12 @@ class PlanFunctions
     uri.query = URI.encode_www_form(args.first)
     Net::HTTP::Delete.new(uri)
   end
+
+  def self.update_plan(*args)
+      request = Net::HTTP::Post.new('/plan_edit', 'Content-Type' => 'application/json')
+      request.set_form_data(args.first)
+      request
+  end
   #
   #
   # # @param [Hash] account like a {:email => 'email_from_account', :password => 'password_from_account'}

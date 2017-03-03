@@ -161,7 +161,6 @@ post '/plan_new' do
   end
 end
 
-# return all plans from one product (product_id)
 get '/plans' do
   if access_available?
     errors = Product.product_id_validation(plan_data['product_id'])
@@ -176,7 +175,6 @@ get '/plans' do
   end
 end
 
-
 delete '/plan_delete' do
   if access_available?
     errors = Plan.plan_id_validation(plan_data['id'])
@@ -186,6 +184,23 @@ delete '/plan_delete' do
     content_type :json
     status 200
     {'plan': plan_data['id'],'errors': errors }.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
+
+post '/plan_edit' do
+  if access_available?
+    plan = Plan.new(:name => plan_data['name'])
+    content_type :json
+    status 200
+    if plan.valid?
+      Plan[:id => plan_data['id']].update(:name => plan_data['name'])
+      {'plan': plan_data['id'],'errors': [] }.to_json
+    else
+      {'plan': plan_data['id'],'errors': plan.errors }.to_json
+    end
   else
     status 201
     {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test

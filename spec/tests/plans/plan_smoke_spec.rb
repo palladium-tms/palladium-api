@@ -158,4 +158,46 @@ describe 'Smoke' do
       expect(response['errors']['plan_id']).to eq([ErrorMessages::PLAN_ID_WRONG])
     end
   end
+
+  describe 'Edit Plan' do
+    before :each do
+      product = ProductFunctions.create_new_product(account)
+      product_id = JSON.parse(http.request(product[0]).body)['product']['id']
+      plan_name = "plan_for_#{product_id}_product"
+      request = PlanFunctions.create_new_plan({"user_data[email]" => account[:email],
+                                               "user_data[password]" => account[:password],
+                                               "plan_data[product_id]" => product_id,
+                                               "plan_data[name]" => plan_name})
+      plan = JSON.parse(http.request(request[0]).body)['plan']
+    end
+
+    it 'edit plan after create' do
+      new_plan_name = 30.times.map { StaticData::ALPHABET.sample }.join
+      request = PlanFunctions.update_plan({"user_data[email]" => account[:email],
+                                 "user_data[password]" => account[:password],
+                                 "plan_data[id]" => plan['id'],
+                                 "plan_data[name]" => new_plan_name})
+      result = JSON.parse(http.request(request).body)
+      expect(result['errors'].empty?).to be_truthy
+      expect(result['plan']).to eq(plan['id'].to_s)
+    end
+
+    it 'edit plan without user_data' do
+      new_plan_name = 30.times.map { StaticData::ALPHABET.sample }.join
+      request = PlanFunctions.update_plan({"plan_data[id]" => plan['id'],
+                                           "plan_data[name]" => new_plan_name})
+      result = JSON.parse(http.request(request).body)
+      expect(result['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
+    end
+
+    it 'edit plan with uncorrect plan_data | empty' do
+      new_plan_name = 30.times.map { StaticData::ALPHABET.sample }.join
+      request = PlanFunctions.update_plan({"user_data[email]" => account[:email],
+                                           "user_data[password]" => account[:password],
+                                           "plan_data[id]" => plan['id'],
+                                           "plan_data[name]" => ''})
+      result = JSON.parse(http.request(request).body)
+      expect(result['errors']['name']).to eq([ErrorMessages::CANT_BE_EMPTY_PLAN_NAME])
+    end
+  end
 end
