@@ -35,7 +35,7 @@ div {
 }
 /* top-toolbar region end */
 
-/* Products region start */
+/* Examples region start */
 .product-region{
     background-color: #89acff;
 }
@@ -43,4 +43,7 @@ div {
 .plan-region{
     background-color: #ffbcc3;
 }
-/* Products region end */
+.run-region{
+    background-color: #bfffae;
+}
+/* Examples region end */
