@@ -36,8 +36,22 @@ $(function() {
     // endregion Products
 
     // region Plans
+    function GenerateRowForPlan(id, name, product_id, created_ad, updated_at){
+        return "<tr id='all-plan-element'><td>" + id + "</td><td>" + name + "</td><td>" + product_id + "</td><td>" + created_ad + "</td><td>" + updated_at + "</td></tr>"
+    }
+
     $("button#create-new-plan").click(function () {
         CreateNewPlan({plan_data: {name: $("input#new-plan-name").val(), product_id: $("input#new-plan-product_id").val()}}, function(data){console.log(data)});
+    });
+
+    $("button#show-plans").click(function () {
+        ShowPlans({plan_data: {product_id: $("input#show-plans-product_id").val()}}, function(data) {
+            console.log(data);
+            $( "tr#all-product-element" ).remove();
+            $.each( data['plans'], function( key, value ) {
+                $("table#show-plans tbody").append(GenerateRowForPlan(value['id'], value['name'],  value['product_id'], value['created_at'], value['updated_at']));
+            });
+        });
     });
     // endregion Plans
 });

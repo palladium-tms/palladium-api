@@ -13,6 +13,22 @@ function CreateNewPlan(data, callback) {
     });
 };
 
+// data = {plan_data: {product_id: int}}
+// callback = function(data){console.log(data)}. Feel free to replace console.log(data) to any code
+function ShowPlans(data, callback) {
+    $.ajax({
+        type: "GET",
+        url: 'plans',
+        data: (data),
+        statusCode: {
+            200: function (data) {
+                callback(data);
+            },
+        }
+    });
+};
+
+
 // // data= {product_data: {id: product_id}}, product_id is number
 // // callback = function(data){console.log(data)}. Feel free to replace console.log(data) to any code
 // function DeleteProduct(data, callback) {
