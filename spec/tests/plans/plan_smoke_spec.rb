@@ -1,15 +1,5 @@
-require 'rspec'
-require 'net/http'
-require 'json'
-require_relative '../../data/static_data'
-require_relative '../../lib/AuthFunctions'
-require_relative '../../lib/ProductFunctions'
-require_relative '../../lib/PlanFunctions'
-http = nil
-account = nil
-product_id = nil
-plan_name = nil
-plan = nil
+require_relative '../../tests/test_management'
+http, account, product_id, plan, plan_name = nil
 describe 'Smoke' do
   before :all do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)

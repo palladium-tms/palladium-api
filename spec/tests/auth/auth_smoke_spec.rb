@@ -1,8 +1,4 @@
-require 'rspec'
-require 'net/http'
-require 'json'
-require_relative '../../data/static_data'
-require_relative '../../lib/AuthFunctions'
+require_relative '../../tests/test_management'
 http = nil
 describe 'Smoke' do
   before :all do
