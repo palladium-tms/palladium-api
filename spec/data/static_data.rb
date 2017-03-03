@@ -21,6 +21,6 @@ class ErrorMessages
   CANT_BE_EMPTY_PLAN_NAME = 'cannot be empty'
   PRODUCT_ID_CANT_BE_NIL_PLAN_NAME = "product_id can't be nil"
   PRODUCT_ID_CANT_BE_EMPTY_PLAN_NAME = "product_id can't be empty"
-  PLAN_ID_CANT_BE_NIL_PLAN_NAME = "plan_id can't be empty"
+  PLAN_ID_CANT_BE_NIL_PLAN_NAME = "plan_id can't be nil"
   #endregion plan
 end
