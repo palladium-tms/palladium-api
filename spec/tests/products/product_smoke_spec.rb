@@ -1,6 +1,6 @@
 require_relative '../../tests/test_management'
 http, account = nil
-describe 'Smoke' do
+describe 'Product Smoke' do
   before :all do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
     request = AuthFunctions.create_new_account

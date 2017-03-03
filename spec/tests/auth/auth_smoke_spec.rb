@@ -1,6 +1,6 @@
 require_relative '../../tests/test_management'
 http = nil
-describe 'Smoke' do
+describe 'Auth Smoke' do
   before :all do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
   end
