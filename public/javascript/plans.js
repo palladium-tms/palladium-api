@@ -29,20 +29,20 @@ function ShowPlans(data, callback) {
 };
 
 
-// // data= {product_data: {id: product_id}}, product_id is number
-// // callback = function(data){console.log(data)}. Feel free to replace console.log(data) to any code
-// function DeleteProduct(data, callback) {
-//     $.ajax({
-//         type: "DELETE",
-//         url: 'product_delete',
-//         data: (data),
-//         statusCode: {
-//             200: function (data) {
-//                 callback(data);
-//             }
-//         }
-//     });
-// };
+// data= {plan_data: {id: plan_id}}, plan_id is number
+// callback = function(data){console.log(data)}. Feel free to replace console.log(data) to any code
+function DeletePlan(data, callback) {
+    $.ajax({
+        type: "DELETE",
+        url: 'plan_delete',
+        data: (data),
+        statusCode: {
+            200: function (data) {
+                callback(data);
+            }
+        }
+    });
+};
 //
 // // callback = function(data){console.log(data)}. Feel free to replace console.log(data) to any code
 // function GetAllProducts(callback) {

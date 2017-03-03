@@ -179,7 +179,7 @@ end
 
 delete '/plan_delete' do
   if access_available?
-    errors = Plan.plan_id_validation(Plan[:id => plan_data['id']])
+    errors = Plan.plan_id_validation(plan_data['id'])
     if errors.empty?
       Plan[:id => plan_data['id']].destroy
     end

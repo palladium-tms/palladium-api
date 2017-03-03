@@ -155,7 +155,7 @@ describe 'Smoke' do
                                            "plan_data[id]" => plan_id})
       response = JSON.parse(http.request(request).body)
       expect(response['errors'].empty?).to be_falsey
-      expect(response['errors']['plan_id']).to eq([ErrorMessages::PLAN_ID_CANT_BE_NIL_PLAN_NAME])
+      expect(response['errors']['plan_id']).to eq([ErrorMessages::PLAN_ID_WRONG])
     end
   end
 end

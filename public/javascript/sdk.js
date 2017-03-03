@@ -53,5 +53,9 @@ $(function() {
             });
         });
     });
+
+    $("button#delete-plan").click(function () {
+        DeletePlan({plan_data: {id: $("input#delete-plan-id").val()}},  function(data){console.log(data)})
+    });
     // endregion Plans
 });
