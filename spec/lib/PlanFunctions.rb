@@ -30,6 +30,13 @@ class PlanFunctions
       result
     end
   end
+
+  # @param [Hash] args must has :plan_id[id] with plan id for deleting
+  def self.delete_plan(*args)
+    uri = URI(StaticData::MAINPAGE + '/plan_delete')
+    uri.query = URI.encode_www_form(args.first)
+    Net::HTTP::Delete.new(uri)
+  end
   #
   #
   # # @param [Hash] account like a {:email => 'email_from_account', :password => 'password_from_account'}

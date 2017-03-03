@@ -118,4 +118,44 @@ describe 'Smoke' do
       expect(plans['errors']['product_id']).to eq([ErrorMessages::PRODUCT_ID_WRONG])
     end
   end
+
+  describe 'Delete Plan' do
+    before :each do
+      product = ProductFunctions.create_new_product(account)
+      product_id = JSON.parse(http.request(product[0]).body)['product']['id']
+      plan_name = "plan_for_#{product_id}_product"
+      request = PlanFunctions.create_new_plan({"user_data[email]" => account[:email],
+                                               "user_data[password]" => account[:password],
+                                               "plan_data[product_id]" => product_id,
+                                               "plan_data[name]" => plan_name})
+      plan = JSON.parse(http.request(request[0]).body)['plan']
+    end
+
+    it 'check deleting plan after plan create' do
+      request = PlanFunctions.delete_plan({"user_data[email]" => account[:email],
+                                               "user_data[password]" => account[:password],
+                                               "plan_data[id]" => plan['id']})
+      response = JSON.parse(http.request(request).body)
+      expect(response['errors'].empty?).to be_truthy
+      expect(response['plan']).to eq(plan['id'].to_s)
+    end
+
+    it 'check deleting plan without user_data' do
+      request = PlanFunctions.delete_plan({"plan_data[id]" => plan['id']})
+      response = JSON.parse(http.request(request).body)
+      expect(response['errors'].empty?).to be_falsey
+      expect(response['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
+    end
+
+    it 'check deleting plan with uncorrect plan_data' do
+      plan_id = 30.times.map { StaticData::ALPHABET.sample }.join
+
+      request = PlanFunctions.delete_plan({"user_data[email]" => account[:email],
+                                           "user_data[password]" => account[:password],
+                                           "plan_data[id]" => plan_id})
+      response = JSON.parse(http.request(request).body)
+      expect(response['errors'].empty?).to be_falsey
+      expect(response['errors']['plan_id']).to eq([ErrorMessages::PLAN_ID_CANT_BE_NIL_PLAN_NAME])
+    end
+  end
 end

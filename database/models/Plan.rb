@@ -24,6 +24,18 @@ class Plan < Sequel::Model
     plan
   end
 
+  def self.plan_id_validation(plan_id)
+    case
+      when plan_id.nil?
+        return {'plan_id': ["plan_id can't be nil"]}
+      when plan_id.empty?
+        return {'plan_id': ["plan_id can't be empty"]}
+      when Product[id: plan_id].nil?
+        return {'plan_id': ["plan_id is not belongs to any product"]}
+    end
+    []
+  end
+
   def self.create_new(data)
     data ||= {'name': ''}
     plan = self.new(name: data['name'])
