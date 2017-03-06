@@ -235,6 +235,20 @@ get '/runs' do
   end
 end
 
+delete '/run_delete' do
+  if access_available?
+    errors = Run.run_id_validation(run_data['id'])
+    if errors.empty?
+      Run[:id => run_data['id']].destroy
+    end
+    content_type :json
+    status 200
+    {'plan': run_data['id'],'errors': errors }.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
 # endregion runs
 
 def login_required

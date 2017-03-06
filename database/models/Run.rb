@@ -24,6 +24,20 @@ class Run < Sequel::Model
     run
   end
 
+
+  def self.run_id_validation(run_id)
+    case
+      when run_id.nil?
+        return {'plan_id': ["run_id can't be nil"]}
+      when run_id.empty?
+        return {'plan_id': ["run_id can't be empty"]}
+      when Run[id: run_id].nil?
+        return {'plan_id': ["run_id is not belongs to any product"]}
+      else
+        {}
+    end
+  end
+
   def self.create_new(data)
     data ||= {'name': ''}
     run = self.new(name: data['name'])

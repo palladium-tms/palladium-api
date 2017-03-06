@@ -24,4 +24,8 @@ class ErrorMessages
   PLAN_ID_CANT_BE_NIL_PLAN_NAME = "plan_id can't be nil"
   PLAN_ID_WRONG = "plan_id is not belongs to any product"
   #endregion plan
+
+  #region run
+  RUN_ID_WRONG = "run_id is not belongs to any product"
+  #endregion run
 end

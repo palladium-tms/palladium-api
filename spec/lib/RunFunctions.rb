@@ -30,4 +30,11 @@ class RunFunctions
       result
     end
   end
+
+  # @param [Hash] args must has :run_data[name] with plan name and run_data[plan_id] with plan id
+  def self.delete_run(*args)
+    uri = URI(StaticData::MAINPAGE + '/run_delete')
+    uri.query = URI.encode_www_form(args.first)
+    Net::HTTP::Delete.new(uri)
+  end
 end
