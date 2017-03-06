@@ -264,7 +264,19 @@ post '/result_set_new' do
   end
 end
 
-
+get '/result_sets' do
+  if access_available?
+    errors = Run.run_id_validation(result_set_data['run_id'])
+    result_sets = []
+    result_sets = Run[:id => result_set_data['run_id']].result_sets if errors.empty?
+    content_type :json
+    status 200
+    {'result_sets': result_sets.map{|result_set| result_set.values}, "errors": errors}.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
 # endregion result_set
 
 def login_required

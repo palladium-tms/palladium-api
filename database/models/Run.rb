@@ -28,11 +28,11 @@ class Run < Sequel::Model
   def self.run_id_validation(run_id)
     case
       when run_id.nil?
-        return {'plan_id': ["run_id can't be nil"]}
+        return {'run_id': ["run_id can't be nil"]}
       when run_id.empty?
-        return {'plan_id': ["run_id can't be empty"]}
+        return {'run_id': ["run_id can't be empty"]}
       when Run[id: run_id].nil?
-        return {'plan_id': ["run_id is not belongs to any plans"]}
+        return {'run_id': ["run_id is not belongs to any plans"]}
       else
         {}
     end
