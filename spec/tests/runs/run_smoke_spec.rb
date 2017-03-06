@@ -100,7 +100,7 @@ describe 'Run Smoke' do
       request = RunFunctions.delete_run(account.merge({"run_data[id]" => uncorrect_id}))
       response = JSON.parse(http.request(request).body)
       result = RunFunctions.get_plans(account.merge({"run_data[plan_id]" => plan['id']}))
-      expect(response['errors']['plan_id']).to eq([ErrorMessages::RUN_ID_WRONG])
+      expect(response['errors']['run_id']).to eq([ErrorMessages::RUN_ID_WRONG])
       expect(result['runs'].empty?).to be_falsey
     end
   end

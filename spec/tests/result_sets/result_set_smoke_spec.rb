@@ -95,6 +95,7 @@ describe 'Result Set Smoke' do
     end
 
     it 'get result_sets by run_id with uncorrect result_set_data | run_id' do
+      uncorrect_run_id = 30.times.map { StaticData::ALPHABET.sample }.join
       result = ResultSetFunctions.get_result_sets(account.merge({"result_set_data[run_id]" => uncorrect_run_id}))
       expect(result['errors']['run_id']).to eq([ErrorMessages::RUN_ID_WRONG])
     end

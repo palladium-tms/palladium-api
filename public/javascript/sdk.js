@@ -84,8 +84,22 @@ $(function() {
     });
     // endregion Runs
     // region ResultSet
+    function GenerateRowForResultSet(id, name, run_id, status, created_ad, updated_at){
+        return "<tr id='all-result_sets-element'><td>" + id + "</td><td>" + name + "</td><td>" + run_id + "</td><td>" + status + "</td><td>" + created_ad + "</td><td>" + updated_at + "</td></tr>"
+    }
+
     $("button#create-new-result_set").click(function () {
         CreateNewResultSet({result_set_data: {name: $("input#new-result_set-name").val(), run_id: $("input#new-result_set-run_id").val(), status: $("input#new-result_set-status").val()}}, function(data){console.log(data)});
+    });
+
+    $("button#show-result_sets").click(function () {
+        ShowResultSets({result_set_data: {run_id: $("input#show-result_sets-run_id").val()}}, function(data) {
+            console.log(data);
+            $( "tr#all-result_sets-element" ).remove();
+            $.each( data['result_sets'], function( key, value ) {
+                $("table#show-result_sets tbody").append(GenerateRowForResultSet(value['id'], value['name'],  value['run_id'], value['status'], value['created_at'], value['updated_at']));
+            });
+        });
     });
     // endregion ResultSet
 });
