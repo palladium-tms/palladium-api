@@ -221,6 +221,19 @@ post '/run_new' do
   end
 end
 
+get '/runs' do
+  if access_available?
+    errors = Plan.plan_id_validation(run_data['plan_id'])
+    runs = []
+    runs = Plan[:id => run_data['plan_id']].runs if errors.empty?
+    content_type :json
+    status 200
+    {'runs': runs.map{|plan| plan.values}, "errors": errors}.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
 
 # endregion runs
 

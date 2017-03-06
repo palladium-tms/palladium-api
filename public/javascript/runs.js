@@ -12,3 +12,18 @@ function CreateNewRun(data, callback) {
         }
     });
 };
+
+// data = {run_data: {plan_id: int}}
+// callback = function(data){console.log(data)}. Feel free to replace console.log(data) to any code
+function ShowRuns(data, callback) {
+    $.ajax({
+        type: "GET",
+        url: 'runs',
+        data: (data),
+        statusCode: {
+            200: function (data) {
+                callback(data);
+            },
+        }
+    });
+};

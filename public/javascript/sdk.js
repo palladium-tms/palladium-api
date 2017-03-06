@@ -63,8 +63,22 @@ $(function() {
     });
     // endregion Plans
     // region Runs
+    function GenerateRowForRun(id, name, plan_id, created_ad, updated_at){
+        return "<tr id='all-run-element'><td>" + id + "</td><td>" + name + "</td><td>" + plan_id + "</td><td>" + created_ad + "</td><td>" + updated_at + "</td></tr>"
+    }
     $("button#create-new-run").click(function () {
         CreateNewRun({run_data: {name: $("input#new-run-name").val(), plan_id: $("input#new-run-plan_id").val()}}, function(data){console.log(data)});
     });
+
+    $("button#show-runs").click(function () {
+        ShowRuns({run_data: {plan_id: $("input#show-runs-plan_id").val()}}, function(data) {
+            console.log(data);
+            $( "tr#all-run-element" ).remove();
+            $.each( data['runs'], function( key, value ) {
+                $("table#show-runs tbody").append(GenerateRowForRun(value['id'], value['name'],  value['plan_id'], value['created_at'], value['updated_at']));
+            });
+        });
+    });
+
     // endregion Runs
 });

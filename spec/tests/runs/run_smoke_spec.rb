@@ -1,7 +1,7 @@
 require_relative '../../tests/test_management'
 http, account, plan = nil
 describe 'Run Smoke' do
-  before :all do
+  before :each do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
     request = AuthFunctions.create_new_account
     http.request(request[0])
@@ -39,6 +39,33 @@ describe 'Run Smoke' do
       response = http.request(request[0])
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors']['plan_id']).to eq([ErrorMessages::PLAN_ID_WRONG])
+    end
+  end
+
+  describe 'Show runs' do
+    it 'Get runs by plan_id' do
+      request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => plan['id']}))
+      response = http.request(request[0])
+      run_id = JSON.parse(response.body)['run']['id']
+      result = RunFunctions.get_plans(account.merge({"run_data[plan_id]" => plan['id']}))
+      expect(result['errors'].empty?).to be_truthy
+      expect(result['runs'].first['id']).to eq(run_id)
+      expect(result['runs'].first['plan_id']).to eq(plan['id'])
+    end
+
+    it 'Get runs by plan_id without user_data' do
+      request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => plan['id']}))
+      http.request(request[0])
+      result = RunFunctions.get_plans({"run_data[plan_id]" => plan['id']})
+      expect(result['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
+    end
+
+    it 'Get runs by plan_id with uncorrect run_data | plan_id' do
+      plan_id = 30.times.map { StaticData::ALPHABET.sample }.join
+      request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => plan['id']}))
+      http.request(request[0])
+      result = RunFunctions.get_plans(account.merge({"run_data[plan_id]" => plan_id}))
+      expect(result['errors']['plan_id']).to eq([ErrorMessages::PLAN_ID_WRONG])
     end
   end
 end
