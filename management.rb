@@ -9,6 +9,7 @@ require_relative 'database/models/User'
 require_relative 'database/models/Product'
 require_relative 'database/models/Plan'
 require_relative 'database/models/Run'
+require_relative 'database/models/ResultSet'
 
 # core modules
 require_relative 'core/auth'

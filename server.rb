@@ -251,6 +251,22 @@ delete '/run_delete' do
 end
 # endregion runs
 
+# region result_set
+post '/result_set_new' do
+  if access_available?
+    result_set = ResultSet.create_new(result_set_data)
+    content_type :json
+    status 200
+    {'result_set': result_set.values, "errors": result_set.errors}.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
+
+
+# endregion result_set
+
 def login_required
   if session[:user]
     return true
@@ -284,6 +300,10 @@ end
 
 def run_data
     params['run_data']
+end
+
+def result_set_data
+    params['result_set_data']
 end
 
 def access_available?

@@ -30,3 +30,11 @@ DB.create_table? :runs do
   DateTime :updated_at
 end
 
+DB.create_table? :result_sets do
+  primary_key :id
+  foreign_key :run_id, :runs
+  String :name
+  Integer :status, default: 0
+  DateTime :created_at
+  DateTime :updated_at
+end

@@ -26,6 +26,8 @@ class ErrorMessages
   #endregion plan
 
   #region run
-  RUN_ID_WRONG = "run_id is not belongs to any product"
+  CANT_BE_EMPTY_RUN_NAME = 'cannot be empty'
+  CANT_BE_STRING_RESULT_SET_STATUS = 'cannot be string'
+  RUN_ID_WRONG = "run_id is not belongs to any plans"
   #endregion run
 end

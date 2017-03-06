@@ -1,5 +1,5 @@
-class Run < Sequel::Model
-  many_to_one :plan
+class ResultSet < Sequel::Model
+  many_to_one :runs
   plugin :validation_helpers
   self.raise_on_save_failure = false
   self.plugin :timestamps
@@ -7,45 +7,33 @@ class Run < Sequel::Model
   def validate
     super
     errors.add(:name, 'cannot be empty') if !name || name.empty?
+    errors.add(:status, 'cannot be string') if status.is_a?(String)
   end
 
-  def self.plan_id_validation(run, plan_id)
-    case
-      when plan_id.nil?
-        run.errors.add('plan_id', "plan_id can't be nil")
-        return run
-      when plan_id.empty?
-        run.errors.add('plan_id', "plan_id can't be empty")
-        return run
-      when Plan[id: plan_id].nil?
-        run.errors.add('plan_id', "plan_id is not belongs to any product")
-        return run
-    end
-    run
-  end
-
-  def self.run_id_validation(run_id)
+  def self.run_id_validation(result_set, run_id)
     case
       when run_id.nil?
-        return {'plan_id': ["run_id can't be nil"]}
+        result_set.errors.add('run_id', "run_id can't be nil")
+        return result_set
       when run_id.empty?
-        return {'plan_id': ["run_id can't be empty"]}
+        result_set.errors.add('run_id', "run_id can't be empty")
+        return result_set
       when Run[id: run_id].nil?
-        return {'plan_id': ["run_id is not belongs to any plans"]}
-      else
-        {}
+        result_set.errors.add('run_id', "run_id is not belongs to any plans")
+        return result_set
     end
+    result_set
   end
 
   def self.create_new(data)
     data ||= {'name': ''}
-    run = self.new(name: data['name'])
-    run.valid? # update errors stack
-    run = self.plan_id_validation(run, data['plan_id'])
-    if run.errors.empty?
-      run.save
-      Plan[id: data['plan_id']].add_run(run)
+    result_set = self.new(data)
+    result_set.valid? # update errors stack
+    result_set = self.run_id_validation(result_set, data['run_id'])
+    if result_set.errors.empty?
+      result_set.save
+      Run[id: data['run_id']].add_result_set(result_set)
     end
-    run
+    result_set
   end
 end
