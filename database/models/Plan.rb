@@ -37,6 +37,11 @@ class Plan < Sequel::Model
     []
   end
 
+  def before_destroy
+    super
+    self.remove_all_runs
+  end
+
   def self.create_new(data)
     data ||= {'name': ''}
     plan = self.new(name: data['name'])

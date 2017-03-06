@@ -157,6 +157,19 @@ describe 'Plan Smoke' do
       expect(response['errors'].empty?).to be_falsey
       expect(response['errors']['plan_id']).to eq([ErrorMessages::PLAN_ID_WRONG])
     end
+
+    it 'check deleting plan with runs' do
+      request = RunFunctions.create_new_run({"user_data[email]" => account[:email],
+                                             "user_data[password]" => account[:password],
+                                             "run_data[plan_id]" => plan['id']})
+      response = http.request(request[0])
+      request = PlanFunctions.delete_plan({"user_data[email]" => account[:email],
+                                           "user_data[password]" => account[:password],
+                                           "plan_data[id]" => plan['id']})
+      response = JSON.parse(http.request(request).body)
+      expect(response['errors'].empty?).to be_truthy
+      expect(response['plan']).to eq(plan['id'].to_s)
+    end
   end
 
   describe 'Edit Plan' do
