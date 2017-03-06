@@ -7,7 +7,7 @@ class ResultSet < Sequel::Model
   def validate
     super
     errors.add(:name, 'cannot be empty') if !name || name.empty?
-    errors.add(:status, 'cannot be string') if status.is_a?(String)
+    validates_integer :status
   end
 
   def self.run_id_validation(result_set, run_id)
@@ -31,7 +31,7 @@ class ResultSet < Sequel::Model
     result_set.valid? # update errors stack
     result_set = self.run_id_validation(result_set, data['run_id'])
     if result_set.errors.empty?
-      result_set.save
+      result_set = result_set.save
       Run[id: data['run_id']].add_result_set(result_set)
     end
     result_set

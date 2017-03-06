@@ -34,7 +34,6 @@ $(function() {
         });
     });
     // endregion Products
-
     // region Plans
     function GenerateRowForPlan(id, name, product_id, created_ad, updated_at){
         return "<tr id='all-plan-element'><td>" + id + "</td><td>" + name + "</td><td>" + product_id + "</td><td>" + created_ad + "</td><td>" + updated_at + "</td></tr>"
@@ -84,4 +83,9 @@ $(function() {
         DeleteRun({run_data: {id: $("input#delete-run-id").val()}},  function(data){console.log(data)})
     });
     // endregion Runs
+    // region ResultSet
+    $("button#create-new-result_set").click(function () {
+        CreateNewResultSet({result_set_data: {name: $("input#new-result_set-name").val(), run_id: $("input#new-result_set-run_id").val(), status: $("input#new-result_set-status").val()}}, function(data){console.log(data)});
+    });
+    // endregion ResultSet
 });

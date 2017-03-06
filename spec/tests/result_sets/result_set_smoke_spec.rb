@@ -21,7 +21,8 @@ describe 'Result Set Smoke' do
 
   describe 'Create new run' do
     it 'check creating new result_sets' do
-      request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => run['id']}))
+      request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => run['id'],
+                                                                        "result_set_data[status]" => 0}))
       response = http.request(request[0])
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
@@ -32,7 +33,8 @@ describe 'Result Set Smoke' do
     end
 
     it 'check creating new result sets without user_data' do
-      request = ResultSetFunctions.create_new_result_set({"result_set_data[run_id]" => run['id']})
+      request = ResultSetFunctions.create_new_result_set({"result_set_data[run_id]" => run['id'],
+                                                          "result_set_data[status]" => 0})
       response = http.request(request[0])
       expect(response.code).to eq('201')
       expect(JSON.parse(response.body)['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
@@ -40,7 +42,8 @@ describe 'Result Set Smoke' do
 
     it 'check creating new result sets_with uncorrect run_id' do
       uncorrect_run_id = 30.times.map { StaticData::ALPHABET.sample }.join
-      request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => uncorrect_run_id}))
+      request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => uncorrect_run_id,
+                                                                        "result_set_data[status]" => 0}))
       response = http.request(request[0])
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].count).to eq(1)
@@ -49,7 +52,8 @@ describe 'Result Set Smoke' do
 
     it 'check creating new result_sets with uncorrect retult_set name | nil' do
       request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => run['id'],
-                                                                        "result_set_data[name]" => ''}))
+                                                                        "result_set_data[name]" => '',
+                                                                        "result_set_data[status]" => 0}))
       response = http.request(request[0])
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors']['name']).to eq([ErrorMessages::CANT_BE_EMPTY_RUN_NAME])
@@ -68,7 +72,7 @@ describe 'Result Set Smoke' do
       request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => run['id'],
                                                                         "result_set_data[status]" => 'wqeqweqeqwe'}))
       response = http.request(request[0])
-      expect(JSON.parse(response.body)['errors']['status']).to eq([ErrorMessages::CANT_BE_STRING_RESULT_SET_STATUS])
+      expect(JSON.parse(response.body)['errors']['status']).to eq([ErrorMessages::IN_NOT_NUMBER_RESULT_SET_STATUS])
     end
   end
 end

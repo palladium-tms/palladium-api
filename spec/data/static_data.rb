@@ -27,7 +27,7 @@ class ErrorMessages
 
   #region run
   CANT_BE_EMPTY_RUN_NAME = 'cannot be empty'
-  CANT_BE_STRING_RESULT_SET_STATUS = 'cannot be string'
+  IN_NOT_NUMBER_RESULT_SET_STATUS = 'is not a number'
   RUN_ID_WRONG = "run_id is not belongs to any plans"
   #endregion run
 end
