@@ -27,3 +27,16 @@ function ShowRuns(data, callback) {
         }
     });
 };
+
+function DeleteRun(data, callback) {
+    $.ajax({
+        type: "DELETE",
+        url: 'run_delete',
+        data: (data),
+        statusCode: {
+            200: function (data) {
+                callback(data);
+            }
+        }
+    });
+};

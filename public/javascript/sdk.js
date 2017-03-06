@@ -80,5 +80,8 @@ $(function() {
         });
     });
 
+    $("button#delete-run").click(function () {
+        DeleteRun({run_data: {id: $("input#delete-run-id").val()}},  function(data){console.log(data)})
+    });
     // endregion Runs
 });
