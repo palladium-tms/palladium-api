@@ -294,6 +294,20 @@ end
 
 # endregion result
 
+# region status
+post '/status_new' do
+  if access_available?
+    status = Status.create_new(status_data)
+    content_type :json
+    status 200
+    {'status': status.values, "errors": status.errors}.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
+# endregion status
+
 def login_required
   if session[:user]
     return true
@@ -335,6 +349,10 @@ end
 
 def result_data
     params['result_data']
+end
+
+def status_data
+    params['status_data'] ||= {'name': 'NoName', 'color': '#ffffff'}
 end
 
 def access_available?
