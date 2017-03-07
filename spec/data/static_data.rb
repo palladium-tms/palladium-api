@@ -31,4 +31,8 @@ class ErrorMessages
   RUN_ID_WRONG = "run_id is not belongs to any plans"
   RUN_ID_CANT_BE_EMPTY = "run_id can't be empty"
   #endregion run
+  #
+  # #region result_set
+  RESULT_SET_ID_WRONG = "result_set_id is not belongs to any result_set_id"
+  #endregion results_set
 end

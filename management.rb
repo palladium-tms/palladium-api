@@ -10,6 +10,7 @@ require_relative 'database/models/Product'
 require_relative 'database/models/Plan'
 require_relative 'database/models/Run'
 require_relative 'database/models/ResultSet'
+require_relative 'database/models/Result'
 
 # core modules
 require_relative 'core/auth'

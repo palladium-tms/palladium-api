@@ -279,6 +279,21 @@ get '/result_sets' do
 end
 # endregion result_set
 
+# region result
+post '/result_new' do
+  if access_available?
+    result = Result.create_new(result_data)
+    content_type :json
+    status 200
+    {'result': result.values, "errors": result.errors}.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
+
+# endregion result
+
 def login_required
   if session[:user]
     return true
@@ -316,6 +331,10 @@ end
 
 def result_set_data
     params['result_set_data']
+end
+
+def result_data
+    params['result_data']
 end
 
 def access_available?

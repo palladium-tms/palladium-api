@@ -7,6 +7,7 @@ require_relative '../lib/ProductFunctions'
 require_relative '../lib/PlanFunctions'
 require_relative '../lib/RunFunctions'
 require_relative '../lib/ResultSetFunctions'
+require_relative '../lib/ResultFunctions'
 require_relative '../lib/AuthFunctions'
 class TestManagement
 end

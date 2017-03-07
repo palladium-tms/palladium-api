@@ -1,6 +1,6 @@
 require_relative '../../tests/test_management'
 http, account, run, result_set = nil
-describe 'Result Set Smoke' do
+describe 'Result Smoke' do
   before :each do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
     request = AuthFunctions.create_new_account
@@ -17,92 +17,40 @@ describe 'Result Set Smoke' do
 
     request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => plan['id']}))
     run = JSON.parse(http.request(request[0]).body)['run']
+
+    request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => run['id']}))
+    result_set = JSON.parse(http.request(request[0]).body)['result_set']
   end
 
-  describe 'Create new result_sets' do
-    it 'check creating new result_sets' do
-      request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => run['id'],
-                                                                        "result_set_data[status]" => 0}))
-      response = http.request(request[0])
+  describe 'Create new result' do
+    it 'check creating new result' do
+      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => result_set['id']}))
+      response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
-      expect(JSON.parse(response.body)['result_set']['id'].nil?).to be_falsey
-      expect(JSON.parse(response.body)['result_set']['name']).to eq(request[1])
-      expect(JSON.parse(response.body)['result_set']['run_id']).to eq(run['id'])
-      expect(JSON.parse(response.body)['result_set']['status']).to eq(0)
+      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
+      expect(JSON.parse(response.body)['result']['result_set_id']).to eq(result_set['id'])
     end
 
-    it 'check creating new result sets without user_data' do
-      request = ResultSetFunctions.create_new_result_set({"result_set_data[run_id]" => run['id'],
-                                                          "result_set_data[status]" => 0})
-      response = http.request(request[0])
-      expect(response.code).to eq('201')
+    it 'check creating new result without user_data' do
+      request = ResultFunctions.create_new_result({"result_data[result_set_id]" => result_set['id']})
+      response = http.request(request)
       expect(JSON.parse(response.body)['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
     end
 
-    it 'check creating new result sets_with uncorrect run_id' do
-      uncorrect_run_id = 30.times.map { StaticData::ALPHABET.sample }.join
-      request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => uncorrect_run_id,
-                                                                        "result_set_data[status]" => 0}))
-      response = http.request(request[0])
+    it 'check creating new result with uncorrect result_set_id' do
+      uncorrect_result_set_id = 30.times.map { StaticData::ALPHABET.sample }.join
+      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => uncorrect_result_set_id}))
+      response = http.request(request)
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].count).to eq(1)
-      expect(JSON.parse(response.body)['errors']['run_id']).to eq([ErrorMessages::RUN_ID_WRONG])
+      expect(JSON.parse(response.body)['errors']['result_set_id']).to eq([ErrorMessages::RESULT_SET_ID_WRONG])
     end
 
-    it 'check creating new result_sets with uncorrect retult_set name | nil' do
-      request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => run['id'],
-                                                                        "result_set_data[name]" => '',
-                                                                        "result_set_data[status]" => 0}))
-      response = http.request(request[0])
-      expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors']['name']).to eq([ErrorMessages::CANT_BE_EMPTY_RUN_NAME])
-    end
-
-    it 'check creating ng new result_sets with correct status' do
-      request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => run['id'],
-                                                                        "result_set_data[status]" => 1}))
-      response = http.request(request[0])
-      expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['result_set']['status']).to eq(1)
-      expect(JSON.parse(response.body)['result_set']['name']).to eq(request[1])
-    end
-
-    it 'check creating ng new result_sets with uncorrect status | string' do
-      request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => run['id'],
-                                                                        "result_set_data[status]" => 'wqeqweqeqwe'}))
-      response = http.request(request[0])
-      expect(JSON.parse(response.body)['errors']['status']).to eq([ErrorMessages::IN_NOT_NUMBER_RESULT_SET_STATUS])
-    end
-  end
-
-  describe 'ResultSets show' do
-    before :each do
-      result_set_request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => run['id'],
-                                                                                   "result_set_data[status]" => 0}))
-      result_set = JSON.parse(http.request(result_set_request[0]).body)['result_set']
-    end
-
-    it 'get result_sets by run_id' do
-      result = ResultSetFunctions.get_result_sets(account.merge({"result_set_data[run_id]" => run['id']}))
-      expect(result[result_set['id']]['id']).to eq(result_set['id'])
-      expect(result[result_set['id']]['run_id']).to eq(run['id'])
-    end
-
-    it 'get result_sets by run_id with uncorrect user_data' do
-      result = ResultSetFunctions.get_result_sets({"result_set_data[run_id]" => run['id']})
-      expect(result['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
-    end
-
-    it 'get result_sets by run_id with uncorrect result_set_data | run_id' do
-      uncorrect_run_id = 30.times.map { StaticData::ALPHABET.sample }.join
-      result = ResultSetFunctions.get_result_sets(account.merge({"result_set_data[run_id]" => uncorrect_run_id}))
-      expect(result['errors']['run_id']).to eq([ErrorMessages::RUN_ID_WRONG])
-    end
-
-    it 'get result_sets by run_id with uncorrect result_set_data | run_id is empty' do
-      result = ResultSetFunctions.get_result_sets(account.merge({"result_set_data[run_id]" => ''}))
-      expect(result['errors']['run_id']).to eq([ErrorMessages::RUN_ID_CANT_BE_EMPTY])
+    it 'check creating new result with uncorrect result_set_id' do
+      uncorrect_result_set_id = 30.times.map { StaticData::ALPHABET.sample }.join
+      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => uncorrect_result_set_id}))
+      response = http.request(request)
+      expect(JSON.parse(response.body)['errors']['result_set_id']).to eq([ErrorMessages::RESULT_SET_ID_WRONG])
     end
   end
 end

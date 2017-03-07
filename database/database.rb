@@ -38,3 +38,11 @@ DB.create_table? :result_sets do
   DateTime :created_at
   DateTime :updated_at
 end
+
+DB.create_table? :results do
+  primary_key :id
+  foreign_key :result_set_id, :result_sets
+  String :message
+  DateTime :created_at
+  DateTime :updated_at
+end

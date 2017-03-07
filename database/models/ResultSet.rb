@@ -1,5 +1,6 @@
 class ResultSet < Sequel::Model
-  many_to_one :runs
+  many_to_one :run
+  one_to_many :results
   plugin :validation_helpers
   self.raise_on_save_failure = false
   self.plugin :timestamps
@@ -7,7 +8,6 @@ class ResultSet < Sequel::Model
   def validate
     super
     errors.add(:name, 'cannot be empty') if !name || name.empty?
-    validates_integer :status
   end
 
   def self.run_id_validation(result_set, run_id)
