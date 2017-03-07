@@ -102,4 +102,12 @@ $(function() {
         });
     });
     // endregion ResultSet
+
+    // region Result
+
+    $("button#create-new-result").click(function () {
+        CreateNewResult({result_data: {message: $("input#new-result-name").val(), result_set_id: $("input#new-result_set-id").val(), status: $("input#new-result-status").val()}}, function(data){console.log(data)});
+    });
+
+    // endregion Result
 });

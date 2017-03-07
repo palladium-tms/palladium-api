@@ -3,6 +3,7 @@
 <head>
   <link rel="stylesheet" type="text/css" href="css/main-styles.css">
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="javascript/result.js"></script>
   <script src="javascript/result_set.js"></script>
   <script src="javascript/runs.js"></script>
   <script src="javascript/plans.js"></script>
@@ -22,14 +23,11 @@
 <div class="product-region">
   <p><label>Product name</label><input id="new-product-name"/></p>
   <button id="create-new-product">Create New Product</button>
-  <p>----------------------------------------
-  <p/>
-
+  <p>----------------------------------------<p/>
   <p><label>Product id</label><input id="delete-product-id"/></p>
   <button id="delete-product">Delete Product</button>
 
-  <p>----------------------------------------
-  <p/>
+  <p>----------------------------------------<p/>
   <button id="show-all-products" action="products">Show All Products</button>
   <table id="products-list">
     <tbody>
@@ -40,14 +38,11 @@
     </tr>
     </tbody>
   </table>
-  <p>----------------------------------------
-  <p/>
+  <p>----------------------------------------<p/>
   <p><label>Product id</label><input id="edit-product-id"/></p>
   <p><label>Product name for changing</label><input id="edit-product-name"/></p>
   <button id="update-product">Update Product</button>
-  <p>----------------------------------------
-  <p/>
-
+  <p>----------------------------------------<p/>
   <p><label>Product id</label><input id="show-product-id"/></p>
   <button id="show-product">Show Product</button>
   <table id="show-product-list">
@@ -62,16 +57,14 @@
   <p><label>Plan name</label><input id="new-plan-name"/></p>
   <p><label>Product id</label><input id="new-plan-product_id"/></p>
   <button id="create-new-plan">Create New Plan</button>
-  <p>----------------------------------------
-  <p/>
+  <p>----------------------------------------<p/>
   <p><label>Product id</label><input id="show-plans-product_id"/></p>
   <button id="show-plans">Show Plans From Product</button>
   <table id="show-plans">
     <tbody>
     </tbody>
   </table>
-  <p>----------------------------------------
-  <p/>
+  <p>----------------------------------------<p/>
   <p><label>Plan id</label><input id="edit-plan-id"/></p>
   <p><label>Plan name for changing</label><input id="edit-plan-name"/></p>
   <button id="update-plan">Update Product</button>
@@ -115,5 +108,14 @@
   </table>
 </div>
 <!--ResultSet region end-->
+
+<!--Result region start-->
+<div class="result-region">
+  <p><label>Result message</label><input id="new-result-message"/></p>
+  <p><label>Result status</label><input id="new-result-status"/></p>
+  <p><label>ResultSet id</label><input id="new-result_set-id"/></p>
+  <button id="create-new-result">Create New Result</button>
+</div>
+<!--Result region end-->
 </body>
 </html>

@@ -284,7 +284,7 @@ post '/result_new' do
   if access_available?
     result = Result.create_new(result_data)
     content_type :json
-    status 200
+   status 200
     {'result': result.values, "errors": result.errors}.to_json
   else
     status 201
