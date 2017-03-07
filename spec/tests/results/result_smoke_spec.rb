@@ -1,5 +1,5 @@
 require_relative '../../tests/test_management'
-http, account, run, result_set = nil
+http, account, run, result_set, status = nil
 describe 'Result Smoke' do
   before :each do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
@@ -20,11 +20,16 @@ describe 'Result Smoke' do
 
     request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => run['id']}))
     result_set = JSON.parse(http.request(request[0]).body)['result_set']
+
+    status_name = 30.times.map {StaticData::ALPHABET.sample }.join
+    request = StatusFunctions.create_new_status(account.merge({"status_data[name]" => status_name}))
+    status = JSON.parse(http.request(request[0]).body)['status']
   end
 
   describe 'Create new result' do
     it 'check creating new result' do
-      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => result_set['id']}))
+      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => result_set['id'],
+                                                                "result_data[status]" => status['name']}))
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
@@ -40,7 +45,8 @@ describe 'Result Smoke' do
 
     it 'check creating new result with uncorrect result_set_id' do
       uncorrect_result_set_id = 30.times.map { StaticData::ALPHABET.sample }.join
-      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => uncorrect_result_set_id}))
+      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => uncorrect_result_set_id,
+                                                                 "result_data[status]" => status['name']}))
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors']['result_set_id']).to eq([ErrorMessages::RESULT_SET_ID_WRONG])
@@ -48,9 +54,21 @@ describe 'Result Smoke' do
 
     it 'check creating new result with uncorrect result_set_id' do
       uncorrect_result_set_id = 30.times.map { StaticData::ALPHABET.sample }.join
-      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => uncorrect_result_set_id}))
+      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => uncorrect_result_set_id,
+                                                                 "result_data[status]" => status['name']}))
       response = http.request(request)
+      expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors']['result_set_id']).to eq([ErrorMessages::RESULT_SET_ID_WRONG])
+    end
+
+    it 'check creating new result with uncorrect status | not_exist' do
+      uncorrect_result_set_id = 30.times.map { StaticData::ALPHABET.sample }.join
+      statis = 30.times.map { StaticData::ALPHABET.sample }.join
+      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => uncorrect_result_set_id,
+                                                                 "result_data[status]" => statis}))
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors']['status']).to eq([ErrorMessages::STATUS_NAME_WRONG])
     end
   end
 end

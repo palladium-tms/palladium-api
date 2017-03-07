@@ -38,6 +38,7 @@ class ErrorMessages
   #
   # # #region status
   UNCORRECT_Status_NAME = "is invalid"
+  STATUS_NAME_WRONG = "status_name is not belongs to any statuses"
   #endregion status
 end
 

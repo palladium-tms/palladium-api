@@ -1,5 +1,5 @@
 class Status < Sequel::Model
-  many_to_one :result_sets
+  one_to_many :results
   plugin :validation_helpers
   self.raise_on_save_failure = false
   self.plugin :timestamps

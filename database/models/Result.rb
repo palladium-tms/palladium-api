@@ -20,14 +20,20 @@ class Result < Sequel::Model
   end
 
   def self.create_new(data)
-    data ||= {'message': ''}
-    result = self.new(data)
-    result.valid? # update errors stack
-    result = self.result_set_validation(result, data['result_set_id'])
-    if result.errors.empty?
-      result = result.save
-      ResultSet[id: data['result_set_id']].add_result(result)
+    if Status[:name => data['status']].nil?
+      result = self.new('message' => data['message'])
+      result.errors.add('status', 'status_name is not belongs to any statuses')
+      result
+     else
+      result = self.new('message' => data['message'])
+      result.valid? # update errors stack
+      result = self.result_set_validation(result, data['result_set_id'])
+      if result.errors.empty?
+        result = result.save
+        ResultSet[id: data['result_set_id']].add_result(result)
+        Status[:name => data['status']].add_result(result)
+      end
+      result
     end
-    result
   end
 end

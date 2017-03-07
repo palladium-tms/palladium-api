@@ -348,7 +348,7 @@ def result_set_data
 end
 
 def result_data
-    params['result_data']
+    params['result_data'] ||= {'message': ''}
 end
 
 def status_data
