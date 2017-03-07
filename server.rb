@@ -352,7 +352,7 @@ def result_data
 end
 
 def status_data
-    params['status_data'] ||= {'name': 'NoName', 'color': '#ffffff'}
+    params['status_data']
 end
 
 def access_available?

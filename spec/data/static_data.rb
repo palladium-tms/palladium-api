@@ -35,12 +35,15 @@ class ErrorMessages
   # #region result_set
   RESULT_SET_ID_WRONG = "result_set_id is not belongs to any result_set_id"
   #endregion results_set
+  #
+  # # #region status
+  UNCORRECT_Status_NAME = "is invalid"
+  #endregion status
 end
 
 class DefaultValues
 
   # #region status
-  DEFAULT_STATUS_NAME = "NoName"
   DEFAULT_STATUS_COLOR = "#ffffff"
   #endregion status
 end
