@@ -67,6 +67,13 @@ describe 'Result Set Smoke' do
       expect(JSON.parse(response.body)['result_set']['status']).to eq(1)
       expect(JSON.parse(response.body)['result_set']['name']).to eq(request[1])
     end
+
+    it 'check creating ng new result_sets with uncorrect status | string' do
+      request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => run['id'],
+                                                                        "result_set_data[status]" => 'wqeqweqeqwe'}))
+      response = http.request(request[0])
+      expect(JSON.parse(response.body)['errors']['status']).to eq([ErrorMessages::IN_NOT_NUMBER_RESULT_SET_STATUS])
+    end
   end
 
   describe 'ResultSets show' do
