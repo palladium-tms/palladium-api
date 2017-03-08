@@ -296,9 +296,33 @@ end
 
 # region status
 post '/status_new' do
+  content_type :json
   if access_available?
     status = Status.create_new(status_data)
-    content_type :json
+    status 200
+    {'status': status.values, "errors": status.errors}.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
+
+get '/statuses' do
+  content_type :json
+  if access_available?
+    status 200
+    statuses = Status.all
+    {'statuses': statuses.map{|current| current.values }}.to_json
+  else
+    status 201
+    {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
+  end
+end
+
+post '/status_block' do
+  content_type :json
+  if access_available?
+    status = Status[:id => status_data['id']].block!
     status 200
     {'status': status.values, "errors": status.errors}.to_json
   else

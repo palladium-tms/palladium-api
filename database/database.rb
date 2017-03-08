@@ -51,5 +51,6 @@ end
 DB.create_table? :statuses do
   primary_key :id
   String :name
+  Boolean :block, default: false
   String :color
 end

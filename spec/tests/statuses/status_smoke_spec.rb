@@ -47,5 +47,90 @@ describe 'Result Smoke' do
       expect(JSON.parse(response.body)['status']['name']).to eq(status_name)
       expect(JSON.parse(response.body)['status']['color']).to eq(DefaultValues::DEFAULT_STATUS_COLOR)
     end
+
+    it 'check create new status if it the name is already in database' do
+      status_name = 30.times.map { StaticData::ALPHABET.sample }.join
+      request = StatusFunctions.create_new_status(account.merge({"status_data[name]" => status_name, "status_data[color]" => '#aaaaaa'}))[0]
+      http.request(request)
+      request = StatusFunctions.create_new_status(account.merge({"status_data[name]" => status_name}))[0]
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['status']['name']).to eq(status_name)
+      expect(JSON.parse(response.body)['status']['color']).to eq('#aaaaaa')
+    end
+
+    it 'check create new status if it the name is already in database and it element is block' do
+      status_name = 30.times.map { StaticData::ALPHABET.sample }.join
+      request = StatusFunctions.create_new_status(account.merge({"status_data[name]" => status_name, "status_data[color]" => '#aaaaaa'}))[0]
+      http.request(request)
+      request = StatusFunctions.create_new_status(account.merge({"status_data[name]" => status_name}))[0]
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['status']['name']).to eq(status_name)
+      expect(JSON.parse(response.body)['status']['color']).to eq('#aaaaaa')
+    end
+  end
+
+  describe 'check blocking element' do
+    it 'blocking status after creating' do
+      status_name = 30.times.map { StaticData::ALPHABET.sample }.join
+      request = StatusFunctions.create_new_status(account.merge({"status_data[name]" => status_name, "status_data[color]" => '#aaaaaa'}))[0]
+      new_status_id = JSON.parse(http.request(request).body)['status']['id']
+      request = StatusFunctions.status_block(account.merge({"status_data[id]" => new_status_id}))
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['status']['name']).to eq(status_name)
+      expect(JSON.parse(response.body)['status']['color']).to eq('#aaaaaa')
+      expect(JSON.parse(response.body)['status']['block']).to be_truthy
+    end
+
+    it 'blocking status after create with uncorrect user_data' do
+      status_name = 30.times.map { StaticData::ALPHABET.sample }.join
+      request = StatusFunctions.create_new_status(account.merge({"status_data[name]" => status_name, "status_data[color]" => '#aaaaaa'}))[0]
+      new_status_id = JSON.parse(http.request(request).body)['status']['id']
+      request = StatusFunctions.status_block({"status_data[id]" => new_status_id})
+      response = http.request(request)
+      expect(response.code).to eq('201')
+      expect(JSON.parse(response.body)['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
+    end
+  end
+
+  describe 'check unblocking element' do
+    it 'heck unblocking element (create new with exist name)' do
+      status_name = 30.times.map { StaticData::ALPHABET.sample }.join
+      request = StatusFunctions.create_new_status(account.merge({"status_data[name]" => status_name, "status_data[color]" => '#aaaaaa'}))[0]
+      new_status_id = JSON.parse(http.request(request).body)['status']['id']
+      request = StatusFunctions.status_block(account.merge({"status_data[id]" => new_status_id}))
+      http.request(request)
+      request = StatusFunctions.create_new_status(account.merge({"status_data[name]" => status_name}))[0]
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['status']['name']).to eq(status_name)
+      expect(JSON.parse(response.body)['status']['color']).to eq('#aaaaaa')
+      expect(JSON.parse(response.body)['status']['block']).to be_falsey
+    end
+  end
+
+  describe 'Statuses get all' do
+    it 'check get all statuses after create' do
+      status_name = 30.times.map {StaticData::ALPHABET.sample }.join
+      request = StatusFunctions.create_new_status(account.merge({"status_data[name]" => status_name}))
+      http.request(request[0])
+      statuses = StatusFunctions.get_all_statuses(account)
+      expect((statuses.select {|_,value| value['name'] == status_name}).empty?).to be_falsey
+    end
+
+    it 'check get all statuses after create without user_data' do
+      status_name = 30.times.map {StaticData::ALPHABET.sample }.join
+      request = StatusFunctions.create_new_status(account.merge({"status_data[name]" => status_name}))
+      http.request(request[0])
+      uri = URI(StaticData::MAINPAGE + '/statuses')
+      result = JSON.parse(Net::HTTP.get_response(uri).body)
+      expect(result['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
+    end
   end
 end
