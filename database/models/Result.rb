@@ -28,6 +28,7 @@ class Result < Sequel::Model
       result = result.save
       ResultSet[id: data['result_set_id']].add_result(result)
       status.add_result(result)
+      ResultSet[:id => data['result_set_id']].update(:status => status.id)
     end
     result
   end
