@@ -45,9 +45,7 @@ describe 'Result Set Smoke' do
       request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => uncorrect_run_id,
                                                                         "result_set_data[status]" => 0}))
       response = http.request(request[0])
-      expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].count).to eq(1)
-      expect(JSON.parse(response.body)['errors']['run_id']).to eq([ErrorMessages::RUN_ID_WRONG])
+      expect(response.code).to eq('500')
     end
 
     it 'check creating new result_sets with uncorrect retult_set name | nil' do
