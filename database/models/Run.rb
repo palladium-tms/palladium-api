@@ -39,10 +39,13 @@ class Run < Sequel::Model
   end
 
   def self.create_new(data)
-    data ||= {'name': ''}
-    run = self.new(name: data['name'])
-    run.valid? # update errors stack
-    run = self.plan_id_validation(run, data['plan_id'])
+    err_run = nil
+    new_run = Run.find_or_create(name: data['name'], plan_id: data['plan_id']){|run|
+      run.name = data['name']
+      err_plan = run unless run.valid?
+    }
+    return err_run unless err_run.nil?
+    run = self.plan_id_validation(new_run, data['plan_id'])
     if run.errors.empty?
       run.save
       Plan[id: data['plan_id']].add_run(run)
