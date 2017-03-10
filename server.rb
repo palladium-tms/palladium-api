@@ -43,19 +43,19 @@ get '/logout' do
 end
 
 post '/registration' do
-    new_user = User.create_new(user_data)
-    begin
-      new_user.save if new_user.errors.empty?
-      rescue
-    end
-    if new_user.errors.empty?
-      session[:user] = user_data['email']
-      status 200
-    else
-      status 201
-      content_type :json
-      new_user.errors.to_json
-    end
+  new_user = User.create_new(user_data)
+  begin
+    new_user.save if new_user.errors.empty?
+  rescue
+  end
+  if new_user.errors.empty?
+    session[:user] = user_data['email']
+    status 200
+  else
+    status 201
+    content_type :json
+    new_user.errors.to_json
+  end
 end
 
 post '/login' do
@@ -88,7 +88,7 @@ get '/products' do
     products = Product.all
     content_type :json
     status 200
-    {'products': products.map{|current| current.values }}.to_json
+    {'products': products.map { |current| current.values }}.to_json
   else
     status 201
     {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
@@ -122,7 +122,7 @@ delete '/product_delete' do
     end
     content_type :json
     status 200
-    {'product': product_data['id'],'errors': errors }.to_json
+    {'product': product_data['id'], 'errors': errors}.to_json
   else
     status 201
     {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
@@ -137,9 +137,9 @@ post '/product_edit' do
     status 200
     if product.valid?
       Product.where(:id => product_data['id']).update(:name => product_data['name'])
-      {'product': product_data['id'],'errors': [] }.to_json
+      {'product': product_data['id'], 'errors': []}.to_json
     else
-      {'product': product_data['id'],'errors': product.errors }.to_json
+      {'product': product_data['id'], 'errors': product.errors}.to_json
     end
   else
     status 201
@@ -168,7 +168,7 @@ get '/plans' do
     plans = Product[:id => plan_data['product_id']].plans if errors.empty?
     content_type :json
     status 200
-    {'plans': plans.map{|plan| plan.values}, "errors": errors}.to_json
+    {'plans': plans.map { |plan| plan.values }, "errors": errors}.to_json
   else
     status 201
     {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
@@ -183,7 +183,7 @@ delete '/plan_delete' do
     end
     content_type :json
     status 200
-    {'plan': plan_data['id'],'errors': errors }.to_json
+    {'plan': plan_data['id'], 'errors': errors}.to_json
   else
     status 201
     {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
@@ -197,9 +197,9 @@ post '/plan_edit' do
     status 200
     if plan.valid?
       Plan[:id => plan_data['id']].update(:name => plan_data['name'])
-      {'plan': plan_data['id'],'errors': [] }.to_json
+      {'plan': plan_data['id'], 'errors': []}.to_json
     else
-      {'plan': plan_data['id'],'errors': plan.errors }.to_json
+      {'plan': plan_data['id'], 'errors': plan.errors}.to_json
     end
   else
     status 201
@@ -228,7 +228,7 @@ get '/runs' do
     runs = Plan[:id => run_data['plan_id']].runs if errors.empty?
     content_type :json
     status 200
-    {'runs': runs.map{|plan| plan.values}, "errors": errors}.to_json
+    {'runs': runs.map { |plan| plan.values }, "errors": errors}.to_json
   else
     status 201
     {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
@@ -243,7 +243,7 @@ delete '/run_delete' do
     end
     content_type :json
     status 200
-    {'plan': run_data['id'],'errors': errors }.to_json
+    {'plan': run_data['id'], 'errors': errors}.to_json
   else
     status 201
     {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
@@ -271,7 +271,7 @@ get '/result_sets' do
     result_sets = Run[:id => result_set_data['run_id']].result_sets if errors.empty?
     content_type :json
     status 200
-    {'result_sets': result_sets.map{|result_set| result_set.values}, "errors": errors}.to_json
+    {'result_sets': result_sets.map { |result_set| result_set.values }, "errors": errors}.to_json
   else
     status 201
     {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
@@ -284,7 +284,7 @@ post '/result_new' do
   if access_available?
     result = Result.create_new(result_data)
     content_type :json
-   status 200
+    status 200
     {'result': result.values, "errors": result.errors}.to_json
   else
     status 201
@@ -312,7 +312,7 @@ get '/statuses' do
   if access_available?
     status 200
     statuses = Status.all
-    {'statuses': statuses.map{|current| current.values }}.to_json
+    {'statuses': statuses.map { |current| current.values }}.to_json
   else
     status 201
     {errors: 'login or password is uncorrect'}.to_json # used in 'check registration page loading' test
@@ -356,27 +356,35 @@ def user_data
 end
 
 def product_data
+  begin
     params['product_data']
+  rescue Exception
+    error
+  end
 end
 
 def plan_data
+  begin
     params['plan_data']
+  rescue Exception
+    error
+  end
 end
 
 def run_data
-    params['run_data']
+  params['run_data']
 end
 
 def result_set_data
-    params['result_set_data']
+  params['result_set_data']
 end
 
 def result_data
-    params['result_data'] ||= {'message': ''}
+  params['result_data'] ||= {'message': ''}
 end
 
 def status_data
-    params['status_data']
+  params['status_data']
 end
 
 def access_available?

@@ -43,10 +43,13 @@ class Plan < Sequel::Model
   end
 
   def self.create_new(data)
-    data ||= {'name': ''}
-    plan = self.new(name: data['name'])
-    plan.valid? # update errors stack
-    plan = self.product_id_validation(plan, data['product_id'])
+    err_plan = nil
+    new_plan = Plan.find_or_create(name: data['name'], product_id: data['product_id']){|plan|
+      plan.name = data['name']
+      err_plan = plan unless plan.valid?
+    }
+    return err_plan unless err_plan.nil?
+    plan = self.product_id_validation(new_plan, data['product_id'])
     if plan.errors.empty?
       plan.save
       Product[id: data['product_id']].add_plan(plan)

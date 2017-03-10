@@ -48,10 +48,7 @@ describe 'Plan Smoke' do
       request = Net::HTTP::Post.new('/plan_new', 'Content-Type' => 'application/json')
       request.set_form_data({"user_data[email]": account[:email], "user_data[password]": account[:password]})
       response = http.request(request)
-      expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors']['name']).to eq([ErrorMessages::CANT_BE_EMPTY_PLAN_NAME])
-      expect(JSON.parse(response.body)['errors']['product_id']).to eq([ErrorMessages::PRODUCT_ID_CANT_BE_NIL_PLAN_NAME])
-      expect(JSON.parse(response.body)['plan'].nil?).to be_falsey
+      expect(response.code).to eq('500')
     end
 
     it 'check creating new plan without plan_data' do
