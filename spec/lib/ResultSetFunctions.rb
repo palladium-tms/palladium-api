@@ -11,6 +11,7 @@ class ResultSetFunctions
   end
 
   # @param [Hash] args must has result_set_data[run_id](int) with run id
+  # example: "result_set_data[run_id]" => run['id']
   def self.get_result_sets(*args)
     uri = URI(StaticData::MAINPAGE + '/result_sets')
     params = args.first

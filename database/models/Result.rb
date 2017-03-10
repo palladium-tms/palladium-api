@@ -24,7 +24,7 @@ class Result < Sequel::Model
     result.valid? # update errors stack
     result = self.result_set_validation(result, data['result_set_id'])
     if result.errors.empty?
-      status = Status.find_or_create(:name => data['status'])
+      status = Status.find_or_create(:name => data['status']){|status| status.name= data['status']; status.block = false; status.color = "#ffffff" }
       result = result.save
       ResultSet[id: data['result_set_id']].add_result(result)
       status.add_result(result)

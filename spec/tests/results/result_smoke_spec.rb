@@ -64,11 +64,11 @@ describe 'Result Smoke' do
     it 'check creating new result with uncorrect status | not_exist' do
       uncorrect_result_set_id = 30.times.map { StaticData::ALPHABET.sample }.join
       status = 30.times.map { StaticData::ALPHABET.sample }.join
-      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => uncorrect_result_set_id,
-                                                                 "result_data[status]" => status}))
+      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => result_set['id'],
+                                                                 "result_data[status]" => uncorrect_result_set_id}))
       response = http.request(request)
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors']['result_set_id']).to eq([ErrorMessages::RESULT_SET_ID_WRONG])
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
     end
   end
 end
