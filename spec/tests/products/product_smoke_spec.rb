@@ -55,9 +55,8 @@ describe 'Product Smoke' do
       http.request(product[0]) # first creating
       response = http.request(product[0]) # second creating
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].keys.count).to eq(1)
-      expect(JSON.parse(response.body)['errors']['name']).to eq([ErrorMessages::NOT_UNIQ_PRODUCT_NAME])
-      expect(JSON.parse(response.body)['product']['id'].nil?).to be_truthy
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['product']['id']).to be_truthy
       expect(JSON.parse(response.body)['product']['name']).to eq(product[1])
     end
   end

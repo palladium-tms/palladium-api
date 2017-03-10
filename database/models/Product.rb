@@ -27,8 +27,11 @@ class Product < Sequel::Model
   end
 
   def self.create_new(data)
-    product = self.new(data)
-    product.save
-    product
+    err_product = nil
+    new_product = Product.find_or_create(:name => data['name']){|product|
+      product.name = data['name']
+      err_product = product unless product.valid?
+    }
+     err_product.nil? ? new_product : err_product
   end
 end
