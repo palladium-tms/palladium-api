@@ -73,7 +73,7 @@ end
 # region product
 post '/product_new' do
   if access_available?
-    product = Product.create_new(product_data)
+    product = Product.create_new(params)
     content_type :json
     status 200
     {'product': product.values, "errors": product.errors}.to_json
@@ -151,7 +151,7 @@ end
 # region plans
 post '/plan_new' do
   if access_available?
-    plan = Plan.create_new(plan_data)
+    plan = Plan.create_new(params)
     content_type :json
     status 200
     {'plan': plan.values, "errors": plan.errors}.to_json
@@ -211,7 +211,7 @@ end
 # region runs
 post '/run_new' do
   if access_available?
-    run = Run.create_new(run_data)
+    run = Run.create_new(params)
     content_type :json
     status 200
     {'run': run.values, "errors": run.errors}.to_json
@@ -254,7 +254,7 @@ end
 # region result_set
 post '/result_set_new' do
   if access_available?
-    result_set = ResultSet.create_new(result_set_data)
+    result_set = ResultSet.create_new(params)
     content_type :json
     status 200
     {'result_set': result_set.values, "errors": result_set.errors}.to_json
@@ -282,7 +282,7 @@ end
 # region result
 post '/result_new' do
   if access_available?
-    result = Result.create_new(result_data)
+    result = Result.create_new(params)
     content_type :json
     status 200
     {'result': result.values, "errors": result.errors}.to_json

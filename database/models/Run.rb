@@ -15,9 +15,6 @@ class Run < Sequel::Model
       when plan_id.nil?
         run.errors.add('plan_id', "plan_id can't be nil")
         return run
-      when plan_id.empty?
-        run.errors.add('plan_id', "plan_id can't be empty")
-        return run
       when Plan[id: plan_id].nil?
         run.errors.add('plan_id', "plan_id is not belongs to any product")
         return run
@@ -39,16 +36,17 @@ class Run < Sequel::Model
   end
 
   def self.create_new(data)
+    data['run_data']['plan_id'] ||= Plan.create_new(data).id
     err_run = nil
-    new_run = Run.find_or_create(name: data['name'], plan_id: data['plan_id']){|run|
-      run.name = data['name']
+    new_run = Run.find_or_create(name:  data['run_data']['name'], plan_id:  data['run_data']['plan_id']){|run|
+      run.name =  data['run_data']['name']
       err_plan = run unless run.valid?
     }
     return err_run unless err_run.nil?
-    run = self.plan_id_validation(new_run, data['plan_id'])
+    run = self.plan_id_validation(new_run, data['run_data']['plan_id'])
     if run.errors.empty?
       run.save
-      Plan[id: data['plan_id']].add_run(run)
+      Plan[id: data['run_data']['plan_id']].add_run(run)
     end
     run
   end

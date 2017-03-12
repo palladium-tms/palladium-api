@@ -15,9 +15,6 @@ class Plan < Sequel::Model
       when product_id.nil?
         plan.errors.add('product_id', "product_id can't be nil")
         return plan
-      when product_id.empty?
-        plan.errors.add('product_id', "product_id can't be empty")
-        return plan
       when Product[id: product_id].nil?
         plan.errors.add('product_id', "product_id is not belongs to any product")
         return plan
@@ -43,16 +40,17 @@ class Plan < Sequel::Model
   end
 
   def self.create_new(data)
+    data['plan_data']['product_id'] ||= Product.create_new(data).id
     err_plan = nil
-    new_plan = Plan.find_or_create(name: data['name'], product_id: data['product_id']){|plan|
-      plan.name = data['name']
+    new_plan = Plan.find_or_create(name: data['plan_data']['name'], product_id: data['plan_data']['product_id']){|plan|
+      plan.name = data['plan_data']['name']
       err_plan = plan unless plan.valid?
     }
     return err_plan unless err_plan.nil?
-    plan = self.product_id_validation(new_plan, data['product_id'])
+    plan = self.product_id_validation(new_plan, data['plan_data']['product_id'])
     if plan.errors.empty?
       plan.save
-      Product[id: data['product_id']].add_plan(plan)
+      Product[id: data['plan_data']['product_id']].add_plan(plan)
     end
     plan
   end

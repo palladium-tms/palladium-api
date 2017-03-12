@@ -9,9 +9,6 @@ class Result < Sequel::Model
       when result_set_id.nil?
         result.errors.add('result_set_id', "result_set_id can't be nil")
         return result
-      when result_set_id.empty?
-        result.errors.add('result_set_id', "result_set_id can't be empty")
-        return result_set_id
       when ResultSet[id: result_set_id].nil?
         result.errors.add('result_set_id', "result_set_id is not belongs to any result_set_id")
         return result
@@ -20,15 +17,16 @@ class Result < Sequel::Model
   end
 
   def self.create_new(data)
-    result = self.new('message' => data['message'])
+    data['result_data']['result_set_id'] ||= ResultSet.create_new(data).id
+    result = self.new('message' => data['result_data']['message'])
     result.valid? # update errors stack
-    result = self.result_set_validation(result, data['result_set_id'])
+    result = self.result_set_validation(result, data['result_data']['result_set_id'])
     if result.errors.empty?
-      status = Status.find_or_create(:name => data['status']){|status| status.name= data['status']; status.block = false; status.color = "#ffffff" }
+      status = Status.find_or_create(:name => data['result_data']['status']){|status| status.name = data['result_data']['status']; status.block = false; status.color = "#ffffff" }
       result = result.save
-      ResultSet[id: data['result_set_id']].add_result(result)
+      ResultSet[id: data['result_data']['result_set_id']].add_result(result)
       status.add_result(result)
-      ResultSet[:id => data['result_set_id']].update(:status => status.id)
+      ResultSet[:id => data['result_data']['result_set_id']].update(:status => status.id)
     end
     result
   end

@@ -15,9 +15,6 @@ class ResultSet < Sequel::Model
       when run_id.nil?
         result_set.errors.add('run_id', "run_id can't be nil")
         return result_set
-      when run_id.empty?
-        result_set.errors.add('run_id', "run_id can't be empty")
-        return result_set
       when Run[id: run_id].nil?
         result_set.errors.add('run_id', "run_id is not belongs to any plans")
         return result_set
@@ -26,17 +23,18 @@ class ResultSet < Sequel::Model
   end
 
   def self.create_new(data)
+    data['result_set_data']['run_id'] ||= Run.create_new(data).id
     err_result_set = nil
-    new_result_set = ResultSet.find_or_create(:name => data['name'], :run_id => data['run_id']){|result_set|
-      result_set.name = data['name']
-      result_set.status = data['status']
+    new_result_set = ResultSet.find_or_create(:name => data['result_set_data']['name'], :run_id => data['result_set_data']['run_id']){|result_set|
+      result_set.name = data['result_set_data']['name']
+      result_set.status = data['result_set_data']['status']
       err_result_set = result_set unless result_set.valid?
     }
     return err_result_set unless err_result_set.nil?
-    result_set = self.run_id_validation(new_result_set, data['run_id'])
+    result_set = self.run_id_validation(new_result_set, data['result_set_data']['run_id'])
     if result_set.errors.empty?
       result_set = result_set.save
-      Run[id: data['run_id']].add_result_set(result_set)
+      Run[id: data['result_set_data']['run_id']].add_result_set(result_set)
     end
     result_set
   end

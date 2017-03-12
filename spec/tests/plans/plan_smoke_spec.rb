@@ -55,8 +55,7 @@ describe 'Plan Smoke' do
       request = PlanFunctions.create_new_plan({"user_data[email]": account[:email],
                                                "user_data[password]": account[:password]})
       response = http.request(request[0])
-      expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors']['product_id']).to eq([ErrorMessages::PRODUCT_ID_CANT_BE_NIL_PLAN_NAME])
+      expect(response.code).to eq('500')
     end
 
     it 'check creating new plan if plan_data[product_id] is empty' do
@@ -64,7 +63,7 @@ describe 'Plan Smoke' do
                                                "user_data[password]": account[:password], "plan_data[product_id]": ''})
       response = http.request(request[0])
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors']['product_id']).to eq([ErrorMessages::PRODUCT_ID_CANT_BE_EMPTY_PLAN_NAME])
+      expect(JSON.parse(response.body)['errors']['product_id']).to eq([ErrorMessages::PRODUCT_ID_WRONG])
     end
   end
 
