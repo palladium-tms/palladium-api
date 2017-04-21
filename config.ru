@@ -10,4 +10,14 @@ require './server.rb'
 # Sinatra::Application.opaque = 'secretkey'
 #
 
-run Sinatra::Application
+run Rack::URLMap.new({
+                         '/' => Public,
+                         '/api' => Api
+                     })
+configure {
+  set :server, :puma
+  set :root, File.dirname(__FILE__)
+  enable :static
+  enable :dump_errors
+  set :show_exceptions, false # uncomment for testing or production
+}

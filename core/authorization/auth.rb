@@ -1,4 +1,4 @@
-require_relative '../management'
+require_relative '../../management'
 
 module Auth
   def authenticate(email, password)

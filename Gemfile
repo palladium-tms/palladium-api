@@ -6,3 +6,5 @@ gem 'puma' # web server
 gem 'sequel' # gem for work with database
 gem 'sqlite3' # tmp database
 gem 'rspec'
+gem 'sinatra-cross_origin'
+gem 'jwt'

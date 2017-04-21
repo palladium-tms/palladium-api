@@ -2,6 +2,8 @@ require 'sinatra'
 require 'sequel'
 require 'sqlite3'
 require 'json'
+require 'jwt'
+require 'sinatra/cross_origin'
 require_relative 'database/database'
 
 # models
@@ -14,7 +16,8 @@ require_relative 'database/models/Result'
 require_relative 'database/models/Status'
 
 # core modules
-require_relative 'core/auth'
+require_relative 'core/authorization/auth'
+require_relative 'core/authorization/jwt_auth'
 
 # utilits
 require_relative 'utilits/encrypt'
