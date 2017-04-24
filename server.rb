@@ -14,15 +14,15 @@ class Api < Sinatra::Base
   end
 
   get '/products' do
-    process_request request, 'products' do |req, username|
-      {'products': Product.all.map { |current| current.values }}.to_json
+    process_request request, 'products' do |_req, _username|
+      { products: Product.all.map(&:values) }.to_json
     end
   end
 
-  def process_request req, scope
+  def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
     username = user['email']
-    if scopes.include?(scope) && User.find(:email => username).exists?
+    if scopes.include?(scope) && User.find(email: username).exists?
       yield req, username
     else
       halt 403
@@ -38,18 +38,16 @@ class Public < Sinatra::Base
     cross_origin
     if auth_success?(user_data)
       content_type :json
-      {token: token(user_data['email'])}.to_json
+      { token: token(user_data['email']) }.to_json
     else
       halt 401
     end
   end
 
   def user_data
-    begin
-      params['user_data']
-    rescue Exception
-      error
-    end
+    params['user_data']
+  rescue StandardError => error
+    error
   end
 
   def token(email)
@@ -58,13 +56,13 @@ class Public < Sinatra::Base
 
   def payload(email)
     {
-        exp: Time.now.to_i + 60 * 60,
-        iat: Time.now.to_i,
-        iss: ENV['JWT_ISSUER'],
-        scopes: ['products'],
-        user: {
-            email: email
-        }
+      exp: Time.now.to_i + 60 * 60,
+      iat: Time.now.to_i,
+      iss: ENV['JWT_ISSUER'],
+      scopes: ['products'],
+      user: {
+        email: email
+      }
     }
   end
 end
