@@ -44,6 +44,37 @@ class Public < Sinatra::Base
     end
   end
 
+
+  get '/login' do
+    erb :login
+  end
+
+  get '/registration' do
+    erb :registration
+  end
+
+  # region auth
+  get '/logout' do
+    session[:user] = nil
+    redirect '/'
+  end
+
+  post '/registration' do
+    new_user = User.create_new(user_data)
+    begin
+      new_user.save if new_user.errors.empty?
+    rescue
+    end
+    if new_user.errors.empty?
+      session[:user] = user_data['email']
+      status 200
+    else
+      status 201
+      content_type :json
+      new_user.errors.to_json
+    end
+  end
+
   def user_data
     params['user_data']
   rescue StandardError => error

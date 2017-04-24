@@ -25,11 +25,11 @@ class Plan < Sequel::Model
   def self.plan_id_validation(plan_id)
     case
       when plan_id.nil?
-        return {'plan_id': ["plan_id can't be nil"]}
+        return {'plan_id' => ["plan_id can't be nil"]}
       when plan_id.empty?
-        return {'plan_id': ["plan_id can't be empty"]}
+        return {'plan_id' => ["plan_id can't be empty"]}
       when Plan[id: plan_id].nil?
-        return {'plan_id': ["plan_id is not belongs to any product"]}
+        return {'plan_id' => ["plan_id is not belongs to any product"]}
     end
     []
   end
