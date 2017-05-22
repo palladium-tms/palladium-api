@@ -16,7 +16,7 @@ class Product < Sequel::Model
       when product_id.empty?
         return {'product_id' => ["product_id can't be empty"]}
       when Product[id: product_id].nil?
-        return {'product_id' => ["product_id is not belongs to any product"]}
+        return {'product_id' => ['product_id is not belongs to any product']}
     end
     {}
   end
@@ -26,9 +26,12 @@ class Product < Sequel::Model
     self.remove_all_plans
   end
 
+  # @param [Hash] data must be like {:product_data => {name: 'product_name'}}
+  # @return [ProductObject]
   def self.create_new(data)
     err_product = nil
-    new_product = Product.find_or_create(:name => data['product_data']['name']){|product|
+    product_name = data['product_data']['name']
+    new_product = Product.find_or_create(:name => product_name){|product|
       product.name = data['product_data']['name']
       err_product = product unless product.valid?
     }

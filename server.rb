@@ -19,6 +19,13 @@ class Api < Sinatra::Base
     end
   end
 
+  post '/product_new' do
+    process_request request, 'product_new' do |_req, _username|
+      product = Product.create_new(params)
+      {'product' => product.values, "errors" => product.errors}.to_json
+    end
+  end
+
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
     username = user['email']
@@ -90,7 +97,7 @@ class Public < Sinatra::Base
       exp: Time.now.to_i + 60 * 60,
       iat: Time.now.to_i,
       iss: ENV['JWT_ISSUER'],
-      scopes: ['products'],
+      scopes: ['products', 'product_new'],
       user: {
         email: email
       }
