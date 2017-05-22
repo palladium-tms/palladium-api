@@ -25,9 +25,9 @@ class ProductFunctions
   # @param [Integer] id is a id of product for deleting
   # return hash which keys - id of product, values - is a hash {'name': 'product_name'}
   def self.delete_product(token, id)
-    uri = URI(StaticData::MAINPAGE + '/product_delete')
-    uri.query = URI.encode_www_form({"product_data[id]": id})
-    Net::HTTP::Delete.new(uri)
+    request = Net::HTTP::Post.new('/api/product_delete', 'Authorization' => token)
+    request.set_form_data({"product_data[id]": id})
+    request
   end
 
   # @param [Hash] product_data like a {:id => product_id, :name => product_name}

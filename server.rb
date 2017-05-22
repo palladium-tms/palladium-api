@@ -26,6 +26,18 @@ class Api < Sinatra::Base
     end
   end
 
+  post '/product_delete' do
+    process_request request, 'product_delete' do |_req, _username|
+      errors = Product.product_id_validation(params['product_data']['id'])
+      if errors.empty?
+        Product[:id => params['product_data']['id']].destroy
+      end
+      content_type :json
+      status 200
+      {'product': params['product_data']['id'], 'errors': errors}.to_json
+    end
+  end
+
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
     username = user['email']
@@ -97,7 +109,7 @@ class Public < Sinatra::Base
       exp: Time.now.to_i + 60 * 60,
       iat: Time.now.to_i,
       iss: ENV['JWT_ISSUER'],
-      scopes: %w(products product_new),
+      scopes: %w(products product_new product_delete),
       user: {
         email: email
       }
