@@ -2,7 +2,7 @@ class Product < Sequel::Model
   one_to_many :plans
   plugin :validation_helpers
   self.raise_on_save_failure = false
-  self.plugin :timestamps
+  plugin :timestamps, :force => true, :update_on_create=>true, :create=>:created_at
 
   def validate
     validates_unique :name
@@ -40,7 +40,7 @@ class Product < Sequel::Model
 
   def self.edit(product_id, product_name)
     product = Product[:id => product_id]
-    product.update(:name => product_name)
+    product.update(:name => product_name, :updated_at => Time.now)
     product.valid?
     {'product_data': product.values, 'errors':  product.errors}.to_json
   end
