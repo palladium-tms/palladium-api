@@ -31,10 +31,17 @@ class Product < Sequel::Model
   def self.create_new(data)
     err_product = nil
     product_name = data['product_data']['name']
-    new_product = Product.find_or_create(:name => product_name){|product|
+    new_product = Product.find_or_create(:name => product_name) {|product|
       product.name = data['product_data']['name']
       err_product = product unless product.valid?
     }
-     err_product.nil? ? new_product : err_product
+    err_product.nil? ? new_product : err_product
+  end
+
+  def self.edit(product_id, product_name)
+    product = Product[:id => product_id]
+    product.update(:name => product_name)
+    product.valid?
+    {'product_data': product.values, 'errors':  product.errors}.to_json
   end
 end

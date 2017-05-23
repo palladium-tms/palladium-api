@@ -28,13 +28,7 @@ class Api < Sinatra::Base
 
   post '/product_edit' do
     process_request request, 'product_edit' do |_req, _username|
-      product = Product.new(:name => params['product_data']['name'])
-      if product.valid?
-        Product.where(:id => params['product_data']['id']).update(:name => params['product_data']['name'])
-        {'product_data': {id: params['product_data']['id'], name: product.name}, 'errors': []}.to_json
-      else
-        {'product_data': {id: params['product_data']['id'], name: product.name}, 'errors': product.errors}.to_json
-      end
+      Product.edit(params['product_data']['id'], params['product_data']['name'])
     end
   end
 
