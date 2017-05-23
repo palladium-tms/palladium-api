@@ -18,9 +18,12 @@ class ProductFunctions
     res = Net::HTTP.new(url.host, url.port).start do |http|
       http.request(req)
     end
-    res.body
+    result = {}
+    JSON.parse(res.body)['products'].each do |current_product|
+      result.merge!({current_product['id'] => current_product})
+    end
+    result
   end
-
 
   # @param [Integer] id is a id of product for deleting
   # return hash which keys - id of product, values - is a hash {'name': 'product_name'}
@@ -32,7 +35,7 @@ class ProductFunctions
 
   # @param [Hash] product_data like a {:id => product_id, :name => product_name}
   def self.update_product(token, product_data)
-    request = Net::HTTP::Post.new('/product_edit', 'Authorization' => token)
+    request = Net::HTTP::Post.new('/api/product_edit', 'Authorization' => token)
     request.set_form_data({"product_data[id]": product_data[:id], "product_data[name]": product_data[:name]})
     request
   end

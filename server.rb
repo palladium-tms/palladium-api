@@ -15,7 +15,7 @@ class Api < Sinatra::Base
 
   get '/products' do
     process_request request, 'products' do |_req, _username|
-      { products: Product.all.map(&:values) }.to_json
+      {products: Product.all.map(&:values)}.to_json
     end
   end
 
@@ -23,6 +23,18 @@ class Api < Sinatra::Base
     process_request request, 'product_new' do |_req, _username|
       product = Product.create_new(params)
       {'product' => product.values, "errors" => product.errors}.to_json
+    end
+  end
+
+  post '/product_edit' do
+    process_request request, 'product_edit' do |_req, _username|
+      product = Product.new(:name => params['product_data']['name'])
+      if product.valid?
+        Product.where(:id => params['product_data']['id']).update(:name => params['product_data']['name'])
+        {'product_data': {id: params['product_data']['id'], name: product.name}, 'errors': []}.to_json
+      else
+        {'product_data': {id: params['product_data']['id'], name: product.name}, 'errors': product.errors}.to_json
+      end
     end
   end
 
@@ -57,7 +69,7 @@ class Public < Sinatra::Base
     cross_origin
     if auth_success?(user_data)
       content_type :json
-      { token: token(user_data['email']) }.to_json
+      {token: token(user_data['email'])}.to_json
     else
       halt 401
     end
@@ -106,13 +118,13 @@ class Public < Sinatra::Base
 
   def payload(email)
     {
-      exp: Time.now.to_i + 60 * 60,
-      iat: Time.now.to_i,
-      iss: ENV['JWT_ISSUER'],
-      scopes: %w(products product_new product_delete),
-      user: {
-        email: email
-      }
+        exp: Time.now.to_i + 60 * 60,
+        iat: Time.now.to_i,
+        iss: ENV['JWT_ISSUER'],
+        scopes: %w(products product_new product_delete product_edit),
+        user: {
+            email: email
+        }
     }
   end
 end
