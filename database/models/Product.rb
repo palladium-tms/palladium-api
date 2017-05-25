@@ -1,8 +1,10 @@
 class Product < Sequel::Model
   one_to_many :plans
   plugin :validation_helpers
+  plugin :association_dependencies
+  self.add_association_dependencies :plans=>:destroy
   self.raise_on_save_failure = false
-  plugin :timestamps, :force => true, :update_on_create=>true, :create=>:created_at
+  plugin :timestamps, :force => true, :update_on_create => true, :create => :created_at
 
   def validate
     validates_unique :name
@@ -21,10 +23,10 @@ class Product < Sequel::Model
     {}
   end
 
-  def before_destroy
-    super
-    self.remove_all_plans
-  end
+  # def before_destroy
+  #   super
+  #   self.plans.dataset.destroy_all
+  # end
 
   # @param [Hash] data must be like {:product_data => {name: 'product_name'}}
   # @return [ProductObject]
@@ -42,6 +44,19 @@ class Product < Sequel::Model
     product = Product[:id => product_id]
     product.update(:name => product_name, :updated_at => Time.now)
     product.valid?
-    {'product_data': product.values, 'errors':  product.errors}.to_json
+    {'product_data': product.values, 'errors': product.errors}.to_json
+  end
+
+  def self.get_plans(*args)
+    product = if args.first['product_id']
+                Product[:id => args.first['product_id']]
+              elsif args.first['product_name']
+                Product[:name => args.first['product_name']]
+              end
+    begin
+      [product.plans, []]
+    rescue StandardError
+      [[], 'Plan data is incorrect']
+    end
   end
 end

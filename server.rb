@@ -56,6 +56,13 @@ class Api < Sinatra::Base
     end
   end
 
+  post '/plans' do
+    process_request request, 'plans' do |_req, _username|
+      plans, errors = Product.get_plans(params['plan_data'])
+      status 422 unless errors
+      {plans: plans.map(&:values), errors: errors}.to_json
+    end
+  end
   # ---- endregion ----
 
   def process_request(req, scope)
@@ -129,7 +136,7 @@ class Public < Sinatra::Base
         exp: Time.now.to_i + 60 * 60,
         iat: Time.now.to_i,
         iss: ENV['JWT_ISSUER'],
-        scopes: %w(products product_new product_delete product_edit plan_new),
+        scopes: %w(products product_new product_delete product_edit plan_new plans),
         user: {
             email: email
         }
