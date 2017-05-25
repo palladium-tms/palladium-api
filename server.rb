@@ -13,11 +13,57 @@ class Api < Sinatra::Base
     cross_origin
   end
 
+  # ---- Products region ----
   get '/products' do
     process_request request, 'products' do |_req, _username|
-      { products: Product.all.map(&:values) }.to_json
+      {products: Product.all.map(&:values)}.to_json
     end
   end
+
+  post '/product_new' do
+    process_request request, 'product_new' do |_req, _username|
+      product = Product.create_new(params)
+      {'product' => product.values, "errors" => product.errors}.to_json
+    end
+  end
+
+  post '/product_edit' do
+    process_request request, 'product_edit' do |_req, _username|
+      Product.edit(params['product_data']['id'], params['product_data']['name'])
+    end
+  end
+
+  post '/product_delete' do
+    process_request request, 'product_delete' do |_req, _username|
+      errors = Product.product_id_validation(params['product_data']['id'])
+      if errors.empty?
+        Product[:id => params['product_data']['id']].destroy
+      end
+      content_type :json
+      status 200
+      {'product': params['product_data']['id'], 'errors': errors}.to_json
+    end
+  end
+  # ---- endregion ----
+
+  # ---- Plans region ----
+
+  post '/plan_new' do
+    process_request request, 'plan_new' do |_req, _username|
+      plan = Plan.create_new(params)
+      status 422 unless plan.errors.empty?
+      {'plan' => plan.values, "errors" => plan.errors}.to_json
+    end
+  end
+
+  post '/plans' do
+    process_request request, 'plans' do |_req, _username|
+      plans, errors = Product.get_plans(params['plan_data'])
+      status 422 unless errors
+      {plans: plans.map(&:values), errors: errors}.to_json
+    end
+  end
+  # ---- endregion ----
 
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
@@ -38,7 +84,7 @@ class Public < Sinatra::Base
     cross_origin
     if auth_success?(user_data)
       content_type :json
-      { token: token(user_data['email']) }.to_json
+      {token: token(user_data['email'])}.to_json
     else
       halt 401
     end
@@ -87,13 +133,13 @@ class Public < Sinatra::Base
 
   def payload(email)
     {
-      exp: Time.now.to_i + 60 * 60,
-      iat: Time.now.to_i,
-      iss: ENV['JWT_ISSUER'],
-      scopes: ['products'],
-      user: {
-        email: email
-      }
+        exp: Time.now.to_i + 60 * 60,
+        iat: Time.now.to_i,
+        iss: ENV['JWT_ISSUER'],
+        scopes: %w(products product_new product_delete product_edit plan_new plans),
+        user: {
+            email: email
+        }
     }
   end
 end

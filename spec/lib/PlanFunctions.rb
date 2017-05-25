@@ -4,10 +4,15 @@ class PlanFunctions
 
   # @param [Hash] args must has :plan_data[name] with plan name and plan_data[product_id] with product id
   def self.create_new_plan(*args)
-    args.first['plan_data[name]'] ||= 30.times.map { StaticData::ALPHABET.sample }.join
-    request = Net::HTTP::Post.new('/plan_new', 'Content-Type' => 'application/json')
-    request.set_form_data(args.first)
-    [request, args.first['plan_data[name]']]
+    args.first[:name] ||= 30.times.map {StaticData::ALPHABET.sample}.join
+    request = Net::HTTP::Post.new('/api/plan_new', 'Authorization' => args.first[:token])
+    params = if args.first[:product_id]
+               {"plan_data[product_id]": args.first[:product_id], "plan_data[name]": args.first[:name]}
+             else
+               {"plan_data[product_name]": args.first[:product_name], "plan_data[name]": args.first[:name]}
+             end
+    request.set_form_data(params)
+    [request, args.first[:name]]
   end
 
   # @param [Hash] args must has :plan_data[name] with plan name and plan_data[product_id] with product id
@@ -39,9 +44,9 @@ class PlanFunctions
   end
 
   def self.update_plan(*args)
-      request = Net::HTTP::Post.new('/plan_edit', 'Content-Type' => 'application/json')
-      request.set_form_data(args.first)
-      request
+    request = Net::HTTP::Post.new('/plan_edit', 'Content-Type' => 'application/json')
+    request.set_form_data(args.first)
+    request
   end
   #
   #
