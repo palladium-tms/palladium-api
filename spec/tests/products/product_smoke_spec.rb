@@ -1,5 +1,5 @@
 require_relative '../../tests/test_management'
-http, account = nil
+http = nil
 describe 'Product Smoke' do
   before :all do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
@@ -61,36 +61,6 @@ describe 'Product Smoke' do
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
       expect(products[JSON.parse(new_product_data.body)['product']['id']]['name']).to eq(product_name_for_updating)
-    end
-  end
-
-  describe 'Show Product' do
-    it 'get product after creating with without user_data' do
-      email = 10.times.map { StaticData::ALPHABET.sample }.join
-      password = 7.times.map { StaticData::ALPHABET.sample }.join
-      new_product = ProductFunctions.create_new_product(account)
-      new_product_data = http.request(new_product[0])
-      product_id = JSON.parse(new_product_data.body)['product']['id']
-      params = {"user_data[email]": email, "user_data[password]":  password,  "product_data[id]": product_id}
-      uri = URI(StaticData::MAINPAGE + '/product')
-      uri.query = URI.encode_www_form(params)
-      response = Net::HTTP.get_response(uri)
-      expect(JSON.parse(response.body)['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
-    end
-
-    it 'get product after creating with uncorrect product_data' do
-      uncorrect_id = 7.times.map { StaticData::ALPHABET.sample }.join
-      product_data = ProductFunctions.show_product(account,  uncorrect_id)
-      expect(product_data.empty?).to be_falsey
-      expect(product_data[:errors]).to eq([ErrorMessages::PRODUCT_NOT_FOUND])
-    end
-
-    it 'get product after creating' do
-      new_product = ProductFunctions.create_new_product(account)
-      new_product_data = http.request(new_product[0])
-      product_id = JSON.parse(new_product_data.body)['product']['id']
-      product_data = ProductFunctions.show_product(account,  product_id)
-      expect(product_data[:id]).to eq(product_id)
     end
   end
 end

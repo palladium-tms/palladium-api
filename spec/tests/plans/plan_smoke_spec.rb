@@ -1,27 +1,51 @@
 require_relative '../../tests/test_management'
-http, account, product_id, plan, plan_name = nil
+http, account, product, plan, plan_name = nil
 describe 'Plan Smoke' do
   before :all do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
-    request = AuthFunctions.create_new_account
-    http.request(request[0])
-    account = request[1]
   end
   describe 'Create new plan' do
     before :each do
-      product = ProductFunctions.create_new_product(account)
-      product_id = JSON.parse(http.request(product[0]).body)['product']['id']
+      product = ProductFunctions.create_new_product(StaticData::TOKEN)
+      http.request(product[0])
+      product = JSON.parse(http.request(product[0]).body)['product']
     end
 
-    it 'check creating new plan' do
-      request = PlanFunctions.create_new_plan({"user_data[email]": account[:email], "user_data[password]": account[:password],
-                                               "plan_data[product_id]": product_id})
-      response = http.request(request[0])
+    it 'check creating new plan with product_id' do
+      request = Net::HTTP::Post.new('/api/plan_new','Authorization' => StaticData::TOKEN)
+      corrent_plan_name = 30.times.map { StaticData::ALPHABET.sample }.join
+      request.set_form_data({"plan_data[name]": corrent_plan_name, "plan_data[product_id]": product['id']})
+      response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
       expect(JSON.parse(response.body)['plan']['id'].nil?).to be_falsey
-      expect(JSON.parse(response.body)['plan']['name']).to eq(request[1])
-      expect(JSON.parse(response.body)['plan']['product_id']).to eq(product_id)
+      expect(JSON.parse(response.body)['plan']['name']).to eq(corrent_plan_name)
+      expect(JSON.parse(response.body)['plan']['product_id']).to eq(product['id'])
+    end
+
+    it 'check creating new plan with product_name(it product is exists)' do
+      request = Net::HTTP::Post.new('/api/plan_new','Authorization' => StaticData::TOKEN)
+      corrent_plan_name = 30.times.map { StaticData::ALPHABET.sample }.join
+      request.set_form_data({"plan_data[name]": corrent_plan_name, "plan_data[product_name]": product['name']})
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['plan']['id'].nil?).to be_falsey
+      expect(JSON.parse(response.body)['plan']['name']).to eq(corrent_plan_name)
+      expect(JSON.parse(response.body)['plan']['product_id']).to eq(product['id'])
+    end
+
+    it 'check creating new plan with product_name(it product is not exists)' do
+      request = Net::HTTP::Post.new('/api/plan_new','Authorization' => StaticData::TOKEN)
+      corrent_plan_name = 30.times.map { StaticData::ALPHABET.sample }.join
+      corrent_plan_name = 30.times.map { StaticData::ALPHABET.sample }.join
+      request.set_form_data({"plan_data[name]": corrent_plan_name, "plan_data[product_name]": product['name']})
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['plan']['id'].nil?).to be_falsey
+      expect(JSON.parse(response.body)['plan']['name']).to eq(corrent_plan_name)
+      expect(JSON.parse(response.body)['plan']['product_id']).to eq(product['id'])
     end
 
     it 'check creating new plan without user_data' do

@@ -39,19 +39,18 @@ class Plan < Sequel::Model
     self.remove_all_runs
   end
 
+
+  # @param [Hash] data
+  # example: {'plan_data': {'product_id': id, 'name': name}} or {'plan_data': {'product_name': name, 'name': name}}
   def self.create_new(data)
-    data['plan_data']['product_id'] ||= Product.create_new(data).id
-    err_plan = nil
-    new_plan = Plan.find_or_create(name: data['plan_data']['name'], product_id: data['plan_data']['product_id']){|plan|
-      plan.name = data['plan_data']['name']
-      err_plan = plan unless plan.valid?
-    }
-    return err_plan unless err_plan.nil?
-    plan = self.product_id_validation(new_plan, data['plan_data']['product_id'])
-    if plan.errors.empty?
-      plan.save
-      Product[id: data['plan_data']['product_id']].add_plan(plan)
+    data['plan_data']['product_id'] ||= Product.find_or_create(name: data['plan_data']['product_name']).id
+    begin
+      plan = Plan.find_or_create(name: data['plan_data']['name'], product_id: data['plan_data']['product_id']) {|plan|
+        plan.name = data['plan_data']['name']
+      }
+    rescue StandardError
+      return self.product_id_validation(Plan.new(data['plan_data']), data['plan_data']['product_id'])
     end
-    plan
+    Product[id: data['plan_data']['product_id']].add_plan(plan)
   end
 end
