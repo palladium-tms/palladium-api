@@ -44,6 +44,17 @@ describe 'Plan Smoke' do
       expect(JSON.parse(response.body)['plan']['name']).to eq(plan_name)
       expect(JSON.parse(response.body)['plan']['product_id']).to eq(product['id'])
     end
+
+    it 'check creating new plan and product with product_name' do
+      name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request, plan_name = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_name: name)
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['plan']['id'].nil?).to be_falsey
+      expect(JSON.parse(response.body)['plan']['name']).to eq(plan_name)
+    end
+
   end
 
   describe 'Show plans' do
