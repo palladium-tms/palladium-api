@@ -71,6 +71,16 @@ class Api < Sinatra::Base
       plan.to_json
     end
   end
+
+  post '/plan_delete' do
+    process_request request, 'plan_delete' do |_req, _username|
+      errors = Plan.plan_id_validation( params['plan_data']['id'])
+      if errors.empty?
+        Plan[:id => params['plan_data']['id']].destroy
+      end
+      {'plan': params['plan_data']['id'], 'errors': errors}.to_json
+    end
+  end
   # ---- endregion ----
 
   def process_request(req, scope)
@@ -144,7 +154,7 @@ class Public < Sinatra::Base
         exp: Time.now.to_i + 60 * 60,
         iat: Time.now.to_i,
         iss: ENV['JWT_ISSUER'],
-        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit),
+        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete),
         user: {
             email: email
         }
