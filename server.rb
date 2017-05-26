@@ -67,8 +67,8 @@ class Api < Sinatra::Base
   post '/plan_edit' do
     process_request request, 'plan_edit' do |_req, _username|
       plan = Plan.edit(params)
-      status 422 unless plan['errors'].empty?
-      plan
+      status 422 unless plan[:errors].empty?
+      plan.to_json
     end
   end
   # ---- endregion ----

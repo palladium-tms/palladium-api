@@ -35,8 +35,8 @@ class PlanFunctions
   end
 
   def self.update_plan(*args)
-    request = Net::HTTP::Post.new('/plan_edit', 'Content-Type' => 'application/json')
-    request.set_form_data(args.first)
+    request = Net::HTTP::Post.new('/api/plan_edit', 'Authorization' => args.first[:token])
+    request.set_form_data({"plan_data[id]": args.first[:id], "plan_data[plan_name]": args.first[:name]})
     request
   end
   #
