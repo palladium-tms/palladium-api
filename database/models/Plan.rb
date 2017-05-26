@@ -53,4 +53,15 @@ class Plan < Sequel::Model
     end
     Product[id: data['plan_data']['product_id']].add_plan(plan)
   end
+
+  def self.edit(data)
+    begin
+      plan = Plan[:id => data['plan_data']['id']]
+      plan.update(:name => data['plan_data']['plan_name'], :updated_at => Time.now)
+      plan.valid?
+      {'product_data': plan.values, 'errors': plan.errors}.to_json
+    rescue StandardError
+      {'product_data': Plan.new.values, 'errors': [params: 'Plan data is incorrect FIXME!!']} # FIXME: add validate
+    end
+  end
 end

@@ -15,25 +15,16 @@ class PlanFunctions
     [request, args.first[:name]]
   end
 
-  # @param [Hash] args must has :plan_data[name] with plan name and plan_data[product_id] with product id
+  # @param [Hash] args must has :product_id with product_id or :product_name with product name
   def self.get_plans(*args)
-    uri = URI(StaticData::MAINPAGE + '/plans')
-    params = args.first
-    uri.query = URI.encode_www_form(params)
-    hash_with_products = {}
-    result = JSON.parse(Net::HTTP.get_response(uri).body)
-    if result['errors'].nil?
-      JSON.parse(Net::HTTP.get_response(uri).body)['plans'].map do |current_plan|
-        hash_with_products.merge!({current_plan['id'] => {'id' => current_plan['id'],
-                                                          'name' => current_plan['name'],
-                                                          'product_id' => current_plan['product_id'],
-                                                          'created_at' => current_plan['created_at'],
-                                                          'updated_at' => current_plan['updated_at']}})
-      end
-      hash_with_products
-    else
-      result
-    end
+    request = Net::HTTP::Post.new('/api/plans', 'Authorization' => args.first[:token])
+    params = if args.first[:product_id]
+               {"plan_data[product_id]": args.first[:product_id]}
+             else
+               {"plan_data[product_name]": args.first[:product_name]}
+             end
+    request.set_form_data(params)
+    request
   end
 
   # @param [Hash] args must has :plan_id[id] with plan id for deleting

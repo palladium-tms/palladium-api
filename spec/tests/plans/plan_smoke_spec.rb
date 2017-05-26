@@ -4,12 +4,20 @@ describe 'Plan Smoke' do
   before :all do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
   end
+
+  before :each do
+    #---product creating
+    product = ProductFunctions.create_new_product(StaticData::TOKEN)
+    http.request(product[0])
+    product = JSON.parse(http.request(product[0]).body)['product']
+  end
+
   describe 'Create new plan' do
-    before :each do
-      product = ProductFunctions.create_new_product(StaticData::TOKEN)
-      http.request(product[0])
-      product = JSON.parse(http.request(product[0]).body)['product']
-    end
+    # before :each do
+    #   product = ProductFunctions.create_new_product(StaticData::TOKEN)
+    #   http.request(product[0])
+    #   product = JSON.parse(http.request(product[0]).body)['product']
+    # end
     it 'check creating new plan with product_id' do
       request = Net::HTTP::Post.new('/api/plan_new','Authorization' => StaticData::TOKEN)
       corrent_plan_name = 30.times.map { StaticData::ALPHABET.sample }.join
@@ -45,49 +53,28 @@ describe 'Plan Smoke' do
 
   describe 'Show plans' do
     before :each do
-      product = ProductFunctions.create_new_product(account)
-      product_id = JSON.parse(http.request(product[0]).body)['product']['id']
-      plan_name = "plan_for_#{product_id}_product"
-      request = PlanFunctions.create_new_plan({"user_data[email]" => account[:email],
-                                               "user_data[password]" => account[:password],
-                                               "plan_data[product_id]" => product_id,
-                                               "plan_data[name]" => plan_name})
-      plan = JSON.parse(http.request(request[0]).body)['plan']
+      request = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_id: product['id'])[0]
+      plan = JSON.parse(http.request(request).body)['plan']
     end
 
     it 'get plans by product id' do
-      uri = URI(StaticData::MAINPAGE + '/plans')
-      params = {"user_data[email]": account[:email], "user_data[password]": account[:password], "plan_data[product_id]": product_id}
-      uri.query = URI.encode_www_form(params)
-      response = Net::HTTP.get_response(uri)
+      request = PlanFunctions.get_plans(token: StaticData::TOKEN, product_id: product['id'])
+      response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors']).to be_empty
       expect(JSON.parse(response.body)['plans'].count).to eq(1)
-      expect(JSON.parse(response.body)['plans'][0]['name']).to eq(plan_name)
-      expect(JSON.parse(response.body)['plans'][0]['product_id']).to eq(product_id)
+      expect(JSON.parse(response.body)['plans'][0]['name']).to eq(plan['name'])
+      expect(JSON.parse(response.body)['plans'][0]['product_id']).to eq(product['id'])
     end
 
-    it 'get plans by product id without user_data' do
-      plans = PlanFunctions.get_plans({"plan_data[product_id]": product_id})
-      expect(plans['errors'].empty?).to be_falsey
-      expect(plans['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
-    end
-
-    it 'get plans by product id with uncorrect user_data' do
-      user_name = 30.times.map { StaticData::ALPHABET.sample }.join
-      plans = PlanFunctions.get_plans({"user_data[email]": user_name,
-                                       "user_data[password]": account[:password],
-                                       "plan_data[product_id]": product_id})
-      expect(plans['errors'].empty?).to be_falsey
-      expect(plans['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
-    end
-
-    it 'get plans by product id with uncorrect plan_data' do
-      uncorrect_product_id = 30.times.map { StaticData::ALPHABET.sample }.join
-      plans = PlanFunctions.get_plans({"user_data[email]": account[:email],
-                                       "user_data[password]": account[:password],
-                                       "plan_data[product_id]": uncorrect_product_id})
-      expect(plans['errors']['product_id']).to eq([ErrorMessages::PRODUCT_ID_WRONG])
+    it 'get plans by product name' do
+      request = PlanFunctions.get_plans(token: StaticData::TOKEN, product_name: product['name'])
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors']).to be_empty
+      expect(JSON.parse(response.body)['plans'].count).to eq(1)
+      expect(JSON.parse(response.body)['plans'][0]['name']).to eq(plan['name'])
+      expect(JSON.parse(response.body)['plans'][0]['product_id']).to eq(product['id'])
     end
   end
 

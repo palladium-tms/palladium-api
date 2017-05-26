@@ -23,11 +23,6 @@ class Product < Sequel::Model
     {}
   end
 
-  # def before_destroy
-  #   super
-  #   self.plans.dataset.destroy_all
-  # end
-
   # @param [Hash] data must be like {:product_data => {name: 'product_name'}}
   # @return [ProductObject]
   def self.create_new(data)

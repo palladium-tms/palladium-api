@@ -1,6 +1,6 @@
 require_relative 'management'
 class Api < Sinatra::Base
-  include Auth
+  # include Auth
   register Sinatra::CrossOrigin
   use JwtAuth
 
@@ -61,6 +61,14 @@ class Api < Sinatra::Base
       plans, errors = Product.get_plans(params['plan_data'])
       status 422 unless errors
       {plans: plans.map(&:values), errors: errors}.to_json
+    end
+  end
+
+  post '/plan_edit' do
+    process_request request, 'plan_edit' do |_req, _username|
+      plan = Plan.edit(params)
+      status 422 unless plan['errors'].empty?
+      plan
     end
   end
   # ---- endregion ----
@@ -136,7 +144,7 @@ class Public < Sinatra::Base
         exp: Time.now.to_i + 60 * 60,
         iat: Time.now.to_i,
         iss: ENV['JWT_ISSUER'],
-        scopes: %w(products product_new product_delete product_edit plan_new plans),
+        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit),
         user: {
             email: email
         }
