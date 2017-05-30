@@ -2,6 +2,8 @@ class Plan < Sequel::Model
   many_to_one :product
   one_to_many :runs
   plugin :validation_helpers
+  plugin :association_dependencies
+  self.add_association_dependencies :runs=>:destroy
   self.raise_on_save_failure = false
   self.plugin :timestamps
 
