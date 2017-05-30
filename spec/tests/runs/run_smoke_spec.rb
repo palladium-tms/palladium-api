@@ -1,43 +1,56 @@
 require_relative '../../tests/test_management'
 http, account, plan = nil
 describe 'Run Smoke' do
-  before :each do
+  before :all do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
-    request = AuthFunctions.create_new_account
-    http.request(request[0])
-    account = request[1]
-
-    product = ProductFunctions.create_new_product(account)
-    product_id = JSON.parse(http.request(product[0]).body)['product']['id']
-
-    account = {"user_data[email]": account[:email], "user_data[password]": account[:password]}
-
-    plan_request = PlanFunctions.create_new_plan(account.merge({"plan_data[product_id]" => product_id}))
-    plan = JSON.parse(http.request(plan_request[0]).body)['plan']
   end
+
+  before :each do
+    #---plan creation
+    request = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_name: 30.times.map {StaticData::ALPHABET.sample}.join)[0]
+    plan = JSON.parse(http.request(request).body)['plan']
+  end
+
   describe 'Create new run' do
-    it 'check creating new run' do
-      request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => plan['id']}))
+    it 'check creating new run, plan and product by run_name, plan_name and product_name' do
+      run_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      plan_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      product_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = RunFunctions.create_new_run(token: StaticData::TOKEN, plan_name: plan_name, run_name: run_name, product_name: product_name)
       response = http.request(request[0])
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
-      expect(JSON.parse(response.body)['run']['id'].nil?).to be_falsey
-      expect(JSON.parse(response.body)['run']['name']).to eq(request[1])
-      expect(JSON.parse(response.body)['run']['plan_id']).to eq(plan['id'])
+      expect(JSON.parse(response.body)['run']['name']).to eq(run_name)
     end
 
-    it 'check creating new run without user_data' do
-      request = RunFunctions.create_new_run({"run_data[plan_id]" => plan['id']})
+    it 'check creating new run and plan by plan_name, run_name and product_id' do
+      product_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = ProductFunctions.create_new_product(StaticData::TOKEN, product_name)[0]
+      product = JSON.parse(http.request(request).body)
+      run_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      plan_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = RunFunctions.create_new_run(token: StaticData::TOKEN, plan_name: plan_name, run_name: run_name, product_id: product['product']['id'])
       response = http.request(request[0])
-      expect(response.code).to eq('201')
-      expect(JSON.parse(response.body)['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['run']['name']).to eq(run_name)
     end
 
-    it 'check creating new run with uncorrect run_data | plan_id' do
-      uncorrect_plan_id = 30.times.map { StaticData::ALPHABET.sample }.join
-      request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => uncorrect_plan_id}))
+    it 'check creating new run by plan_id and run_name' do
+      product_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = ProductFunctions.create_new_product(StaticData::TOKEN, product_name)[0]
+      product_id = JSON.parse(http.request(request).body)['product']['id']
+
+      plan_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_id: product_id, plan_name: plan_name)[0]
+      plan_id = JSON.parse(http.request(request).body)
+
+      run_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = RunFunctions.create_new_run(token: StaticData::TOKEN, plan_id: plan_id['plan']['id'], run_name: run_name)
       response = http.request(request[0])
-      expect(response.code).to eq('500')
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['run']['name']).to eq(run_name)
     end
   end
 

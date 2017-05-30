@@ -13,7 +13,7 @@ class Api < Sinatra::Base
     cross_origin
   end
 
-  # ---- Products region ----
+  #region products
   get '/products' do
     process_request request, 'products' do |_req, _username|
       {products: Product.all.map(&:values)}.to_json
@@ -44,10 +44,9 @@ class Api < Sinatra::Base
       {'product': params['product_data']['id'], 'errors': errors}.to_json
     end
   end
-  # ---- endregion ----
+  #endregion products
 
-  # ---- Plans region ----
-
+  #region plans
   post '/plan_new' do
     process_request request, 'plan_new' do |_req, _username|
       plan = Plan.create_new(params)
@@ -81,7 +80,17 @@ class Api < Sinatra::Base
       {'plan': params['plan_data']['id'], 'errors': errors}.to_json
     end
   end
-  # ---- endregion ----
+  #endregion plans
+
+  #region runs
+  post '/run_new' do
+    process_request request, 'run_new' do |_req, _username|
+      run = Run.create_new(params)
+      status 422 unless run.errors.empty?
+      {'run' => run.values, "errors" => run.errors}.to_json
+    end
+  end
+  #endregion runs
 
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
@@ -154,7 +163,7 @@ class Public < Sinatra::Base
         exp: Time.now.to_i + 60 * 60,
         iat: Time.now.to_i,
         iss: ENV['JWT_ISSUER'],
-        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete),
+        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete run_new),
         user: {
             email: email
         }

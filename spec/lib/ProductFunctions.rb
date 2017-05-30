@@ -3,8 +3,8 @@ require 'json'
 class ProductFunctions
   # @param [String] name name for product. Max size = 30 simbols. If it empty - will be generate
   # return array with request and product name [request, product_name]
-  def self.create_new_product(token, name = nil)
-    product_name = 30.times.map { StaticData::ALPHABET.sample }.join if name.nil?
+  def self.create_new_product(token, product_name = nil)
+    product_name = 30.times.map { StaticData::ALPHABET.sample }.join if product_name.nil?
     request = Net::HTTP::Post.new('/api/product_new', 'Authorization' => token)
     request.set_form_data({"product_data[name]": product_name})
     [request, product_name]
