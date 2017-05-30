@@ -77,38 +77,20 @@ describe 'Run Smoke' do
   end
 
   describe 'Delete Run' do
-    it 'check deleting run after run create' do
-      request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => plan['id']}))
-      response = http.request(request[0])
-      run_id = JSON.parse(response.body)['run']['id']
-      request = RunFunctions.delete_run(account.merge({"run_data[id]" => run_id}))
+    it 'Delete run by run_id' do
+      run_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      plan_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      product_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = RunFunctions.create_new_run(token: StaticData::TOKEN, plan_name: plan_name, run_name: run_name, product_name: product_name)
+      response = JSON.parse(http.request(request[0]).body)
+      run = response['run']
+      request = RunFunctions.delete_run(token: StaticData::TOKEN, id: run['id'])
       response = JSON.parse(http.request(request).body)
-      result = RunFunctions.get_plans(account.merge({"run_data[plan_id]" => plan['id']}))
-      expect(result['runs'].empty?).to be_truthy
+      expect(response['run']).to eq(run['id'].to_s)
       expect(response['errors'].empty?).to be_truthy
-      expect(response['plan']).to eq(run_id.to_s)
-    end
-
-    it 'check deleting run with uncorrect user_data' do
-      request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => plan['id']}))
-      response = http.request(request[0])
-      run_id = JSON.parse(response.body)['run']['id']
-      request = RunFunctions.delete_run({"run_data[id]" => run_id})
-      response = JSON.parse(http.request(request).body)
-      result = RunFunctions.get_plans(account.merge({"run_data[plan_id]" => plan['id']}))
-      expect(result['runs'].empty?).to be_falsey
-      expect(response['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
-    end
-
-    it 'check deleting run with uncorrect run_data | id' do
-      uncorrect_id = 30.times.map { StaticData::ALPHABET.sample }.join
-      request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => plan['id']}))
-      http.request(request[0])
-      request = RunFunctions.delete_run(account.merge({"run_data[id]" => uncorrect_id}))
-      response = JSON.parse(http.request(request).body)
-      result = RunFunctions.get_plans(account.merge({"run_data[plan_id]" => plan['id']}))
-      expect(response['errors']['run_id']).to eq([ErrorMessages::RUN_ID_WRONG])
-      expect(result['runs'].empty?).to be_falsey
+      request = RunFunctions.get_runs(token: StaticData::TOKEN, plan_id: run['plan_id'])
+      result = JSON.parse(http.request(request).body)
+      expect(result['runs']).to be_empty
     end
   end
 end
