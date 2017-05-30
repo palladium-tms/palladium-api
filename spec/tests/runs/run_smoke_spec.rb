@@ -56,28 +56,23 @@ describe 'Run Smoke' do
 
   describe 'Show runs' do
     it 'Get runs by plan_id' do
-      request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => plan['id']}))
-      response = http.request(request[0])
-      run_id = JSON.parse(response.body)['run']['id']
-      result = RunFunctions.get_plans(account.merge({"run_data[plan_id]" => plan['id']}))
+      product_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = ProductFunctions.create_new_product(StaticData::TOKEN, product_name)[0]
+      product_id = JSON.parse(http.request(request).body)['product']['id']
+
+      plan_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_id: product_id, plan_name: plan_name)[0]
+      plan_id = JSON.parse(http.request(request).body)['plan']['id']
+
+      run_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = RunFunctions.create_new_run(token: StaticData::TOKEN, plan_id: plan_id, run_name: run_name)
+      run_id = JSON.parse(http.request(request[0]).body)['run']['id']
+
+      request = RunFunctions.get_runs(token: StaticData::TOKEN, plan_id: plan_id)
+      result = JSON.parse(http.request(request).body)
       expect(result['errors'].empty?).to be_truthy
       expect(result['runs'].first['id']).to eq(run_id)
-      expect(result['runs'].first['plan_id']).to eq(plan['id'])
-    end
-
-    it 'Get runs by plan_id without user_data' do
-      request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => plan['id']}))
-      http.request(request[0])
-      result = RunFunctions.get_plans({"run_data[plan_id]" => plan['id']})
-      expect(result['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
-    end
-
-    it 'Get runs by plan_id with uncorrect run_data | plan_id' do
-      plan_id = 30.times.map { StaticData::ALPHABET.sample }.join
-      request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => plan['id']}))
-      http.request(request[0])
-      result = RunFunctions.get_plans(account.merge({"run_data[plan_id]" => plan_id}))
-      expect(result['errors']['plan_id']).to eq([ErrorMessages::PLAN_ID_WRONG])
+      expect(result['runs'].first['plan_id']).to eq(plan_id)
     end
   end
 

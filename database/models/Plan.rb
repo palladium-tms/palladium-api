@@ -66,4 +66,13 @@ class Plan < Sequel::Model
       {'plan_data': Plan.new.values, 'errors': [params: 'Plan data is incorrect FIXME!!']} # FIXME: add validate
     end
   end
+
+  def self.get_runs(*args)
+    plan =  Plan[:id => args.first['plan_id']]
+    begin
+      [plan.runs, []]
+    rescue StandardError
+      [[], 'Run data is incorrect']
+    end
+  end
 end
