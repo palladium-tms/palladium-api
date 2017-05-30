@@ -1,5 +1,5 @@
 require_relative '../../tests/test_management'
-http, account, plan = nil
+http = nil
 describe 'Run Smoke' do
   before :all do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
@@ -68,7 +68,7 @@ describe 'Run Smoke' do
       request = RunFunctions.create_new_run(token: StaticData::TOKEN, plan_id: plan_id, run_name: run_name)
       run_id = JSON.parse(http.request(request[0]).body)['run']['id']
 
-      request = RunFunctions.get_runs(token: StaticData::TOKEN, plan_id: plan_id)
+      request = RunFunctions.get_runs(token: StaticData::TOKEN, id: plan_id)
       result = JSON.parse(http.request(request).body)
       expect(result['errors'].empty?).to be_truthy
       expect(result['runs'].first['id']).to eq(run_id)
@@ -84,6 +84,7 @@ describe 'Run Smoke' do
       request = RunFunctions.create_new_run(token: StaticData::TOKEN, plan_name: plan_name, run_name: run_name, product_name: product_name)
       response = JSON.parse(http.request(request[0]).body)
       run = response['run']
+      # -----------
       request = RunFunctions.delete_run(token: StaticData::TOKEN, id: run['id'])
       response = JSON.parse(http.request(request).body)
       expect(response['run']).to eq(run['id'].to_s)
@@ -93,4 +94,24 @@ describe 'Run Smoke' do
       expect(result['runs']).to be_empty
     end
   end
+
+  describe 'Edit Run' do
+      it 'Edit run by run_id' do
+        run_name = 30.times.map {StaticData::ALPHABET.sample}.join
+        new_run_name = 30.times.map {StaticData::ALPHABET.sample}.join
+        plan_name = 30.times.map {StaticData::ALPHABET.sample}.join
+        product_name = 30.times.map {StaticData::ALPHABET.sample}.join
+        request = RunFunctions.create_new_run(token: StaticData::TOKEN, plan_name: plan_name, run_name: run_name, product_name: product_name)
+        response = JSON.parse(http.request(request[0]).body)
+        run = response['run']
+        # -----------
+        request = RunFunctions.update_run(token: StaticData::TOKEN, name: new_run_name, id: run['id'])
+        response = JSON.parse(http.request(request).body)
+        expect(response['run_data']['name']).to eq(new_run_name)
+        expect(response['errors']).to be_empty
+        request = RunFunctions.get_runs(token: StaticData::TOKEN, id: run['plan_id'])
+        response = JSON.parse(http.request(request).body)
+        expect(response['runs'].first['name']).to eq(new_run_name)
+      end
+    end
 end

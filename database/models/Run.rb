@@ -46,4 +46,16 @@ class Run < Sequel::Model
     end
     Plan[id: data['run_data']['plan_id']].add_run(run)
   end
+
+  def self.edit(data)
+    begin
+      run = Run[:id => data['run_data']['id']]
+      run.update(:name => data['run_data']['run_name'], :updated_at => Time.now)
+      run.valid?
+      {'run_data': run.values, 'errors': run.errors}
+    rescue StandardError
+      {'run_data': Run.new.values, 'errors': [params: 'Run data is incorrect FIXME!!']} # FIXME: add validate
+    end
+  end
+
 end

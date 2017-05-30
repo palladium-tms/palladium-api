@@ -51,7 +51,7 @@ class Api < Sinatra::Base
     process_request request, 'plan_new' do |_req, _username|
       plan = Plan.create_new(params)
       status 422 unless plan.errors.empty?
-      {'plan' => plan.values, "errors" => plan.errors}.to_json
+      {'plan': plan.values, 'errors': plan.errors}.to_json
     end
   end
 
@@ -106,6 +106,14 @@ class Api < Sinatra::Base
         Run[:id => params['run_data']['id']].destroy
       end
       {'run': params['run_data']['id'], 'errors': errors}.to_json
+    end
+  end
+
+  post '/run_edit' do
+    process_request request, 'run_edit' do |_req, _username|
+      run = Run.edit(params)
+      status 422 unless run[:errors].empty?
+      run.to_json
     end
   end
   #endregion runs
@@ -181,7 +189,7 @@ class Public < Sinatra::Base
         exp: Time.now.to_i + 60 * 60,
         iat: Time.now.to_i,
         iss: ENV['JWT_ISSUER'],
-        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete run_new runs run_delete),
+        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete run_new runs run_delete run_edit),
         user: {
             email: email
         }

@@ -28,7 +28,7 @@ class RunFunctions
   # @param [Hash] args must has :run_data[name] with plan name and run_data[plan_id] with plan id
   def self.get_runs(*args)
     request = Net::HTTP::Post.new('/api/runs', 'Authorization' => args.first[:token])
-    request.set_form_data(  {"run_data[plan_id]": args.first[:plan_id]})
+    request.set_form_data(  {"run_data[plan_id]": args.first[:id]})
     request
   end
 
@@ -36,6 +36,12 @@ class RunFunctions
   def self.delete_run(*args)
     request = Net::HTTP::Post.new('/api/run_delete', 'Authorization' => args.first[:token])
     request.set_form_data({ "run_data[id]": args.first[:id]})
+    request
+  end
+
+  def self.update_run(*args)
+    request = Net::HTTP::Post.new('/api/run_edit', 'Authorization' => args.first[:token])
+    request.set_form_data({"run_data[id]": args.first[:id], "run_data[run_name]": args.first[:name]})
     request
   end
 end
