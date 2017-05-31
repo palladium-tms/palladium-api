@@ -146,8 +146,15 @@ class Api < Sinatra::Base
       {'result_set': params['result_set_data'], 'errors': errors}.to_json
     end
   end
-  #endregion
 
+  post '/result_set_edit' do
+    process_request request, 'result_set_edit' do |_req, _username|
+      result_set = ResultSet.edit(params)
+      status 422 unless result_set[:errors].empty?
+      result_set.to_json
+    end
+  end
+  #endregion
 
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
@@ -219,7 +226,7 @@ class Public < Sinatra::Base
         exp: Time.now.to_i + 60 * 60,
         iat: Time.now.to_i,
         iss: ENV['JWT_ISSUER'],
-        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete run_new runs run_delete run_edit result_set_new result_sets result_set_delete),
+        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete run_new runs run_delete run_edit result_set_new result_sets result_set_delete result_set_edit),
         user: {
             email: email
         }

@@ -40,4 +40,10 @@ class ResultSetFunctions
     request.set_form_data(  {"result_set_data[id]": args.first[:id]})
     request
   end
+
+  def self.update_result_set(*args)
+    request = Net::HTTP::Post.new('/api/result_set_edit', 'Authorization' => args.first[:token])
+    request.set_form_data({"result_set_data[id]": args.first[:id], "result_set_data[result_set_name]": args.first[:name]})
+    request
+  end
 end

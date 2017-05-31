@@ -125,4 +125,37 @@ describe 'Result Set Smoke' do
       expect(result['result_sets']).to be_empty
     end
   end
+
+  describe 'Delete result_set' do
+    before :each do
+      product_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = ProductFunctions.create_new_product(StaticData::TOKEN, product_name)[0]
+      product_id = JSON.parse(http.request(request).body)['product']['id']
+
+      plan_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_id: product_id, plan_name: plan_name)[0]
+      plan_id = JSON.parse(http.request(request).body)['plan']['id']
+
+      run_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = RunFunctions.create_new_run(token: StaticData::TOKEN, plan_id: plan_id, run_name: run_name)
+      run_id = JSON.parse(http.request(request[0]).body)['run']['id']
+
+      result_set_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = ResultSetFunctions.create_new_result_set(token: StaticData::TOKEN,
+                                                         run_id: run_id,
+                                                         result_set_name: result_set_name)
+      result_set_id = JSON.parse(http.request(request[0]).body)['result_set']['id']
+    end
+
+    it 'Edit result set' do
+      new_result_set_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      request = ResultSetFunctions.update_result_set(token: StaticData::TOKEN, id: result_set_id, name: new_result_set_name)
+      result_set = JSON.parse(http.request(request).body)['result_set_data']
+      expect(result_set['id']).to eq(result_set_id)
+      expect(result_set['name']).to eq(new_result_set_name)
+      request = ResultSetFunctions.get_result_sets(token: StaticData::TOKEN, id: run_id)
+      result = JSON.parse(http.request(request).body)
+      expect(result['result_sets'].first['name']).to  eq(new_result_set_name)
+    end
+  end
 end
