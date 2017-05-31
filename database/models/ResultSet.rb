@@ -24,18 +24,13 @@ class ResultSet < Sequel::Model
 
   def self.create_new(data)
     data['result_set_data']['run_id'] ||= Run.create_new(data).id
-    err_result_set = nil
-    new_result_set = ResultSet.find_or_create(:name => data['result_set_data']['name'], :run_id => data['result_set_data']['run_id']){|result_set|
-      result_set.name = data['result_set_data']['name']
-      result_set.status = data['result_set_data']['status']
-      err_result_set = result_set unless result_set.valid?
-    }
-    return err_result_set unless err_result_set.nil?
-    result_set = self.run_id_validation(new_result_set, data['result_set_data']['run_id'])
-    if result_set.errors.empty?
-      result_set = result_set.save
-      Run[id: data['result_set_data']['run_id']].add_result_set(result_set)
+    begin
+      result_set = ResultSet.find_or_create(name:  data['result_set_data']['name'], run_id:  data['result_set_data']['run_id']){|result_set|
+        result_set.name =  data['result_set_data']['name']
+      }
+    rescue StandardError
+      return self.run_id_validation(Run.new(data['result_set_data']), data['plan_data']['plan_id'])
     end
-    result_set
+    Run[id: data['result_set_data']['run_id']].add_result_set(result_set)
   end
 end

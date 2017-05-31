@@ -36,12 +36,6 @@ class Plan < Sequel::Model
     []
   end
 
-  def before_destroy
-    super
-    self.remove_all_runs
-  end
-
-
   # @param [Hash] data
   # example: {'plan_data': {'product_id': id, 'name': name}} or {'plan_data': {'product_name': name, 'name': name}}
   def self.create_new(data)
