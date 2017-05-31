@@ -3,6 +3,7 @@ class StaticData
   ADDRESS = '0.0.0.0'
   PORT = 9292
   MAINPAGE = "http://#{ADDRESS}:#{PORT}"
+  TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTYxNjIyMjksImlhdCI6MTQ5NjE1ODYyOSwiaXNzIjoibW9uZXlhcGkuY29tIiwic2NvcGVzIjpbInByb2R1Y3RzIiwicHJvZHVjdF9uZXciLCJwcm9kdWN0X2RlbGV0ZSIsInByb2R1Y3RfZWRpdCIsInBsYW5fbmV3IiwicGxhbnMiLCJwbGFuX2VkaXQiLCJwbGFuX2RlbGV0ZSIsInJ1bl9uZXciLCJydW5zIiwicnVuX2RlbGV0ZSIsInJ1bl9lZGl0Il0sInVzZXIiOnsiZW1haWwiOiIxQGcuY29tIn19.01Uiv9a0lBmkkrZ7qy8Sj0VjpJxtHyHbJR6IsgJWaxY'
 
   ALPHABET = ('a'..'z').to_a
 end

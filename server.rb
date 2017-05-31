@@ -13,7 +13,7 @@ class Api < Sinatra::Base
     cross_origin
   end
 
-  # ---- Products region ----
+  #region products
   get '/products' do
     process_request request, 'products' do |_req, _username|
       {products: Product.all.map(&:values)}.to_json
@@ -44,15 +44,14 @@ class Api < Sinatra::Base
       {'product': params['product_data']['id'], 'errors': errors}.to_json
     end
   end
-  # ---- endregion ----
+  #endregion products
 
-  # ---- Plans region ----
-
+  #region plans
   post '/plan_new' do
     process_request request, 'plan_new' do |_req, _username|
       plan = Plan.create_new(params)
       status 422 unless plan.errors.empty?
-      {'plan' => plan.values, "errors" => plan.errors}.to_json
+      {'plan': plan.values, 'errors': plan.errors}.to_json
     end
   end
 
@@ -81,7 +80,54 @@ class Api < Sinatra::Base
       {'plan': params['plan_data']['id'], 'errors': errors}.to_json
     end
   end
-  # ---- endregion ----
+  #endregion plans
+
+  #region runs
+  post '/run_new' do
+    process_request request, 'run_new' do |_req, _username|
+      run = Run.create_new(params)
+      status 422 unless run.errors.empty?
+      {'run' => run.values, "errors" => run.errors}.to_json
+    end
+  end
+
+  post '/runs' do
+    process_request request, 'runs' do |_req, _username|
+      runs, errors = Plan.get_runs(params['run_data'])
+      status 422 unless errors
+      {runs: runs.map(&:values), errors: errors}.to_json
+    end
+  end
+
+  post '/run_delete' do
+    process_request request, 'run_delete' do |_req, _username|
+      errors = Run.run_id_validation( params['run_data']['id'])
+      if errors.empty?
+        Run[:id => params['run_data']['id']].destroy
+      end
+      {'run': params['run_data']['id'], 'errors': errors}.to_json
+    end
+  end
+
+  post '/run_edit' do
+    process_request request, 'run_edit' do |_req, _username|
+      run = Run.edit(params)
+      status 422 unless run[:errors].empty?
+      run.to_json
+    end
+  end
+  #endregion runs
+
+  #region runs
+  post '/result_set_new' do
+    process_request request, 'result_set_new' do |_req, _username|
+      result_set = ResultSet.create_new(params)
+      status 422 unless result_set.errors.empty?
+      {'result_set' => result_set.values, "errors" => result_set.errors}.to_json
+    end
+  end
+  #endregion
+
 
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
@@ -154,7 +200,7 @@ class Public < Sinatra::Base
         exp: Time.now.to_i + 60 * 60,
         iat: Time.now.to_i,
         iss: ENV['JWT_ISSUER'],
-        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete),
+        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete run_new runs run_delete run_edit result_set_new),
         user: {
             email: email
         }

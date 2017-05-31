@@ -2,6 +2,8 @@ class Run < Sequel::Model
   many_to_one :plan
   one_to_many :result_sets
   plugin :validation_helpers
+  plugin :association_dependencies
+  self.add_association_dependencies :result_sets=>:destroy
   self.raise_on_save_failure = false
   self.plugin :timestamps
 
@@ -37,17 +39,25 @@ class Run < Sequel::Model
 
   def self.create_new(data)
     data['run_data']['plan_id'] ||= Plan.create_new(data).id
-    err_run = nil
-    new_run = Run.find_or_create(name:  data['run_data']['name'], plan_id:  data['run_data']['plan_id']){|run|
-      run.name =  data['run_data']['name']
-      err_plan = run unless run.valid?
-    }
-    return err_run unless err_run.nil?
-    run = self.plan_id_validation(new_run, data['run_data']['plan_id'])
-    if run.errors.empty?
-      run.save
-      Plan[id: data['run_data']['plan_id']].add_run(run)
+    begin
+      run = Run.find_or_create(name:  data['run_data']['name'], plan_id:  data['run_data']['plan_id']){|run|
+        run.name =  data['run_data']['name']
+      }
+    rescue StandardError
+      return self.plan_id_validation(Plan.new(data['plan_data']), data['plan_data']['plan_id'])
     end
-    run
+    Plan[id: data['run_data']['plan_id']].add_run(run)
   end
+
+  def self.edit(data)
+    begin
+      run = Run[:id => data['run_data']['id']]
+      run.update(:name => data['run_data']['run_name'], :updated_at => Time.now)
+      run.valid?
+      {'run_data': run.values, 'errors': run.errors}
+    rescue StandardError
+      {'run_data': Run.new.values, 'errors': [params: 'Run data is incorrect FIXME!!']} # FIXME: add validate
+    end
+  end
+
 end
