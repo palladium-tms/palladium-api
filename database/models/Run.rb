@@ -60,4 +60,12 @@ class Run < Sequel::Model
     end
   end
 
+  def self.get_result_sets(*args)
+    run =  Run[:id => args.first['run_id']]
+    begin
+      [run.result_sets, []]
+    rescue StandardError
+      [[], 'Result_set data is incorrect']
+    end
+  end
 end
