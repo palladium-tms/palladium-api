@@ -29,11 +29,15 @@ class ResultSetFunctions
     params
   end
 
-  # @param [Hash] args must has result_set_data[run_id](int) with run id
-  # example: "result_set_data[run_id]" => run['id']
   def self.get_result_sets(*args)
     request = Net::HTTP::Post.new('/api/result_sets', 'Authorization' => args.first[:token])
     request.set_form_data(  {"result_set_data[run_id]": args.first[:id]})
+    request
+  end
+
+  def self.delete_result_set(*args)
+    request = Net::HTTP::Post.new('/api/result_set_delete', 'Authorization' => args.first[:token])
+    request.set_form_data(  {"result_set_data[id]": args.first[:id]})
     request
   end
 end

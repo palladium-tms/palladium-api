@@ -134,6 +134,18 @@ class Api < Sinatra::Base
       {result_sets: result_sets.map(&:values), errors: errors}.to_json
     end
   end
+
+  post '/result_set_delete' do
+    process_request request, 'result_set_delete' do |_req, _username|
+      errors = []
+      begin
+        ResultSet[:id =>  params['result_set_data']['id']].destroy
+      rescue StandardError => e
+        errors = e
+      end
+      {'result_set': params['result_set_data'], 'errors': errors}.to_json
+    end
+  end
   #endregion
 
 
@@ -161,7 +173,6 @@ class Public < Sinatra::Base
       halt 401
     end
   end
-
 
   get '/login' do
     erb :login
@@ -208,7 +219,7 @@ class Public < Sinatra::Base
         exp: Time.now.to_i + 60 * 60,
         iat: Time.now.to_i,
         iss: ENV['JWT_ISSUER'],
-        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete run_new runs run_delete run_edit result_set_new result_sets),
+        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete run_new runs run_delete run_edit result_set_new result_sets result_set_delete),
         user: {
             email: email
         }
