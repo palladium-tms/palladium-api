@@ -18,16 +18,14 @@ class Result < Sequel::Model
 
   def self.create_new(data)
     data['result_data']['result_set_id'] ||= ResultSet.create_new(data).id
-    result = self.new('message' => data['result_data']['message'])
-    result.valid? # update errors stack
-    result = self.result_set_validation(result, data['result_data']['result_set_id'])
-    if result.errors.empty?
-      status = Status.find_or_create(:name => data['result_data']['status']){|status| status.name = data['result_data']['status']; status.block = false; status.color = "#ffffff" }
-      result = result.save
-      ResultSet[id: data['result_data']['result_set_id']].add_result(result)
-      status.add_result(result)
-      ResultSet[:id => data['result_data']['result_set_id']].update(:status => status.id)
+    begin
+      result = Result.create(message:  data['result_data']['message'], result_set_id:  data['result_data']['result_set_id'])
+    rescue StandardError
+      return self.run_id_validation(Run.new(data['result_set_data']), data['plan_data']['plan_id'])
     end
-    result
+    result_set = ResultSet[id: data['result_data']['result_set_id']]
+    result_set.add_result(result)
+    result_set.update(status: result.status_id) unless result.status_id.nil?
+    result_set
   end
 end

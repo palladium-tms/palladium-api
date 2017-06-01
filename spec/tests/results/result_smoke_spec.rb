@@ -1,74 +1,109 @@
 require_relative '../../tests/test_management'
-http, account, run, result_set, status = nil
+http, run, result_set, status = nil
 describe 'Result Smoke' do
   before :each do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
-    request = AuthFunctions.create_new_account
-    http.request(request[0])
-    account = request[1]
-
-    product = ProductFunctions.create_new_product(account)
-    product_id = JSON.parse(http.request(product[0]).body)['product']['id']
-
-    account = {"user_data[email]": account[:email], "user_data[password]": account[:password]}
-
-    plan_request = PlanFunctions.create_new_plan(account.merge({"plan_data[product_id]" => product_id}))
-    plan = JSON.parse(http.request(plan_request[0]).body)['plan']
-
-    request = RunFunctions.create_new_run(account.merge({"run_data[plan_id]" => plan['id']}))
-    run = JSON.parse(http.request(request[0]).body)['run']
-
-    request = ResultSetFunctions.create_new_result_set(account.merge({"result_set_data[run_id]" => run['id']}))
-    result_set = JSON.parse(http.request(request[0]).body)['result_set']
-
-    status_name = 30.times.map {StaticData::ALPHABET.sample }.join
-    request = StatusFunctions.create_new_status(account.merge({"status_data[name]" => status_name}))
-    status = JSON.parse(http.request(request[0]).body)['status']
   end
 
   describe 'Create new result' do
-    it 'check creating new result' do
-      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => result_set['id'],
-                                                                "result_data[status]" => status['name']}))
+    it '1. Check creating new result with all other elements' do
+      product_name, plan_name, run_name, result_set_name, message = Array.new(5).map { 30.times.map {StaticData::ALPHABET.sample}.join}
+      request = ResultFunctions.create_new_result(token: StaticData::TOKEN,
+                                                         plan_name: plan_name,
+                                                         run_name: run_name,
+                                                         product_name: product_name,
+                                                         result_set_name: result_set_name,
+                                                         message: message)
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
       expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
-      expect(JSON.parse(response.body)['result']['result_set_id']).to eq(result_set['id'])
     end
 
-    it 'check creating new result without user_data' do
-      request = ResultFunctions.create_new_result({"result_data[result_set_id]" => result_set['id']})
-      response = http.request(request)
-      expect(JSON.parse(response.body)['errors']).to eq(ErrorMessages::UNCORRECT_LOGIN)
-    end
+    it '2. Check creating new result | only product has created before' do
+      product = ProductFunctions.create_new_product(StaticData::TOKEN)
+      product_id = JSON.parse(http.request(product[0]).body)['product']['id']
 
-    it 'check creating new result with uncorrect result_set_id' do
-      uncorrect_result_set_id = 30.times.map { StaticData::ALPHABET.sample }.join
-      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => uncorrect_result_set_id,
-                                                                 "result_data[status]" => status['name']}))
-      response = http.request(request)
-      expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors']['result_set_id']).to eq([ErrorMessages::RESULT_SET_ID_WRONG])
-    end
-
-    it 'check creating new result with uncorrect result_set_id' do
-      uncorrect_result_set_id = 30.times.map { StaticData::ALPHABET.sample }.join
-      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => uncorrect_result_set_id,
-                                                                 "result_data[status]" => status['name']}))
-      response = http.request(request)
-      expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors']['result_set_id']).to eq([ErrorMessages::RESULT_SET_ID_WRONG])
-    end
-
-    it 'check creating new result with uncorrect status | not_exist' do
-      uncorrect_result_set_id = 30.times.map { StaticData::ALPHABET.sample }.join
-      status = 30.times.map { StaticData::ALPHABET.sample }.join
-      request = ResultFunctions.create_new_result(account.merge({"result_data[result_set_id]" => result_set['id'],
-                                                                 "result_data[status]" => uncorrect_result_set_id}))
+      plan_name, run_name, result_set_name, message = Array.new(5).map { 30.times.map {StaticData::ALPHABET.sample}.join}
+      request = ResultFunctions.create_new_result(token: StaticData::TOKEN,
+                                                  plan_name: plan_name,
+                                                  run_name: run_name,
+                                                  product_id: product_id,
+                                                  result_set_name: result_set_name,
+                                                  message: message)
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
+    end
+
+    it '3. Check creating new result | only product and plan has created before' do
+      product = ProductFunctions.create_new_product(StaticData::TOKEN)
+      product_id = JSON.parse(http.request(product[0]).body)['product']['id']
+
+      plan = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_id: product_id)
+      plan_id = JSON.parse(http.request(plan[0]).body)['plan']['id']
+
+      run_name, result_set_name, message = Array.new(5).map { 30.times.map {StaticData::ALPHABET.sample}.join}
+      request = ResultFunctions.create_new_result(token: StaticData::TOKEN,
+                                                  plan_id: plan_id,
+                                                  run_name: run_name,
+                                                  result_set_name: result_set_name,
+                                                  message: message)
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
+    end
+
+
+    it '4. Check creating new result | only product, plan and run has created before' do
+      run_name, result_set_name, message = Array.new(5).map { 30.times.map {StaticData::ALPHABET.sample}.join}
+      product = ProductFunctions.create_new_product(StaticData::TOKEN)
+      product_id = JSON.parse(http.request(product[0]).body)['product']['id']
+
+      plan = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_id: product_id)
+      plan_id = JSON.parse(http.request(plan[0]).body)['plan']['id']
+
+      run = RunFunctions.create_new_run(token: StaticData::TOKEN, plan_id: plan_id, run_name: run_name)
+      run_id = JSON.parse(http.request(run[0]).body)['run']['id']
+
+      request = ResultFunctions.create_new_result(token: StaticData::TOKEN,
+                                                  plan_id: plan_id,
+                                                  run_id: run_id,
+                                                  result_set_name: result_set_name,
+                                                  message: message)
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
+    end
+
+    it '5. Check creating new result | only product, plan, run and result set has created before' do
+      run_name, result_set_name, message = Array.new(5).map { 30.times.map {StaticData::ALPHABET.sample}.join}
+      product = ProductFunctions.create_new_product(StaticData::TOKEN)
+      product_id = JSON.parse(http.request(product[0]).body)['product']['id']
+
+      plan = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_id: product_id)
+      plan_id = JSON.parse(http.request(plan[0]).body)['plan']['id']
+
+      run = RunFunctions.create_new_run(token: StaticData::TOKEN, plan_id: plan_id, run_name: run_name)
+      run_id = JSON.parse(http.request(run[0]).body)['run']['id']
+
+      request = ResultSetFunctions.create_new_result_set(token: StaticData::TOKEN,
+                                                         run_id: run_id,
+                                                         result_set_name: result_set_name)
+      result_set_id = JSON.parse(http.request(request[0]).body)['result_set']['id']
+
+      request = ResultFunctions.create_new_result(token: StaticData::TOKEN,
+                                                  plan_id: plan_id,
+                                                  run_id: run_id,
+                                                  result_set_id: result_set_id,
+                                                  message: message)
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
     end
   end
 end

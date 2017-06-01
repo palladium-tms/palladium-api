@@ -118,7 +118,7 @@ class Api < Sinatra::Base
   end
   #endregion runs
 
-  #result_set runs
+  #region result_set
   post '/result_set_new' do
     process_request request, 'result_set_new' do |_req, _username|
       result_set = ResultSet.create_new(params)
@@ -152,6 +152,16 @@ class Api < Sinatra::Base
       result_set = ResultSet.edit(params)
       status 422 unless result_set[:errors].empty?
       result_set.to_json
+    end
+  end
+  #endregion
+
+  #region result
+  post '/result_new' do
+    process_request request, 'result_new' do |_req, _username|
+      result = Result.create_new(params)
+      status 422 unless result.errors.empty?
+      {'result': result.values, 'errors': result.errors}.to_json
     end
   end
   #endregion
@@ -226,7 +236,7 @@ class Public < Sinatra::Base
         exp: Time.now.to_i + 60 * 60,
         iat: Time.now.to_i,
         iss: ENV['JWT_ISSUER'],
-        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete run_new runs run_delete run_edit result_set_new result_sets result_set_delete result_set_edit),
+        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete run_new runs run_delete run_edit result_set_new result_sets result_set_delete result_set_edit result_new results result_edit result_delete),
         user: {
             email: email
         }
