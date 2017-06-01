@@ -45,7 +45,6 @@ DB.create_table? :results do
   foreign_key :status_id, :statuses
   String :message
   DateTime :created_at
-  DateTime :updated_at
 end
 
 DB.create_table? :statuses do
