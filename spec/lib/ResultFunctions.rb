@@ -25,4 +25,11 @@ class ResultFunctions
     params.merge!('result_data[result_set_id]': param[:result_set_id]) if param[:result_set_id]
     params
   end
+
+  def self.get_results(*args)
+    request = Net::HTTP::Post.new('/api/results', 'Authorization' => args.first[:token])
+    request.set_form_data(  {"result_data[result_set_id]": args.first[:id]})
+    request
+  end
+
 end

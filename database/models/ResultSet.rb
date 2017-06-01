@@ -2,6 +2,8 @@ class ResultSet < Sequel::Model
   many_to_one :run
   one_to_many :results
   plugin :validation_helpers
+  plugin :association_dependencies
+  self.add_association_dependencies :results=>:destroy
   self.raise_on_save_failure = false
   self.plugin :timestamps
 
@@ -42,6 +44,15 @@ class ResultSet < Sequel::Model
       {'result_set_data': result_set.values, 'errors': result_set.errors}
     rescue StandardError
       {'result_set_data': ResultSet.new.values, 'errors': [params: 'Run data is incorrect FIXME!!']} # FIXME: add validate
+    end
+  end
+
+  def self.get_results(*args)
+    result_set =  ResultSet[:id => args.first['result_set_id']]
+    begin
+      [result_set.results, []]
+    rescue StandardError
+      [[], 'Result data is incorrect']
     end
   end
 end
