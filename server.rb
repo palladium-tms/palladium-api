@@ -164,7 +164,40 @@ class Api < Sinatra::Base
       {'result': result.values, 'errors': result.errors}.to_json
     end
   end
+
+  post '/results' do
+    process_request request, 'results' do |_req, _username|
+      results, errors = ResultSet.get_results(params['result_data'])
+      status 422 unless errors
+      {results: results.map(&:values), errors: errors}.to_json
+    end
+  end
   #endregion
+
+  #region status
+  post '/status_new' do
+    process_request request, 'status_new' do |_req, _username|
+      status = Status.create_new(params['status_data'])
+      status 422 unless status.errors.empty?
+      {'status': status.values, 'errors': status.errors}.to_json
+    end
+  end
+
+  post '/status_edit' do
+    process_request request, 'status_edit' do |_req, _username|
+      status = Status.edit(params['status_data'])
+      status 422 unless status.errors.empty?
+      {'status': status.values, 'errors': status.errors}.to_json
+    end
+  end
+
+  get '/statuses' do
+    process_request request, 'statuses' do |_req, _username|
+      {statuses: Status.all.map(&:values)}.to_json
+    end
+  end
+  #endregion
+
 
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
@@ -236,7 +269,12 @@ class Public < Sinatra::Base
         exp: Time.now.to_i + 60 * 60,
         iat: Time.now.to_i,
         iss: ENV['JWT_ISSUER'],
-        scopes: %w(products product_new product_delete product_edit plan_new plans plan_edit plan_delete run_new runs run_delete run_edit result_set_new result_sets result_set_delete result_set_edit result_new results result_edit result_delete),
+        scopes: %w(products product_new product_delete product_edit
+                   plan_new plans plan_edit plan_delete
+                   run_new runs run_delete run_edit
+                   result_set_new result_sets result_set_delete result_set_edit
+                   result_new results
+                   status_new statuses status_edit),
         user: {
             email: email
         }

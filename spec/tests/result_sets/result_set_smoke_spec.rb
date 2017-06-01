@@ -126,7 +126,7 @@ describe 'Result Set Smoke' do
     end
   end
 
-  describe 'Delete result_set' do
+  describe 'Edit result_set' do
     before :each do
       product_name = 30.times.map {StaticData::ALPHABET.sample}.join
       request = ProductFunctions.create_new_product(StaticData::TOKEN, product_name)[0]

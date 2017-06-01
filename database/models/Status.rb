@@ -10,13 +10,27 @@ class Status < Sequel::Model
   end
 
   def self.create_new(data)
-    if Status[:name => data['name']].nil?
-      data['color'] = data.fetch('color', '#ffffff')
-      status = self.new(data)
+    if Status[:name => data['status_name']].nil?
+      data['status_color'] = data.fetch('status_color', '#ffffff')
+      status = self.new(name: data['status_name'], color: data['status_color'])
       status.save if status.valid?
       status # TODO: it needed?
     else
-      Status[:name => data['name']].unblock!
+      Status[:name => data['status_name']].unblock!
+    end
+  end
+
+  def self.edit(*args)
+    status = Status[:id => args.first['id']]
+    if status.nil?
+      [Status.new, 'Status data is invalid'] # Fixme: need validation
+    else
+      params = {}
+      params.merge!({name: args.first['name']}) if args.first['name']
+      params.merge!({color: args.first['color']}) if args.first['color']
+      params.merge!({block: args.first['block']}) if args.first['block']
+      status.update(params)
+      status
     end
   end
 

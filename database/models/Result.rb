@@ -26,6 +26,6 @@ class Result < Sequel::Model
     result_set = ResultSet[id: data['result_data']['result_set_id']]
     result_set.add_result(result)
     result_set.update(status: result.status_id) unless result.status_id.nil?
-    result_set
+    result
   end
 end

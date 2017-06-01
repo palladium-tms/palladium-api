@@ -42,29 +42,29 @@ class Palladium
     result
   end
 end
-
-
-product = "Test1"
-plan = "v.3"
-run = File.basename(__FILE__, '_spec.rb')
-auth = {host: '0.0.0.0', port: '9292', email: 'flamine@list.ru', password: '123123123'}
-palladium = Palladium.new({:product => product,
-                           :plan => plan,
-                           :run => run,
-                           :auth => auth})
-
-describe 'Tests' do
-  it '1*1' do true end
-  it '1*2' do expect(true).to eq(false) end
-  it '1*3' do true end
-  it '1*4' do  expect(true).to eq(false) end
-  it '1*5' do true end
-  it '1*6' do  expect(true).to eq(false) end
-  it '1*7' do true end
-  it '1*8' do  expect(true).to eq(false) end
-  it '1*9' do true end
-  after :each do |example|
-    palladium.set_result(example)
-  end
-end
-
+#
+#
+# product = "Test1"
+# plan = "v.3"
+# run = File.basename(__FILE__, '_spec.rb')
+# auth = {host: '0.0.0.0', port: '9292', email: 'flamine@list.ru', password: '123123123'}
+# palladium = Palladium.new({:product => product,
+#                            :plan => plan,
+#                            :run => run,
+#                            :auth => auth})
+#
+# describe 'Tests' do
+#   it '1*1' do true end
+#   it '1*2' do expect(true).to eq(false) end
+#   it '1*3' do true end
+#   it '1*4' do  expect(true).to eq(false) end
+#   it '1*5' do true end
+#   it '1*6' do  expect(true).to eq(false) end
+#   it '1*7' do true end
+#   it '1*8' do  expect(true).to eq(false) end
+#   it '1*9' do true end
+#   after :each do |example|
+#     palladium.set_result(example)
+#   end
+# end
+#
