@@ -159,9 +159,11 @@ class Api < Sinatra::Base
   #region result
   post '/result_new' do
     process_request request, 'result_new' do |_req, _username|
-      result = Result.create_new(params)
+      result, run_id = Result.create_new(params)
       status 422 unless result.errors.empty?
-      {'result': result.values, 'errors': result.errors}.to_json
+      resp = {'result': result.values, 'errors': result.errors}
+      resp.merge!('run_id': run_id) unless run_id.nil?
+      resp.to_json
     end
   end
 

@@ -17,15 +17,29 @@ class Result < Sequel::Model
   end
 
   def self.create_new(data)
-    data['result_data']['result_set_id'] ||= ResultSet.create_new(data).id
+    a = Time.now
+    data.merge!({'run_id' => nil})
+    if data['result_data']['result_set_id'].nil?
+      result_set = ResultSet.create_new(data)
+      data['result_data']['result_set_id'] = result_set.id
+      data['run_id'] = result_set.run_id
+    end
+
     begin
       result = Result.create(message:  data['result_data']['message'], result_set_id:  data['result_data']['result_set_id'])
+      if Status[name: data['result_data']['status']].nil?
+        status = Status.create_new({'status_name' =>  data['result_data']['status']})
+        status.add_result(result)
+      else
+        Status[name: data['result_data']['status']].add_result(result)
+      end
     rescue StandardError
-      return self.run_id_validation(Run.new(data['result_set_data']), data['plan_data']['plan_id'])
+      return self.result_set_validation(Run.new(data['result_set_data']), data['plan_data']['plan_id'])
     end
     result_set = ResultSet[id: data['result_data']['result_set_id']]
     result_set.add_result(result)
     result_set.update(status: result.status_id) unless result.status_id.nil?
-    result
+    puts Time.now - a
+    [result, data['run_data']['id']]
   end
 end
