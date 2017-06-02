@@ -5,14 +5,15 @@ class Status < Sequel::Model
   self.plugin :timestamps
 
   def validate
+    validates_presence [:name]
     validates_format /^.{1,40}$/, :name
-    validates_format /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, :color
   end
 
   def self.create_new(data)
     if Status[:name => data['status_name']].nil?
-      data['status_color'] = data.fetch('status_color', '#ffffff')
-      status = self.new(name: data['status_name'], color: data['status_color'])
+      params = { name: data['status_name'] }
+      params.merge!({color: data['status_color']}) unless data['status_color'].nil?
+      status = self.new(params)
       status.save if status.valid?
       status # TODO: it needed?
     else
