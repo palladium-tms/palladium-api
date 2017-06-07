@@ -22,6 +22,7 @@ class ResultFunctions
 
     params.merge!('plan_data[product_name]': param[:product_name]) if param[:product_name]
     params.merge!('result_data[message]': param[:message]) if param[:message]
+    params.merge!('result_data[status]': param[:status]) if param[:status]
     params.merge!('result_data[result_set_id]': param[:result_set_id]) if param[:result_set_id]
     params
   end

@@ -13,10 +13,11 @@ describe 'Result Smoke' do
                                                          run_name: run_name,
                                                          product_name: product_name,
                                                          result_set_name: result_set_name,
-                                                         message: message)
+                                                         message: message,
+                                                         status: 'Passed')
       response = http.request(request)
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
       expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
     end
 
@@ -30,10 +31,11 @@ describe 'Result Smoke' do
                                                   run_name: run_name,
                                                   product_id: product_id,
                                                   result_set_name: result_set_name,
-                                                  message: message)
+                                                  message: message,
+                                                  status: 'Passed')
       response = http.request(request)
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
       expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
     end
 
@@ -49,10 +51,11 @@ describe 'Result Smoke' do
                                                   plan_id: plan_id,
                                                   run_name: run_name,
                                                   result_set_name: result_set_name,
-                                                  message: message)
+                                                  message: message,
+                                                  status: 'Passed')
       response = http.request(request)
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
       expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
     end
 
@@ -71,10 +74,11 @@ describe 'Result Smoke' do
                                                   plan_id: plan_id,
                                                   run_id: run_id,
                                                   result_set_name: result_set_name,
-                                                  message: message)
+                                                  message: message,
+                                                  status: 'Passed')
       response = http.request(request)
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
       expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
     end
 
@@ -96,10 +100,11 @@ describe 'Result Smoke' do
 
       request = ResultFunctions.create_new_result(token: StaticData::TOKEN,
                                                   result_set_id: result_set_id,
-                                                  message: message)
+                                                  message: message,
+                                                  status: 'Passed')
       response = http.request(request)
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
       expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
       expect(JSON.parse(response.body)['result']['result_set_id']).to eq(result_set_id)
     end
@@ -128,7 +133,8 @@ describe 'Result Smoke' do
       message = 30.times.map {StaticData::ALPHABET.sample}.join
       request = ResultFunctions.create_new_result(token: StaticData::TOKEN,
                                                   result_set_id: result_set_id,
-                                                  message: message)
+                                                  message: message,
+                                                  status: 'Passed')
       result = JSON.parse(http.request(request).body)['result']
     end
 

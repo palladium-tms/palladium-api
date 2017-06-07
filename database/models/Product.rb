@@ -8,7 +8,6 @@ class Product < Sequel::Model
 
   def validate
     validates_unique :name
-    validates_format /^.{1,30}$/, :name
   end
 
   def self.product_id_validation(product_id)

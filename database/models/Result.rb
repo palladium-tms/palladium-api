@@ -4,29 +4,31 @@ class Result < Sequel::Model
   self.raise_on_save_failure = false
   self.plugin :timestamps
 
-  def self.result_set_validation(result, result_set_id)
+  def self.data_valid?(data)
     case
-      when result_set_id.nil?
-        result.errors.add('result_set_id', "result_set_id can't be nil")
-        return result
-      when ResultSet[id: result_set_id].nil?
-        result.errors.add('result_set_id', "result_set_id is not belongs to any result_set_id")
-        return result
+      when data['result_data'].nil?
+        return {result_data: "result_data can't be nil"}
+      when data['result_data']['status'].nil?
+        {status: "status can't be nil"}
     end
-    result
+  end
+
+  def self.get_result_and_run_id(data)
+    result_set = ResultSet.create_new(data)
+    data['result_data']['result_set_id'] = result_set.id
+    data['run_id'] = result_set.run_id
+    data
   end
 
   def self.create_new(data)
-    a = Time.now
-    data.merge!({'run_id' => nil})
+    errors = data_valid?(data)
+    return {errors: errors} unless errors.nil?
     if data['result_data']['result_set_id'].nil?
-      result_set = ResultSet.create_new(data)
-      data['result_data']['result_set_id'] = result_set.id
-      data['run_id'] = result_set.run_id
+      data = get_result_and_run_id(data)
     end
 
     begin
-      result = Result.create(message:  data['result_data']['message'], result_set_id:  data['result_data']['result_set_id'])
+      result = Result.create(message:  data['result_data']['message'])
       if Status[name: data['result_data']['status']].nil?
         status = Status.create_new({'status_name' =>  data['result_data']['status']})
         status.add_result(result)
@@ -34,12 +36,11 @@ class Result < Sequel::Model
         Status[name: data['result_data']['status']].add_result(result)
       end
     rescue StandardError
-      return self.result_set_validation(Run.new(data['result_set_data']), data['plan_data']['plan_id'])
+      {errors: result.errors, result: result}
     end
     result_set = ResultSet[id: data['result_data']['result_set_id']]
     result_set.add_result(result)
     result_set.update(status: result.status_id) unless result.status_id.nil?
-    puts Time.now - a
-    [result, data['run_data']['id']]
+    {result: result, run_id: data['run_id']}
   end
 end

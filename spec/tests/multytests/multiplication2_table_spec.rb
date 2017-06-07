@@ -42,9 +42,8 @@ class Palladium
   end
 end
 
-
-product = "Test1"
-plan = "v.3"
+product = 'CPE11qwe12'
+plan = "v.8"
 run = File.basename(__FILE__, '_spec.rb')
 auth = {host: '0.0.0.0', port: '9292', token: StaticData::TOKEN}
 palladium = Palladium.new({:product => product,

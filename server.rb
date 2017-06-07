@@ -73,7 +73,7 @@ class Api < Sinatra::Base
 
   post '/plan_delete' do
     process_request request, 'plan_delete' do |_req, _username|
-      errors = Plan.plan_id_validation( params['plan_data']['id'])
+      errors = Plan.plan_id_validation(params['plan_data']['id'])
       if errors.empty?
         Plan[:id => params['plan_data']['id']].destroy
       end
@@ -101,7 +101,7 @@ class Api < Sinatra::Base
 
   post '/run_delete' do
     process_request request, 'run_delete' do |_req, _username|
-      errors = Run.run_id_validation( params['run_data']['id'])
+      errors = Run.run_id_validation(params['run_data']['id'])
       if errors.empty?
         Run[:id => params['run_data']['id']].destroy
       end
@@ -139,7 +139,7 @@ class Api < Sinatra::Base
     process_request request, 'result_set_delete' do |_req, _username|
       errors = []
       begin
-        ResultSet[:id =>  params['result_set_data']['id']].destroy
+        ResultSet[:id => params['result_set_data']['id']].destroy
       rescue StandardError => e
         errors = e
       end
@@ -159,11 +159,13 @@ class Api < Sinatra::Base
   #region result
   post '/result_new' do
     process_request request, 'result_new' do |_req, _username|
-      result, run_id = Result.create_new(params)
-      status 422 unless result.errors.empty?
-      resp = {'result': result.values, 'errors': result.errors}
-      resp.merge!('run_id': run_id) unless run_id.nil?
-      resp.to_json
+      responce = Result.create_new(params)
+      if responce[:errors].nil?
+        {'result': responce[:result].values}.to_json
+      else
+        status 422
+        {'errors': responce[:errors].values, 'run_id': responce[:run_id]}.to_json
+      end
     end
   end
 
@@ -204,7 +206,7 @@ class Api < Sinatra::Base
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
     username = user['email']
-    if scopes.include?(scope) && User.find(email: username).exists?
+    if scopes.include?(scope) && User[email: username].exists?
       yield req, username
     else
       halt 403
