@@ -197,7 +197,9 @@ class Api < Sinatra::Base
 
   get '/statuses' do
     process_request request, 'statuses' do |_req, _username|
-      {statuses: Status.all.map(&:values)}.to_json
+      statuses = Status.where(block: false)
+      statuses_ids = statuses.select_map(:id)
+      {statuses: Hash[(statuses_ids).zip statuses.map(&:values)]}.to_json
     end
   end
   #endregion
