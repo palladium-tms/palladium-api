@@ -29,6 +29,7 @@ class ResultSet < Sequel::Model
     begin
       result_set = ResultSet.find_or_create(name:  data['result_set_data']['name'], run_id:  data['result_set_data']['run_id']){|result_set|
         result_set.name =  data['result_set_data']['name']
+        result_set.plan_id =  data['run_data']['plan_id']
       }
     rescue StandardError
       return self.run_id_validation(Run.new(data['result_set_data']), data['plan_data']['plan_id'])
