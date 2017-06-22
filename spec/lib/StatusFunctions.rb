@@ -18,11 +18,7 @@ class StatusFunctions
     res = Net::HTTP.new(url.host, url.port).start do |http|
       http.request(req)
     end
-    result = {}
-    JSON.parse(res.body)['statuses'].each do |current_product|
-      result.merge!({current_product['id'] => current_product})
-    end
-    result
+    JSON.parse(res.body)['statuses']
   end
 
   def self.status_edit(*args)

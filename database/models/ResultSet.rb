@@ -25,11 +25,18 @@ class ResultSet < Sequel::Model
   end
 
   def self.create_new(data)
-    data['result_set_data']['run_id'] ||= Run.create_new(data).id
+    if data['result_set_data']['run_id'].nil?
+      run = Run.create_new(data)
+      data['result_set_data']['run_id'] = run.id
+      data['run_data']['plan_id'] ||= run.plan_id
+    else
+      Run[data['result_set_data']['run_id']].plan_id
+      data.merge!({'run_data' => {'plan_id' => Run[data['result_set_data']['run_id']].plan_id}})
+    end
     begin
       result_set = ResultSet.find_or_create(name:  data['result_set_data']['name'], run_id:  data['result_set_data']['run_id']){|result_set|
-        result_set.name =  data['result_set_data']['name']
-        result_set.plan_id =  data['run_data']['plan_id']
+        result_set.name = data['result_set_data']['name']
+        result_set.plan_id = data['run_data']['plan_id']
       }
     rescue StandardError
       return self.run_id_validation(Run.new(data['result_set_data']), data['plan_data']['plan_id'])

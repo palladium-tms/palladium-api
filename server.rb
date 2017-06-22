@@ -124,7 +124,7 @@ class Api < Sinatra::Base
     process_request request, 'result_set_new' do |_req, _username|
       result_set = ResultSet.create_new(params)
       status 422 unless result_set.errors.empty?
-      {'result_set' => result_set.values, "errors" => result_set.errors}.to_json
+      {result_set: result_set.values, errors: result_set.errors}.to_json
     end
   end
 
@@ -198,8 +198,8 @@ class Api < Sinatra::Base
 
   get '/statuses' do
     process_request request, 'statuses' do |_req, _username|
-      statuses = Status.where(block: false)
-      statuses_ids = statuses.select_map(:id)
+      statuses = Status.all
+      statuses_ids = statuses.map(&:id)
       {statuses: Hash[(statuses_ids).zip statuses.map(&:values)]}.to_json
     end
   end

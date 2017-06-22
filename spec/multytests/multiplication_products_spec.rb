@@ -1,6 +1,6 @@
 require 'net/http'
 require 'json'
-require_relative '../../data/static_data'
+require_relative '../../data/tic_data'
 class Palladium
   def initialize(*args)
     @http = Net::HTTP.new(args.first[:auth][:host], args.first[:auth][:port])

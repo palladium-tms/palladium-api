@@ -1,4 +1,4 @@
-require_relative '../../tests/test_management'
+require_relative '../../tests/t_management'
 http = nil
 describe 'Auth Smoke' do
   before :all do

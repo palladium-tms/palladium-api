@@ -93,7 +93,7 @@ describe 'Status Smoke' do
       request = StatusFunctions.create_new_status(token: StaticData::TOKEN, name: status_name)
       status = JSON.parse(http.request(request).body)['status']
       statuses = StatusFunctions.get_all_statuses(StaticData::TOKEN)
-      expect(statuses.key?(status['id'])).to be_truthy
+      expect(statuses.key?(status['id'].to_s)).to be_truthy
     end
   end
 end
