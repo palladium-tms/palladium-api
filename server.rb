@@ -58,8 +58,9 @@ class Api < Sinatra::Base
   post '/plans' do
     process_request request, 'plans' do |_req, _username|
       plans, errors = Product.get_plans(params['plan_data'])
+      plans = Product.add_statictic(plans)
       status 422 unless errors
-      {plans: plans.map(&:values), errors: errors}.to_json
+      { plans: plans, errors: errors }.to_json
     end
   end
 

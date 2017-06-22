@@ -46,7 +46,7 @@ $j = 0
 
   product = "Product_2"
   1.times do |j|
-plan = "v.8_#{0}.#{0}"
+plan = "v.9_#{0}.#{0}"
     run = File.basename(__FILE__, '_spec.rb')
     auth = {host: '0.0.0.0', port: '9292', token: StaticData::TOKEN}
     palladium = Palladium.new({:product => product,
@@ -59,30 +59,30 @@ plan = "v.8_#{0}.#{0}"
         it "1*1+c" do
           true
         end
-        # it "1*2+#{c}" do
-        #   expect(true).to eq(false)
-        # end
-        # it "1*3+#{c}" do
-        #   true
-        # end
-        # it "1*4+#{c}" do
-        #   expect(true).to eq(false)
-        # end
-        # it "1*5+#{c}" do
-        #   true
-        # end
-        # it "1*6+#{c}" do
-        #   expect(true).to eq(false)
-        # end
-        # it "1*7+#{c}" do
-        #   true
-        # end
-        # it "1*8+#{c}" do
-        #   expect(true).to eq(false)
-        # end
-        # it "1*9+#{c}" do
-        #   true
-        # end
+        it "1*2+#{c}" do
+          expect(true).to eq(false)
+        end
+        it "1*3+#{c}" do
+          true
+        end
+        it "1*4+#{c}" do
+          expect(true).to eq(false)
+        end
+        it "1*5+#{c}" do
+          true
+        end
+        it "1*6+#{c}" do
+          expect(true).to eq(false)
+        end
+        it "1*7+#{c}" do
+          true
+        end
+        it "1*8+#{c}" do
+          expect(true).to eq(false)
+        end
+        it "1*9+#{c}" do
+          true
+        end
         after :each do |example|
           $j +=1
           palladium.set_result(example)
