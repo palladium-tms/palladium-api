@@ -63,7 +63,7 @@ class Product < Sequel::Model
   def self.add_statictic(plans)
     statistic = get_statistic(plans)
     plans.map(&:values).map do |plan|
-      plan.merge!({statistic: statistic[plan[:id]]})
+      plan.merge!({statistic: statistic[plan[:id]] || []})
     end
   end
 end
