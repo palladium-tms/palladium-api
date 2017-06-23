@@ -1,6 +1,6 @@
 require 'net/http'
 require 'json'
-require_relative '../../data/tic_data'
+TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTgyMzI0MTYsImlhdCI6MTQ5ODIyODgxNiwiaXNzIjoic2FkYXNkYXNmcmdhd2U0cndlciIsInNjb3BlcyI6WyJwcm9kdWN0cyIsInByb2R1Y3RfbmV3IiwicHJvZHVjdF9kZWxldGUiLCJwcm9kdWN0X2VkaXQiLCJwbGFuX25ldyIsInBsYW5zIiwicGxhbl9lZGl0IiwicGxhbl9kZWxldGUiLCJydW5fbmV3IiwicnVucyIsInJ1bl9kZWxldGUiLCJydW5fZWRpdCIsInJlc3VsdF9zZXRfbmV3IiwicmVzdWx0X3NldHMiLCJyZXN1bHRfc2V0X2RlbGV0ZSIsInJlc3VsdF9zZXRfZWRpdCIsInJlc3VsdF9uZXciLCJyZXN1bHRzIiwic3RhdHVzX25ldyIsInN0YXR1c2VzIiwic3RhdHVzX2VkaXQiXSwidXNlciI6eyJlbWFpbCI6IjFAZy5jb20ifX0.6XXkp0uAwin8WSur_gopNr-oYntFS5vOCo44xN-PBk0'
 class Palladium
   def initialize(*args)
     @http = Net::HTTP.new(args.first[:auth][:host], args.first[:auth][:port])
@@ -12,7 +12,7 @@ class Palladium
 
   def set_result(example)
     result = get_result(example)
-    request = Net::HTTP::Post.new('/api/result_new', 'Authorization' => StaticData::TOKEN)
+    request = Net::HTTP::Post.new('/api/result_new', 'Authorization' => TOKEN)
     params = {"plan_data[product_name]": @product,
               "plan_data[name]": @plan,
               "run_data[name]": 'multiplication_products1',
@@ -44,11 +44,11 @@ end
 $j = 0
 1.times do |i|
 
-  product = "Product_2"
+  product = "Product_0"
   1.times do |j|
 plan = "v.9_#{0}.#{0}"
     run = File.basename(__FILE__, '_spec.rb')
-    auth = {host: '0.0.0.0', port: '9292', token: StaticData::TOKEN}
+    auth = {host: '0.0.0.0', port: '9292', token: TOKEN}
     palladium = Palladium.new({:product => product,
                                :plan => plan,
                                :run => run,

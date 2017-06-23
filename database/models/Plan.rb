@@ -69,4 +69,17 @@ class Plan < Sequel::Model
       [[], 'Run data is incorrect']
     end
   end
+
+  def self.get_statistic(runs)
+    ResultSet.where(:run_id => runs.map(&:id)).group_and_count(:run_id, :status).map(&:values).group_by do |e|
+      e[:run_id]
+    end
+  end
+
+  def self.add_statictic(runs)
+    statistic = get_statistic(runs)
+    runs.map(&:values).map do |run|
+      run.merge!({statistic: statistic[run[:id]] || []})
+    end
+  end
 end
