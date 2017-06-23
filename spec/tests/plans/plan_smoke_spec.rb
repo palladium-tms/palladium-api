@@ -1,20 +1,21 @@
 require_relative '../../tests/test_management'
-http, account, product, plan, plan_name = nil
+http, account, product, plan, plan_name, token = nil
 describe 'Plan Smoke' do
   before :all do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
+    token = AuthFunctions.create_user_and_get_token
   end
 
   before :each do
     #---product creating
-    product = ProductFunctions.create_new_product(StaticData::TOKEN)
+    product = ProductFunctions.create_new_product(token)
     http.request(product[0])
     product = JSON.parse(http.request(product[0]).body)['product']
   end
 
   describe 'Create new plan' do
     it 'check creating new plan with product_id' do
-      request = Net::HTTP::Post.new('/api/plan_new','Authorization' => StaticData::TOKEN)
+      request = Net::HTTP::Post.new('/api/plan_new','Authorization' => token)
       corrent_plan_name = 30.times.map { StaticData::ALPHABET.sample }.join
       request.set_form_data({"plan_data[name]": corrent_plan_name, "plan_data[product_id]": product['id']})
       response = http.request(request)
@@ -26,7 +27,7 @@ describe 'Plan Smoke' do
     end
 
     it 'check creating new plan with product_name(it product is exists)' do
-      request, plan_name = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_id: product['id'])
+      request, plan_name = PlanFunctions.create_new_plan(token: token, product_id: product['id'])
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
@@ -36,7 +37,7 @@ describe 'Plan Smoke' do
     end
 
     it 'check creating new plan with product_name(it product is not exists)' do
-      request, plan_name = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_name: product['name'])
+      request, plan_name = PlanFunctions.create_new_plan(token: token, product_name: product['name'])
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
@@ -47,7 +48,7 @@ describe 'Plan Smoke' do
 
     it 'check creating new plan and product with product_name' do
       name = 30.times.map {StaticData::ALPHABET.sample}.join
-      request, plan_name = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_name: name)
+      request, plan_name = PlanFunctions.create_new_plan(token: token, product_name: name)
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
@@ -59,12 +60,12 @@ describe 'Plan Smoke' do
 
   describe 'Show plans' do
     before :each do
-      request = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_id: product['id'])[0]
+      request = PlanFunctions.create_new_plan(token: token, product_id: product['id'])[0]
       plan = JSON.parse(http.request(request).body)['plan']
     end
 
     it 'get plans by product id' do
-      request = PlanFunctions.get_plans(token: StaticData::TOKEN, product_id: product['id'])
+      request = PlanFunctions.get_plans(token: token, product_id: product['id'])
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors']).to be_empty
@@ -74,7 +75,7 @@ describe 'Plan Smoke' do
     end
 
     it 'get plans by product name' do
-      request = PlanFunctions.get_plans(token: StaticData::TOKEN, product_name: product['name'])
+      request = PlanFunctions.get_plans(token: token, product_name: product['name'])
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors']).to be_empty
@@ -86,15 +87,15 @@ describe 'Plan Smoke' do
 
   describe 'Delete Plan' do
     before :each do
-      request = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_id: product['id'])[0]
+      request = PlanFunctions.create_new_plan(token: token, product_id: product['id'])[0]
       plan = JSON.parse(http.request(request).body)['plan']
     end
 
     it 'check deleting plan' do
-      request = PlanFunctions.delete_plan(token: StaticData::TOKEN, id: plan['id'])
+      request = PlanFunctions.delete_plan(token: token, id: plan['id'])
       response = JSON.parse(http.request(request).body)
 
-      get_plans_req = PlanFunctions.get_plans(token: StaticData::TOKEN, product_id: product['id'])
+      get_plans_req = PlanFunctions.get_plans(token: token, product_id: product['id'])
       plans = JSON.parse(http.request(get_plans_req).body)
       expect(response['errors'].empty?).to be_truthy
       expect(response['plan']).to eq(plan['id'].to_s)
@@ -104,13 +105,13 @@ describe 'Plan Smoke' do
 
   describe 'Edit Plan' do
     before :each do
-      request = PlanFunctions.create_new_plan(token: StaticData::TOKEN, product_id: product['id'])[0]
+      request = PlanFunctions.create_new_plan(token: token, product_id: product['id'])[0]
       plan = JSON.parse(http.request(request).body)['plan']
     end
 
     it 'edit plan after create' do
       new_plan_name = 30.times.map { StaticData::ALPHABET.sample }.join
-      request = PlanFunctions.update_plan({token: StaticData::TOKEN, id: plan['id'], name: new_plan_name})
+      request = PlanFunctions.update_plan({token: token, id: plan['id'], name: new_plan_name})
       result = JSON.parse(http.request(request).body)
       expect(result['errors'].empty?).to be_truthy
       expect(result['plan_data']['id']).to eq(plan['id'])
