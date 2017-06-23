@@ -11,4 +11,10 @@ class AuthFunctions
     request.set_form_data({"user_data[email]": email, "user_data[password]": password})
     [request, { email: email, password: password }]
   end
+
+  def self.login(user_data)
+    request = Net::HTTP::Post.new('/login', 'Content-Type' => 'application/json')
+    request.set_form_data({"user_data[email]": user_data[:email], "user_data[password]": user_data[:password]})
+    request
+  end
 end
