@@ -95,8 +95,9 @@ class Api < Sinatra::Base
   post '/runs' do
     process_request request, 'runs' do |_req, _username|
       runs, errors = Plan.get_runs(params['run_data'])
+      runs = Plan.add_statictic(runs)
       status 422 unless errors
-      {runs: runs.map(&:values), errors: errors}.to_json
+      {runs: runs, errors: errors}.to_json
     end
   end
 
