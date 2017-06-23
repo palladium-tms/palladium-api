@@ -75,6 +75,25 @@ describe 'Run Smoke' do
       expect(result['runs'].first['id']).to eq(run_id)
       expect(result['runs'].first['plan_id']).to eq(plan_id)
     end
+
+    it 'Get runs by plan_id | statistic check' do
+      run_name, product_name, result_set_name, message, plan_name = Array.new(5).map { 30.times.map {StaticData::ALPHABET.sample}.join}
+      request = ProductFunctions.create_new_product(token, product_name)[0]
+      product_id = JSON.parse(http.request(request).body)['product']['id']
+      request = PlanFunctions.create_new_plan(token: token, product_id: product_id, plan_name: plan_name)[0]
+      plan_id = JSON.parse(http.request(request).body)['plan']['id']
+      request = RunFunctions.create_new_run(token: token, plan_id: plan_id, run_name: run_name)
+      run_id = JSON.parse(http.request(request[0]).body)['run']['id']
+      request = RunFunctions.get_runs(token: token, id: plan_id)
+      request = ResultFunctions.create_new_result(token: token,
+                                                  run_id: run_id,
+                                                  result_set_name: result_set_name,
+                                                  message: message,
+                                                  status: 'Passed')
+      http.request(request)
+      response = http.request(RunFunctions.get_runs(token: token, id: plan_id))
+      expect(JSON.parse(response.body)['runs'].first['statistic']).not_to be_empty
+    end
   end
 
   describe 'Delete Run' do
