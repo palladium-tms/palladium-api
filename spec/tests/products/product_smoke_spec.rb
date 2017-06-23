@@ -1,12 +1,13 @@
 require_relative '../../tests/test_management'
-http = nil
+http, token = nil
 describe 'Product Smoke' do
   before :all do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
+    token = AuthFunctions.create_user_and_get_token
   end
   describe 'Create new product' do
     it 'check creating new product with correct user_data and correct product_data' do
-      request = Net::HTTP::Post.new('/api/product_new','Authorization' => StaticData::TOKEN)
+      request = Net::HTTP::Post.new('/api/product_new','Authorization' => token)
       corrent_product_name = 30.times.map { StaticData::ALPHABET.sample }.join
       request.set_form_data({"product_data[name]": corrent_product_name})
       response = http.request(request)
@@ -17,7 +18,7 @@ describe 'Product Smoke' do
     end
 
     it 'check creating new product with correct user_data and exists correct product_data' do
-      product = ProductFunctions.create_new_product(StaticData::TOKEN)
+      product = ProductFunctions.create_new_product(token)
       http.request(product[0]) # first creating
       response = http.request(product[0]) # second creating
       expect(response.code).to eq('200')
@@ -29,10 +30,10 @@ describe 'Product Smoke' do
 
   describe 'Delete product' do
     it 'check deleting product after product create' do
-      product = ProductFunctions.create_new_product(StaticData::TOKEN)
+      product = ProductFunctions.create_new_product(token)
       new_product_response = http.request(product[0])
       product_id_for_deleting = JSON.parse(new_product_response.body)['product']['id']
-      request = ProductFunctions.delete_product(StaticData::TOKEN, product_id_for_deleting)
+      request = ProductFunctions.delete_product(token, product_id_for_deleting)
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['product']).to eq(product_id_for_deleting.to_s)
@@ -42,22 +43,22 @@ describe 'Product Smoke' do
 
   describe 'Get Products' do
     it 'get all products after creating' do
-      product = ProductFunctions.create_new_product(StaticData::TOKEN)
+      product = ProductFunctions.create_new_product(token)
       new_product_data = http.request(product[0])
-      products = ProductFunctions.get_all_products(StaticData::TOKEN)
+      products = ProductFunctions.get_all_products(token)
       expect(products[JSON.parse(new_product_data.body)['product']['id']]['name']).to eq(JSON.parse(new_product_data.body)['product']['name'])
     end
   end
 
   describe 'Edit product' do
     it 'edit product after creating' do
-      product = ProductFunctions.create_new_product(StaticData::TOKEN)
+      product = ProductFunctions.create_new_product(token)
       product_name_for_updating = 30.times.map { StaticData::ALPHABET.sample }.join
       new_product_data = http.request(product[0])
       product_data = {id: JSON.parse(new_product_data.body)['product']['id'], name: product_name_for_updating}
-      request = ProductFunctions.update_product(StaticData::TOKEN, product_data)
+      request = ProductFunctions.update_product(token, product_data)
       response = http.request(request)
-      products = ProductFunctions.get_all_products(StaticData::TOKEN)
+      products = ProductFunctions.get_all_products(token)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
       expect(products[JSON.parse(new_product_data.body)['product']['id']]['name']).to eq(product_name_for_updating)

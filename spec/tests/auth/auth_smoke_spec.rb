@@ -30,8 +30,12 @@ describe 'Auth Smoke' do
       expect(response.code).to eq('401')
       expect(response.body).to eq('')
     end
-  end
 
+    it 'create user and get token' do
+      token = AuthFunctions.create_user_and_get_token
+      expect(token.nil?).to be_falsey
+    end
+  end
     #   it 'try login with uncorrect user_data' do
     #     request = Net::HTTP::Post.new('/login')
     #     email = 10.times.map { StaticData::ALPHABET.sample }.join + '@g.com'

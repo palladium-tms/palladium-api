@@ -1,14 +1,15 @@
 require_relative '../../tests/test_management'
-http, account = nil
+http, token = nil
 describe 'Status Smoke' do
   before :each do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
+    token = AuthFunctions.create_user_and_get_token
   end
 
   describe 'Create new status' do
     it 'check creating new status' do
       status_name = 30.times.map {StaticData::ALPHABET.sample }.join
-      request = StatusFunctions.create_new_status(token: StaticData::TOKEN, name: status_name)
+      request = StatusFunctions.create_new_status(token: token, name: status_name)
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
@@ -19,7 +20,7 @@ describe 'Status Smoke' do
     it 'check creating new status with color' do
       status_name = 30.times.map {StaticData::ALPHABET.sample }.join
       status_color = '#aaccbb'
-      request = StatusFunctions.create_new_status(token: StaticData::TOKEN, name: status_name, color: status_color)
+      request = StatusFunctions.create_new_status(token: token, name: status_name, color: status_color)
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
@@ -30,9 +31,9 @@ describe 'Status Smoke' do
     it 'check creating new status if it has created later' do
       status_name = 30.times.map {StaticData::ALPHABET.sample }.join
       status_color = '#aaccbb'
-      request = StatusFunctions.create_new_status(token: StaticData::TOKEN, name: status_name, color: status_color)
+      request = StatusFunctions.create_new_status(token: token, name: status_name, color: status_color)
       http.request(request)
-      request = StatusFunctions.create_new_status(token: StaticData::TOKEN, name: status_name, color: status_color)
+      request = StatusFunctions.create_new_status(token: token, name: status_name, color: status_color)
       response = http.request(request)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
@@ -42,9 +43,9 @@ describe 'Status Smoke' do
 
     it 'check block new status' do
       status_name = 30.times.map {StaticData::ALPHABET.sample }.join
-      request = StatusFunctions.create_new_status(token: StaticData::TOKEN, name: status_name)
+      request = StatusFunctions.create_new_status(token: token, name: status_name)
       status = JSON.parse(http.request(request).body)['status']
-      request = StatusFunctions.status_edit(token: StaticData::TOKEN, id: status['id'], block: true)
+      request = StatusFunctions.status_edit(token: token, id: status['id'], block: true)
       response = http.request(request)
       status =  JSON.parse(response.body)
       expect(response.code).to eq('200')
@@ -56,11 +57,11 @@ describe 'Status Smoke' do
 
     it 'check unblock new status' do
       status_name = 30.times.map {StaticData::ALPHABET.sample }.join
-      request = StatusFunctions.create_new_status(token: StaticData::TOKEN, name: status_name)
+      request = StatusFunctions.create_new_status(token: token, name: status_name)
       status = JSON.parse(http.request(request).body)['status']
-      request = StatusFunctions.status_edit(token: StaticData::TOKEN, id: status['id'], block: true)
+      request = StatusFunctions.status_edit(token: token, id: status['id'], block: true)
       http.request(request)
-      request = StatusFunctions.status_edit(token: StaticData::TOKEN, id: status['id'], block: false)
+      request = StatusFunctions.status_edit(token: token, id: status['id'], block: false)
       response = http.request(request)
       status =  JSON.parse(response.body)
       expect(response.code).to eq('200')
@@ -74,9 +75,9 @@ describe 'Status Smoke' do
     it 'check change name of status' do
       status_name = 30.times.map {StaticData::ALPHABET.sample }.join
       new_status_name = 30.times.map {StaticData::ALPHABET.sample }.join
-      request = StatusFunctions.create_new_status(token: StaticData::TOKEN, name: status_name)
+      request = StatusFunctions.create_new_status(token: token, name: status_name)
       status = JSON.parse(http.request(request).body)['status']
-      request = StatusFunctions.status_edit(token: StaticData::TOKEN, name: new_status_name, id: status['id'])
+      request = StatusFunctions.status_edit(token: token, name: new_status_name, id: status['id'])
       response = http.request(request)
       status =  JSON.parse(response.body)
       expect(response.code).to eq('200')
@@ -90,9 +91,9 @@ describe 'Status Smoke' do
   describe 'Statuses get all' do
     it 'check get all statuses after create' do
       status_name = 30.times.map {StaticData::ALPHABET.sample }.join
-      request = StatusFunctions.create_new_status(token: StaticData::TOKEN, name: status_name)
+      request = StatusFunctions.create_new_status(token: token, name: status_name)
       status = JSON.parse(http.request(request).body)['status']
-      statuses = StatusFunctions.get_all_statuses(StaticData::TOKEN)
+      statuses = StatusFunctions.get_all_statuses(token)
       expect(statuses.key?(status['id'].to_s)).to be_truthy
     end
   end
