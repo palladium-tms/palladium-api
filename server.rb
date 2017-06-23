@@ -23,7 +23,7 @@ class Api < Sinatra::Base
   post '/product_new' do
     process_request request, 'product_new' do |_req, _username|
       product = Product.create_new(params)
-      {'product' => product.values, "errors" => product.errors}.to_json
+      {product: product.values, errors: product.errors}.to_json
     end
   end
 
@@ -41,7 +41,7 @@ class Api < Sinatra::Base
       end
       content_type :json
       status 200
-      {'product': params['product_data']['id'], 'errors': errors}.to_json
+      {product: params['product_data']['id'], errors: errors}.to_json
     end
   end
   #endregion products
@@ -51,15 +51,16 @@ class Api < Sinatra::Base
     process_request request, 'plan_new' do |_req, _username|
       plan = Plan.create_new(params)
       status 422 unless plan.errors.empty?
-      {'plan': plan.values, 'errors': plan.errors}.to_json
+      {plan: plan.values, errors: plan.errors}.to_json
     end
   end
 
   post '/plans' do
     process_request request, 'plans' do |_req, _username|
       plans, errors = Product.get_plans(params['plan_data'])
+      plans = Product.add_statictic(plans)
       status 422 unless errors
-      {plans: plans.map(&:values), errors: errors}.to_json
+      { plans: plans, errors: errors }.to_json
     end
   end
 
@@ -77,7 +78,7 @@ class Api < Sinatra::Base
       if errors.empty?
         Plan[:id => params['plan_data']['id']].destroy
       end
-      {'plan': params['plan_data']['id'], 'errors': errors}.to_json
+      {plan: params['plan_data']['id'], errors: errors}.to_json
     end
   end
   #endregion plans
@@ -105,7 +106,7 @@ class Api < Sinatra::Base
       if errors.empty?
         Run[:id => params['run_data']['id']].destroy
       end
-      {'run': params['run_data']['id'], 'errors': errors}.to_json
+      {run: params['run_data']['id'], errors: errors}.to_json
     end
   end
 
@@ -123,7 +124,7 @@ class Api < Sinatra::Base
     process_request request, 'result_set_new' do |_req, _username|
       result_set = ResultSet.create_new(params)
       status 422 unless result_set.errors.empty?
-      {'result_set' => result_set.values, "errors" => result_set.errors}.to_json
+      {result_set: result_set.values, errors: result_set.errors}.to_json
     end
   end
 
@@ -143,7 +144,7 @@ class Api < Sinatra::Base
       rescue StandardError => e
         errors = e
       end
-      {'result_set': params['result_set_data'], 'errors': errors}.to_json
+      {result_set: params['result_set_data'], errors: errors}.to_json
     end
   end
 
@@ -161,10 +162,10 @@ class Api < Sinatra::Base
     process_request request, 'result_new' do |_req, _username|
       responce = Result.create_new(params)
       if responce[:errors].nil?
-        {'result': responce[:result].values}.to_json
+        {result: responce[:result].values}.to_json
       else
         status 422
-        {'errors': responce[:errors].values, 'run_id': responce[:run_id]}.to_json
+        {errors: responce[:errors].values, run_id: responce[:run_id]}.to_json
       end
     end
   end
@@ -183,7 +184,7 @@ class Api < Sinatra::Base
     process_request request, 'status_new' do |_req, _username|
       status = Status.create_new(params['status_data'])
       status 422 unless status.errors.empty?
-      {'status': status.values, 'errors': status.errors}.to_json
+      {status: status.values, errors: status.errors}.to_json
     end
   end
 
@@ -191,14 +192,14 @@ class Api < Sinatra::Base
     process_request request, 'status_edit' do |_req, _username|
       status = Status.edit(params['status_data'])
       status 422 unless status.errors.empty?
-      {'status': status.values, 'errors': status.errors}.to_json
+      {status: status.values, errors: status.errors}.to_json
     end
   end
 
   get '/statuses' do
     process_request request, 'statuses' do |_req, _username|
-      statuses = Status.where(block: false)
-      statuses_ids = statuses.select_map(:id)
+      statuses = Status.all
+      statuses_ids = statuses.map(&:id)
       {statuses: Hash[(statuses_ids).zip statuses.map(&:values)]}.to_json
     end
   end

@@ -53,4 +53,17 @@ class Product < Sequel::Model
       [[], 'Plan data is incorrect']
     end
   end
+
+  def self.get_statistic(plans)
+    ResultSet.where(:plan_id => plans.map(&:id)).group_and_count(:plan_id, :status).map(&:values).group_by do |e|
+      e[:plan_id]
+    end
+  end
+
+  def self.add_statictic(plans)
+    statistic = get_statistic(plans)
+    plans.map(&:values).map do |plan|
+      plan.merge!({statistic: statistic[plan[:id]]})
+    end
+  end
 end

@@ -34,6 +34,7 @@ DB.create_table? :result_sets do
   primary_key :id
   foreign_key :run_id, :runs
   String :name
+  Integer :plan_id
   Integer :status, default: 0
   DateTime :created_at
   DateTime :updated_at
