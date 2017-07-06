@@ -1,9 +1,8 @@
 class ResultSet < Sequel::Model
   many_to_one :run
-  one_to_many :results
+  many_to_many :results
   plugin :validation_helpers
   plugin :association_dependencies
-  self.add_association_dependencies :results=>:destroy
   self.raise_on_save_failure = false
   self.plugin :timestamps
 

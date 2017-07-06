@@ -163,7 +163,7 @@ class Api < Sinatra::Base
     process_request request, 'result_new' do |_req, _username|
       responce = Result.create_new(params)
       if responce[:errors].nil?
-        {result: responce[:result].values}.to_json
+        {result: responce[:result].values, result_set_id: responce[:result_set_id]}.to_json
       else
         status 422
         {errors: responce[:errors].values, run_id: responce[:run_id]}.to_json
