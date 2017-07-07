@@ -1,7 +1,7 @@
 require_relative '../../tests/test_management'
 http, result, token, result_set_id = nil
 describe 'Result Smoke' do
-  before :each do
+  before :all do
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
     token = AuthFunctions.create_user_and_get_token
   end
@@ -107,9 +107,40 @@ describe 'Result Smoke' do
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
       expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
-      expect(JSON.parse(response.body)['result']['result_set_id']).to eq(result_set_id)
+      expect(JSON.parse(response.body)['result_set_id']).to eq([result_set_id])
+    end
+
+    # You can send array of result_sets for create this result for every this result_sets
+    it '6. Create result from multiple creator' do
+      run_name, result_set_name, message = Array.new(5).map { 30.times.map {StaticData::ALPHABET.sample}.join}
+      product = ProductFunctions.create_new_product(token)
+      product_id = JSON.parse(http.request(product[0]).body)['product']['id']
+
+      plan = PlanFunctions.create_new_plan(token: token, product_id: product_id)
+      plan_id = JSON.parse(http.request(plan[0]).body)['plan']['id']
+
+      run = RunFunctions.create_new_run(token: token, plan_id: plan_id, run_name: run_name)
+      run_id = JSON.parse(http.request(run[0]).body)['run']['id']
+
+      result_set_array = (1..3).to_a.map { |iterator|
+        request = ResultSetFunctions.create_new_result_set(token: token,
+                                                           run_id: run_id,
+                                                           result_set_name: result_set_name + iterator.to_s)
+        JSON.parse(http.request(request[0]).body)['result_set']['id']
+      }
+
+      request = ResultFunctions.create_new_result(token: token,
+                                                  result_set_id: result_set_array,
+                                                  message: message,
+                                                  status: 'Passed')
+      response = http.request(request)
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
+      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
+      expect(JSON.parse(response.body)['result_set_id']).to eq(result_set_array)
     end
   end
+
 
   describe 'Get results' do
     before :each do

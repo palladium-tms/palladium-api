@@ -141,7 +141,9 @@ class Api < Sinatra::Base
     process_request request, 'result_set_delete' do |_req, _username|
       errors = []
       begin
-        ResultSet[:id => params['result_set_data']['id']].destroy
+        result_set_id = params['result_set_data']['id']
+        ResultSet[id: result_set_id].remove_all_results
+        ResultSet[id: result_set_id].delete
       rescue StandardError => e
         errors = e
       end
@@ -163,7 +165,7 @@ class Api < Sinatra::Base
     process_request request, 'result_new' do |_req, _username|
       responce = Result.create_new(params)
       if responce[:errors].nil?
-        {result: responce[:result].values}.to_json
+        {result: responce[:result].values, result_set_id: responce[:result_set_id]}.to_json
       else
         status 422
         {errors: responce[:errors].values, run_id: responce[:run_id]}.to_json

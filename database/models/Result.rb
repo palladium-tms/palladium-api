@@ -1,5 +1,5 @@
 class Result < Sequel::Model
-  many_to_one :result_sets
+  many_to_many :result_sets
   plugin :validation_helpers
   self.raise_on_save_failure = false
   self.plugin :timestamps
@@ -17,16 +17,19 @@ class Result < Sequel::Model
     result_set = ResultSet.create_new(data)
     data['result_data']['result_set_id'] = result_set.id
     data['run_id'] = result_set.run_id
-    data
+    [data, [result_set]]
   end
 
   def self.create_new(data)
     errors = data_valid?(data)
     return {errors: errors} unless errors.nil?
     if data['result_data']['result_set_id'].nil?
-      data = get_result_and_run_id(data)
+      data, result_set = get_result_and_run_id(data)
+    else
+      result_set = ResultSet.where(id: data['result_data']['result_set_id'])
+      data['run_id'] = result_set.select_map(:run_id)
+      data['result_set_id'] = result_set.select_map(:id)
     end
-
     begin
       result = Result.create(message:  data['result_data']['message'])
       if Status[name: data['result_data']['status']].nil?
@@ -38,9 +41,10 @@ class Result < Sequel::Model
     rescue StandardError
       {errors: result.errors, result: result}
     end
-    result_set = ResultSet[id: data['result_data']['result_set_id']]
-    result_set.add_result(result)
-    result_set.update(status: result.status_id) unless result.status_id.nil?
-    {result: result, run_id: data['run_id']}
+    result_set.each do |current_result_set|
+      current_result_set.add_result(result)
+      current_result_set.update(status: result.status_id) unless result.status_id.nil?
+    end
+    {result: result, run_id: data['run_id'], result_set_id: data['result_set_id'] }
   end
 end

@@ -42,10 +42,15 @@ end
 
 DB.create_table? :results do
   primary_key :id
-  foreign_key :result_set_id, :result_sets
   foreign_key :status_id, :statuses
   String :message
   DateTime :created_at
+end
+
+DB.create_table? :result_sets_results do
+  primary_key :id
+  foreign_key :result_id, :results
+  foreign_key :result_set_id, :result_sets
 end
 
 DB.create_table? :statuses do
