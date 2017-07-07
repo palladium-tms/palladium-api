@@ -2,7 +2,6 @@ class ResultSet < Sequel::Model
   many_to_one :run
   many_to_many :results
   plugin :validation_helpers
-  plugin :association_dependencies
   self.raise_on_save_failure = false
   self.plugin :timestamps
 

@@ -141,7 +141,9 @@ class Api < Sinatra::Base
     process_request request, 'result_set_delete' do |_req, _username|
       errors = []
       begin
-        ResultSet[:id => params['result_set_data']['id']].destroy
+        result_set_id = params['result_set_data']['id']
+        ResultSet[id: result_set_id].remove_all_results
+        ResultSet[id: result_set_id].delete
       rescue StandardError => e
         errors = e
       end
