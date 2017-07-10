@@ -1,7 +1,7 @@
 
 class StaticData
   ADDRESS = '0.0.0.0'
-  PORT = 3000
+  PORT = 8080
   MAINPAGE = "http://#{ADDRESS}:#{PORT}"
 
   ALPHABET = ('a'..'z').to_a

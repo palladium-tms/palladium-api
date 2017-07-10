@@ -1,5 +1,7 @@
 require_relative '../management'
-DB = Sequel.connect('sqlite://palladium.db') # requires sqlite3
+require 'yaml'
+sleep 10 # FIXME: need to add wait for database available
+DB = Sequel.connect(YAML.load_file('config/sequel.yml')[Sinatra::Application.environment])
 
 DB.create_table? :users do
   primary_key :id
@@ -40,6 +42,13 @@ DB.create_table? :result_sets do
   DateTime :updated_at
 end
 
+DB.create_table? :statuses do
+  primary_key :id
+  String :name
+  Boolean :block, default: false
+  String :color, default: '#ffffff'
+end
+
 DB.create_table? :results do
   primary_key :id
   foreign_key :status_id, :statuses
@@ -51,11 +60,4 @@ DB.create_table? :result_sets_results do
   primary_key :id
   foreign_key :result_id, :results
   foreign_key :result_set_id, :result_sets
-end
-
-DB.create_table? :statuses do
-  primary_key :id
-  String :name
-  Boolean :block, default: false
-  String :color, default: '#ffffff'
 end
