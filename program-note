@@ -1,5 +1,3 @@
-JWT_SECRET=someawesomesecret JWT_ISSUER=someawesomesecret rackup
-puma #for run app with config (like production)
-shotgun server.rb # debug (streaming is not work)
-200 - all right
-201 - pass is uncorrect
+JWT_SECRET=someawesomesecret JWT_ISSUER=someawesomesecret puma
+docker run --name db -itd postgres
+ docker run --name server --link db:postgres -itd -p 80:80 palladium_image_id puma

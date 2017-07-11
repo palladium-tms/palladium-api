@@ -1,0 +1,5 @@
+  :development:
+    adapter: postgres
+    database: postgres
+    username: postgres
+    host: db

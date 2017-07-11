@@ -1,8 +1,8 @@
 require 'sinatra'
 require 'sequel'
-require 'sqlite3'
 require 'json'
 require 'jwt'
+require 'pg'
 require 'sinatra/cross_origin'
 require_relative 'database/database'
 

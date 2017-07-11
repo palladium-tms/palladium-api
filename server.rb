@@ -1,6 +1,5 @@
 require_relative 'management'
 class Api < Sinatra::Base
-  # include Auth
   register Sinatra::CrossOrigin
   use JwtAuth
 
@@ -209,7 +208,6 @@ class Api < Sinatra::Base
     end
   end
   #endregion
-
 
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user

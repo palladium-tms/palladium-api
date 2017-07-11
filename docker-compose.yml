@@ -1,0 +1,15 @@
+version: '2'
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+  server:
+    build: .
+    command: ["puma"]
+    volumes:
+      - .:/palladium
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
