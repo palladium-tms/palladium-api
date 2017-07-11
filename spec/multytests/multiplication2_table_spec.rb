@@ -1,6 +1,6 @@
 require 'net/http'
 require 'json'
-TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTgyMzI0MTYsImlhdCI6MTQ5ODIyODgxNiwiaXNzIjoic2FkYXNkYXNmcmdhd2U0cndlciIsInNjb3BlcyI6WyJwcm9kdWN0cyIsInByb2R1Y3RfbmV3IiwicHJvZHVjdF9kZWxldGUiLCJwcm9kdWN0X2VkaXQiLCJwbGFuX25ldyIsInBsYW5zIiwicGxhbl9lZGl0IiwicGxhbl9kZWxldGUiLCJydW5fbmV3IiwicnVucyIsInJ1bl9kZWxldGUiLCJydW5fZWRpdCIsInJlc3VsdF9zZXRfbmV3IiwicmVzdWx0X3NldHMiLCJyZXN1bHRfc2V0X2RlbGV0ZSIsInJlc3VsdF9zZXRfZWRpdCIsInJlc3VsdF9uZXciLCJyZXN1bHRzIiwic3RhdHVzX25ldyIsInN0YXR1c2VzIiwic3RhdHVzX2VkaXQiXSwidXNlciI6eyJlbWFpbCI6IjFAZy5jb20ifX0.6XXkp0uAwin8WSur_gopNr-oYntFS5vOCo44xN-PBk0'
+TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk3MDcyMTUsImlhdCI6MTQ5OTcwMzYxNSwiaXNzIjoic29tZWF3ZXNvbWVzZWNyZXQiLCJzY29wZXMiOlsicHJvZHVjdHMiLCJwcm9kdWN0X25ldyIsInByb2R1Y3RfZGVsZXRlIiwicHJvZHVjdF9lZGl0IiwicGxhbl9uZXciLCJwbGFucyIsInBsYW5fZWRpdCIsInBsYW5fZGVsZXRlIiwicnVuX25ldyIsInJ1bnMiLCJydW5fZGVsZXRlIiwicnVuX2VkaXQiLCJyZXN1bHRfc2V0X25ldyIsInJlc3VsdF9zZXRzIiwicmVzdWx0X3NldF9kZWxldGUiLCJyZXN1bHRfc2V0X2VkaXQiLCJyZXN1bHRfbmV3IiwicmVzdWx0cyIsInN0YXR1c19uZXciLCJzdGF0dXNlcyIsInN0YXR1c19lZGl0Il0sInVzZXIiOnsiZW1haWwiOiIxQGcuY29tIn19._FgmO44_BRYfYagCpMQfjBbr1LOFgLMXgk1Tyv1nr74'
 class Palladium
   def initialize(*args)
     @http = Net::HTTP.new(args.first[:auth][:host], args.first[:auth][:port])
@@ -48,7 +48,7 @@ $j = 0
   1.times do |j|
 plan = "v.9_#{0}.#{0}"
     run = File.basename(__FILE__, '_spec.rb')
-    auth = {host: '0.0.0.0', port: '9292', token: TOKEN}
+    auth = {host: '0.0.0.0', port: '8080', token: TOKEN}
     palladium = Palladium.new({:product => product,
                                :plan => plan,
                                :run => run,
