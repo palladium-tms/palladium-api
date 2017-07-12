@@ -10,4 +10,5 @@ gem 'pg'
 group :test, :development do
   gem 'rspec'
   gem 'rubocop'
+  gem 'palladium-ruby', git: 'https://github.com/flaminestone/palladium-ruby.git'
 end
