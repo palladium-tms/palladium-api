@@ -9,7 +9,7 @@ class User < Sequel::Model
   end
 
   def self.create_new(data)
-    user = self.new(:email => data['email'], :password => Encrypt.encrypt(data['password']))
+    user = new(email: data['email'], password: Encrypt.encrypt(data['password']))
     user.errors.add(:password, 'password is uncorrent') if /^[a-zA-Z0-9]{6,20}$/.match(data[:password]).nil?
     user
   end

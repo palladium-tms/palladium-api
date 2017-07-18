@@ -2,7 +2,7 @@ require_relative '../../management'
 
 module Auth
   def authenticate(email, password)
-    current_user = User.find(:email => email)
+    current_user = User.find(email: email)
     return false if current_user.nil?
     if Encrypt.encrypt(password) == current_user.password
       return true

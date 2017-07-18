@@ -8,7 +8,7 @@ describe 'Result Set Smoke' do
 
   describe 'Create new result_sets' do
     it '1. Create product, plan, run and result set in one time' do
-      product_name, plan_name, run_name, result_set_name = Array.new(4).map { 30.times.map {StaticData::ALPHABET.sample}.join}
+      product_name, plan_name, run_name, result_set_name = Array.new(4).map { Array.new(30) { StaticData::ALPHABET.sample }.join }
       request = ResultSetFunctions.create_new_result_set(token: token,
                                                          plan_name: plan_name,
                                                          run_name: run_name,
@@ -20,7 +20,7 @@ describe 'Result Set Smoke' do
     end
 
     it '2. Create plan, run and result set in one time' do
-      plan_name, run_name, result_set_name = Array.new(4).map { 30.times.map {StaticData::ALPHABET.sample}.join}
+      plan_name, run_name, result_set_name = Array.new(4).map { Array.new(30) { StaticData::ALPHABET.sample }.join }
       product = ProductFunctions.create_new_product(token)
       product_id = JSON.parse(http.request(product[0]).body)['product']['id']
       request = ResultSetFunctions.create_new_result_set(token: token,
@@ -34,7 +34,7 @@ describe 'Result Set Smoke' do
     end
 
     it '3. Create run and result set in one time' do
-      run_name, result_set_name = Array.new(4).map { 30.times.map {StaticData::ALPHABET.sample}.join}
+      run_name, result_set_name = Array.new(4).map { Array.new(30) { StaticData::ALPHABET.sample }.join }
       product = ProductFunctions.create_new_product(token)
       product_id = JSON.parse(http.request(product[0]).body)['product']['id']
 
@@ -50,7 +50,7 @@ describe 'Result Set Smoke' do
     end
 
     it '4. Create result set in one time' do
-      run_name, result_set_name = Array.new(4).map { 30.times.map {StaticData::ALPHABET.sample}.join}
+      run_name, result_set_name = Array.new(4).map { Array.new(30) { StaticData::ALPHABET.sample }.join }
       product = ProductFunctions.create_new_product(token)
       product_id = JSON.parse(http.request(product[0]).body)['product']['id']
       plan = PlanFunctions.create_new_plan(token: token, product_id: product_id)
@@ -68,19 +68,19 @@ describe 'Result Set Smoke' do
 
   describe 'Show result_set' do
     before :each do
-      product_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      product_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = ProductFunctions.create_new_product(token, product_name)[0]
       product_id = JSON.parse(http.request(request).body)['product']['id']
 
-      plan_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      plan_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = PlanFunctions.create_new_plan(token: token, product_id: product_id, plan_name: plan_name)[0]
       plan_id = JSON.parse(http.request(request).body)['plan']['id']
 
-      run_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      run_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = RunFunctions.create_new_run(token: token, plan_id: plan_id, run_name: run_name)
       run_id = JSON.parse(http.request(request[0]).body)['run']['id']
 
-      result_set_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      result_set_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = ResultSetFunctions.create_new_result_set(token: token,
                                                          run_id: run_id,
                                                          result_set_name: result_set_name)
@@ -98,19 +98,19 @@ describe 'Result Set Smoke' do
 
   describe 'Delete result_set' do
     before :each do
-      product_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      product_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = ProductFunctions.create_new_product(token, product_name)[0]
       product_id = JSON.parse(http.request(request).body)['product']['id']
 
-      plan_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      plan_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = PlanFunctions.create_new_plan(token: token, product_id: product_id, plan_name: plan_name)[0]
       plan_id = JSON.parse(http.request(request).body)['plan']['id']
 
-      run_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      run_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = RunFunctions.create_new_run(token: token, plan_id: plan_id, run_name: run_name)
       run_id = JSON.parse(http.request(request[0]).body)['run']['id']
 
-      result_set_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      result_set_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = ResultSetFunctions.create_new_result_set(token: token,
                                                          run_id: run_id,
                                                          result_set_name: result_set_name)
@@ -129,19 +129,19 @@ describe 'Result Set Smoke' do
 
   describe 'Edit result_set' do
     before :each do
-      product_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      product_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = ProductFunctions.create_new_product(token, product_name)[0]
       product_id = JSON.parse(http.request(request).body)['product']['id']
 
-      plan_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      plan_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = PlanFunctions.create_new_plan(token: token, product_id: product_id, plan_name: plan_name)[0]
       plan_id = JSON.parse(http.request(request).body)['plan']['id']
 
-      run_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      run_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = RunFunctions.create_new_run(token: token, plan_id: plan_id, run_name: run_name)
       run_id = JSON.parse(http.request(request[0]).body)['run']['id']
 
-      result_set_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      result_set_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = ResultSetFunctions.create_new_result_set(token: token,
                                                          run_id: run_id,
                                                          result_set_name: result_set_name)
@@ -149,14 +149,14 @@ describe 'Result Set Smoke' do
     end
 
     it 'Edit result set' do
-      new_result_set_name = 30.times.map {StaticData::ALPHABET.sample}.join
+      new_result_set_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = ResultSetFunctions.update_result_set(token: token, id: result_set_id, name: new_result_set_name)
       result_set = JSON.parse(http.request(request).body)['result_set_data']
       expect(result_set['id']).to eq(result_set_id)
       expect(result_set['name']).to eq(new_result_set_name)
       request = ResultSetFunctions.get_result_sets(token: token, id: run_id)
       result = JSON.parse(http.request(request).body)
-      expect(result['result_sets'].first['name']).to  eq(new_result_set_name)
+      expect(result['result_sets'].first['name']).to eq(new_result_set_name)
     end
   end
 end

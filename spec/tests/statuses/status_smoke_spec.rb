@@ -8,7 +8,7 @@ describe 'Status Smoke' do
 
   describe 'Create new status' do
     it 'check creating new status' do
-      status_name = 30.times.map {StaticData::ALPHABET.sample }.join
+      status_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = StatusFunctions.create_new_status(token: token, name: status_name)
       response = http.request(request)
       expect(response.code).to eq('200')
@@ -18,7 +18,7 @@ describe 'Status Smoke' do
     end
 
     it 'check creating new status with color' do
-      status_name = 30.times.map {StaticData::ALPHABET.sample }.join
+      status_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       status_color = '#aaccbb'
       request = StatusFunctions.create_new_status(token: token, name: status_name, color: status_color)
       response = http.request(request)
@@ -29,7 +29,7 @@ describe 'Status Smoke' do
     end
 
     it 'check creating new status if it has created later' do
-      status_name = 30.times.map {StaticData::ALPHABET.sample }.join
+      status_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       status_color = '#aaccbb'
       request = StatusFunctions.create_new_status(token: token, name: status_name, color: status_color)
       http.request(request)
@@ -42,12 +42,12 @@ describe 'Status Smoke' do
     end
 
     it 'check block new status' do
-      status_name = 30.times.map {StaticData::ALPHABET.sample }.join
+      status_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = StatusFunctions.create_new_status(token: token, name: status_name)
       status = JSON.parse(http.request(request).body)['status']
       request = StatusFunctions.status_edit(token: token, id: status['id'], block: true)
       response = http.request(request)
-      status =  JSON.parse(response.body)
+      status = JSON.parse(response.body)
       expect(response.code).to eq('200')
       expect(status['errors'].empty?).to be_truthy
       expect(status['status']['name']).to eq(status_name)
@@ -56,14 +56,14 @@ describe 'Status Smoke' do
     end
 
     it 'check unblock new status' do
-      status_name = 30.times.map {StaticData::ALPHABET.sample }.join
+      status_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = StatusFunctions.create_new_status(token: token, name: status_name)
       status = JSON.parse(http.request(request).body)['status']
       request = StatusFunctions.status_edit(token: token, id: status['id'], block: true)
       http.request(request)
       request = StatusFunctions.status_edit(token: token, id: status['id'], block: false)
       response = http.request(request)
-      status =  JSON.parse(response.body)
+      status = JSON.parse(response.body)
       expect(response.code).to eq('200')
       expect(status['errors'].empty?).to be_truthy
       expect(status['status']['name']).to eq(status_name)
@@ -71,15 +71,14 @@ describe 'Status Smoke' do
       expect(status['status']['color']).to eq(DefaultValues::DEFAULT_STATUS_COLOR)
     end
 
-
     it 'check change name of status' do
-      status_name = 30.times.map {StaticData::ALPHABET.sample }.join
-      new_status_name = 30.times.map {StaticData::ALPHABET.sample }.join
+      status_name = Array.new(30) { StaticData::ALPHABET.sample }.join
+      new_status_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = StatusFunctions.create_new_status(token: token, name: status_name)
       status = JSON.parse(http.request(request).body)['status']
       request = StatusFunctions.status_edit(token: token, name: new_status_name, id: status['id'])
       response = http.request(request)
-      status =  JSON.parse(response.body)
+      status = JSON.parse(response.body)
       expect(response.code).to eq('200')
       expect(status['errors'].empty?).to be_truthy
       expect(status['status']['name']).to eq(new_status_name)
@@ -90,7 +89,7 @@ describe 'Status Smoke' do
 
   describe 'Statuses get all' do
     it 'check get all statuses after create' do
-      status_name = 30.times.map {StaticData::ALPHABET.sample }.join
+      status_name = Array.new(30) { StaticData::ALPHABET.sample }.join
       request = StatusFunctions.create_new_status(token: token, name: status_name)
       status = JSON.parse(http.request(request).body)['status']
       statuses = StatusFunctions.get_all_statuses(token)
