@@ -1,5 +1,5 @@
 require 'palladium'
-TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0OTk4Nzk1NTcsImlhdCI6MTQ5OTg3NTk1NywiaXNzIjoic29tZWF3ZXNvbWVzZWNyZXQiLCJzY29wZXMiOlsicHJvZHVjdHMiLCJwcm9kdWN0X25ldyIsInByb2R1Y3RfZGVsZXRlIiwicHJvZHVjdF9lZGl0IiwicGxhbl9uZXciLCJwbGFucyIsInBsYW5fZWRpdCIsInBsYW5fZGVsZXRlIiwicnVuX25ldyIsInJ1bnMiLCJydW5fZGVsZXRlIiwicnVuX2VkaXQiLCJyZXN1bHRfc2V0X25ldyIsInJlc3VsdF9zZXRzIiwicmVzdWx0X3NldF9kZWxldGUiLCJyZXN1bHRfc2V0X2VkaXQiLCJyZXN1bHRfbmV3IiwicmVzdWx0cyIsInN0YXR1c19uZXciLCJzdGF0dXNlcyIsInN0YXR1c19lZGl0Il0sInVzZXIiOnsiZW1haWwiOiIxQGcuY29tIn19.UOJaW-1le-Et8gGKLbeG9b2ZcoJBWJjVlPoWPgUsWio'
+TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MDAzODQyMTYsImlhdCI6MTUwMDM4MDYxNiwiaXNzIjoic29tZWF3ZXNvbWVzZWNyZXQiLCJzY29wZXMiOlsicHJvZHVjdHMiLCJwcm9kdWN0X25ldyIsInByb2R1Y3RfZGVsZXRlIiwicHJvZHVjdF9lZGl0IiwicGxhbl9uZXciLCJwbGFucyIsInBsYW5fZWRpdCIsInBsYW5fZGVsZXRlIiwicnVuX25ldyIsInJ1bnMiLCJydW5fZGVsZXRlIiwicnVuX2VkaXQiLCJyZXN1bHRfc2V0X25ldyIsInJlc3VsdF9zZXRzIiwicmVzdWx0X3NldF9kZWxldGUiLCJyZXN1bHRfc2V0X2VkaXQiLCJyZXN1bHRfbmV3IiwicmVzdWx0cyIsInN0YXR1c19uZXciLCJzdGF0dXNlcyIsInN0YXR1c19lZGl0Il0sInVzZXIiOnsiZW1haWwiOiIxQGcuY29tIn19.fgOGDbqmYFDYSyQIKZ_InSR9Iyb4qnNDkXCvuKxpyEU'.freeze
 product_count = 1
 plan_count = 1
 product_count.times do |product_iterator|
@@ -15,7 +15,7 @@ product_count.times do |product_iterator|
     1.times do
       40.times do |c|
         describe 'Tests' do
-          it "1*1+c" do
+          it '1*1+c' do
             true
           end
           it "1*2+#{c}" do
@@ -43,11 +43,11 @@ product_count.times do |product_iterator|
             true
           end
           after :each do |example|
-            palladium.set_result(status:'Passed', description:'Not right', name: example.metadata[:description])
+            a = palladium.set_result(status: 'True', description: 'Not right', name: example.metadata[:description])
+            p
           end
         end
       end
     end
   end
 end
-
