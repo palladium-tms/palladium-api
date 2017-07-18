@@ -8,13 +8,13 @@ class AuthFunctions
     email = 10.times.map { StaticData::ALPHABET.sample }.join + '@g.com' if email.nil?
     password = 7.times.map { StaticData::ALPHABET.sample }.join if password.nil?
     request = Net::HTTP::Post.new('/registration', 'Content-Type' => 'application/json')
-    request.set_form_data({"user_data[email]": email, "user_data[password]": password})
+    request.set_form_data({'user_data[email]': email, 'user_data[password]': password})
     [request, { email: email, password: password }]
   end
 
   def self.login(user_data)
     request = Net::HTTP::Post.new('/login', 'Content-Type' => 'application/json')
-    request.set_form_data({"user_data[email]": user_data[:email], "user_data[password]": user_data[:password]})
+    request.set_form_data({'user_data[email]': user_data[:email], 'user_data[password]': user_data[:password]})
     request
   end
 
@@ -24,10 +24,10 @@ class AuthFunctions
     email ||= 10.times.map { StaticData::ALPHABET.sample }.join + '@g.com'
     password ||= 7.times.map { StaticData::ALPHABET.sample }.join
     request = Net::HTTP::Post.new('/registration', 'Content-Type' => 'application/json')
-    request.set_form_data({"user_data[email]": email, "user_data[password]": password})
+    request.set_form_data({'user_data[email]': email, 'user_data[password]': password})
     http.request(request)
     request = Net::HTTP::Post.new('/login', 'Content-Type' => 'application/json')
-    request.set_form_data({"user_data[email]": email, "user_data[password]": password})
+    request.set_form_data({'user_data[email]': email, 'user_data[password]': password})
     JSON.parse(http.request(request).body)['token']
   end
 end
