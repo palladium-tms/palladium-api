@@ -234,6 +234,10 @@ class Public < Sinatra::Base
     erb :login
   end
 
+  get '/up' do
+    erb :up
+  end
+
   get '/registration' do
     erb :registration
   end
