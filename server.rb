@@ -249,19 +249,16 @@ class Public < Sinatra::Base
   end
 
   post '/registration' do
+    cross_origin
     new_user = User.create_new(user_data)
     begin
-      new_user.save if new_user.errors.empty?
+      new_user.save
     rescue
     end
-    if new_user.errors.empty?
-      session[:user] = user_data['email']
-      status 200
-    else
-      status 201
-      content_type :json
-      new_user.errors.to_json
-    end
+    content_type :json
+    status 200
+    halt 401 unless new_user.errors.empty?
+    {email: user_data['email'], errors: new_user.errors}.to_json
   end
 
   def user_data
