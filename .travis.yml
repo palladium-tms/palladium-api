@@ -8,7 +8,7 @@ services:
 before_install:
               - docker build . -t palladium
               - docker run --name db -itd postgres
-              - docker run --name server --link db:postgres -itd -p 8080:8080 palladium puma
+              - docker run --name server --link db:postgres -itd -p 80:80 palladium puma
 
 install:
         - bundle install
