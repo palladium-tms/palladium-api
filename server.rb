@@ -76,7 +76,10 @@ class Api < Sinatra::Base
   post '/plan_delete' do
     process_request request, 'plan_delete' do |_req, _username|
       errors = Plan.plan_id_validation(params['plan_data']['id'])
-      Plan[id: params['plan_data']['id']].destroy if errors.empty?
+     if errors.empty?
+       Plan[id: params['plan_data']['id']].remove_all_runs
+       Plan[id: params['plan_data']['id']].delete
+     end
       { plan: params['plan_data']['id'], errors: errors }.to_json
     end
   end
@@ -103,7 +106,10 @@ class Api < Sinatra::Base
   post '/run_delete' do
     process_request request, 'run_delete' do |_req, _username|
       errors = Run.run_id_validation(params['run_data']['id'])
-      Run[id: params['run_data']['id']].destroy if errors.empty?
+     if errors.empty?
+       Run[id: params['run_data']['id']].remove_all_result_sets
+       Run[id: params['run_data']['id']].destroy
+     end
       { run: params['run_data']['id'], errors: errors }.to_json
     end
   end
@@ -200,6 +206,7 @@ class Api < Sinatra::Base
     process_request request, 'statuses' do |_req, _username|
       statuses = Status.all
       statuses_ids = statuses.map(&:id)
+      # sleep 2
       { statuses: Hash[statuses_ids.zip statuses.map(&:values)] }.to_json
     end
   end
@@ -273,7 +280,7 @@ class Public < Sinatra::Base
 
   def payload(email)
     {
-      exp: Time.now.to_i + 60 * 60,
+      exp: Time.now.to_i + 60 * 600,
       iat: Time.now.to_i,
       iss: ENV['JWT_ISSUER'],
       scopes: %w[products product_new product_delete product_edit
