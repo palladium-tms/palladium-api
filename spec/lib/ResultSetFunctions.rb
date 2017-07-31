@@ -7,11 +7,10 @@ class ResultSetFunctions
   # and belongs to plan with id = int
   # {result_set_name: 'str', run_name: 'str', plan_name: 'str', product_id: int} - create result_set, run and plan
   # {result_set_name: 'str', run_name: 'str', plan_name: 'str', product_name: 'str'} - create result_set, run and plan
-  def self.create_new_result_set(*args)
-    args.first[:result_set_name] ||= 30.times.map { StaticData::ALPHABET.sample }.join
-    request = Net::HTTP::Post.new('/api/result_set_new', 'Authorization' => args.first[:token])
-    request.set_form_data(get_params(args.first))
-    [request, args.first[:result_set_name] ]
+  def self.create_new_result_set(http, options = {})
+    options[:result_set_name] ||= http.random_name
+    response = http.post_request('/api/result_set_new', get_params(options))
+    [response, options[:result_set_name]  ]
   end
 
   def self.get_params(param)
@@ -29,21 +28,19 @@ class ResultSetFunctions
     params
   end
 
-  def self.get_result_sets(*args)
-    request = Net::HTTP::Post.new('/api/result_sets', 'Authorization' => args.first[:token])
-    request.set_form_data(  {"result_set_data[run_id]": args.first[:id]})
-    request
+  def self.get_result_sets(http, options = {})
+    http.post_request('/api/result_sets', {"result_set_data[run_id]": options[:id]} )
   end
 
-  def self.delete_result_set(*args)
-    request = Net::HTTP::Post.new('/api/result_set_delete', 'Authorization' => args.first[:token])
-    request.set_form_data(  {"result_set_data[id]": args.first[:id]})
-    request
+  def self.get_result_set(http, options = {})
+    http.post_request('/api/result_set', {"result_set_data[id]": options[:id]} )
   end
 
-  def self.update_result_set(*args)
-    request = Net::HTTP::Post.new('/api/result_set_edit', 'Authorization' => args.first[:token])
-    request.set_form_data({"result_set_data[id]": args.first[:id], "result_set_data[result_set_name]": args.first[:name]})
-    request
+  def self.delete_result_set(http, option = {})
+    http.post_request('/api/result_set_delete', {"result_set_data[id]": option[:id]})
+  end
+
+  def self.update_result_set(http, options = {})
+    http.post_request('/api/result_set_edit', {"result_set_data[id]": options[:id], "result_set_data[result_set_name]": options[:name]})
   end
 end

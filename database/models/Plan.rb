@@ -50,6 +50,7 @@ class Plan < Sequel::Model
     Product[id: data['plan_data']['product_id']].add_plan(plan)
   end
 
+  # @param data [Hash] like {'plan_data' => {id: int, plan_name: str}}
   def self.edit(data)
     begin
       plan = Plan[:id => data['plan_data']['id']]

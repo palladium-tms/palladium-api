@@ -10,14 +10,14 @@ class Status < Sequel::Model
   end
 
   def self.create_new(data)
-    if Status[name: data['status_name']].nil?
-      params = { name: data['status_name'] }
-      params[:color] = data['status_color'] unless data['status_color'].nil?
+    if Status[name: data['name']].nil?
+      params = { name: data['name'] }
+      params[:color] = data['color'] unless data['color'].nil?
       status = new(params)
       status.save if status.valid?
       status # TODO: it needed?
     else
-      Status[name: data['status_name']].unblock!
+      Status[name: data['name']].unblock!
     end
   end
 

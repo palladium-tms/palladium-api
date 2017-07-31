@@ -10,5 +10,6 @@ require_relative '../lib/ResultSetFunctions'
 require_relative '../lib/ResultFunctions'
 require_relative '../lib/StatusFunctions'
 require_relative '../lib/AuthFunctions'
+require_relative '../../spec/lib/ObjectWrap/http'
 class TestManagement
 end

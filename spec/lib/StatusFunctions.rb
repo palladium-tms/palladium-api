@@ -3,28 +3,16 @@ require 'json'
 class StatusFunctions
   # @param [Hash] args must has 'result_data[result_set_id_id]' with result_set id, and can has result_data[message] with hash of messages (or will be generate
   # random message). example: {"result_data[result_set_id_id]" => int, "result_data[message]" => hash }
-  def self.create_new_status(*args)
-    request = Net::HTTP::Post.new('/api/status_new', 'Authorization' => args.first[:token])
-    params = {'status_data[status_name]': args.first[:name]}
-    params.merge!('status_data[status_color]': args.first[:color]) if args.first[:color]
-    request.set_form_data(params)
-    request
+  def self.create_new_status(http, options = {})
+    http.post_request('/api/status_new', params(options))
   end
 
-  def self.get_all_statuses(token)
-    url = URI.parse(StaticData::MAINPAGE + '/api/statuses')
-    req = Net::HTTP::Get.new(url.path)
-    req[:Authorization] = token
-    res = Net::HTTP.new(url.host, url.port).start do |http|
-      http.request(req)
-    end
-    JSON.parse(res.body)['statuses']
+  def self.get_all_statuses(http)
+    http.post_request('/api/statuses')
   end
 
-  def self.status_edit(*args)
-    request = Net::HTTP::Post.new('/api/status_edit', 'Authorization' => args.first[:token])
-    request.set_form_data(params(args.first))
-    request
+  def self.status_edit(http, options = {})
+    http.post_request('/api/status_edit', params(options))
   end
 
   def self.params(param)

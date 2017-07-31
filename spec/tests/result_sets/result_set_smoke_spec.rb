@@ -2,161 +2,106 @@ require_relative '../../tests/test_management'
 http, run_id, result_set, result_set_id, token = nil
 describe 'Result Set Smoke' do
   before :each do
-    http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
-    token = AuthFunctions.create_user_and_get_token
+    http = Http.new(token: AuthFunctions.create_user_and_get_token)
   end
 
   describe 'Create new result_sets' do
     it '1. Create product, plan, run and result set in one time' do
-      product_name, plan_name, run_name, result_set_name = Array.new(4).map { Array.new(30) { StaticData::ALPHABET.sample }.join }
-      request = ResultSetFunctions.create_new_result_set(token: token,
-                                                         plan_name: plan_name,
+      product_name, plan_name, run_name, result_set_name = Array.new(4).map { http.random_name }
+      responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, { plan_name: plan_name,
                                                          run_name: run_name,
                                                          product_name: product_name,
-                                                         result_set_name: result_set_name)
-      responce = JSON.parse(http.request(request[0]).body)
+                                                         result_set_name: result_set_name})[0].body)
       expect(responce['errors']).to be_empty
       expect(responce['result_set']['name']).to eq(result_set_name)
     end
 
     it '2. Create plan, run and result set in one time' do
-      plan_name, run_name, result_set_name = Array.new(4).map { Array.new(30) { StaticData::ALPHABET.sample }.join }
-      product = ProductFunctions.create_new_product(token)
-      product_id = JSON.parse(http.request(product[0]).body)['product']['id']
-      request = ResultSetFunctions.create_new_result_set(token: token,
-                                                         plan_name: plan_name,
-                                                         run_name: run_name,
-                                                         product_id: product_id,
-                                                         result_set_name: result_set_name)
-      responce = JSON.parse(http.request(request[0]).body)
+      product = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']
+      plan_name, run_name, result_set_name = Array.new(4).map { http.random_name }
+      responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, { plan_name: plan_name,
+                                                                             run_name: run_name,
+                                                                             product_id: product['id'],
+                                                                             result_set_name: result_set_name})[0].body)
       expect(responce['errors']).to be_empty
       expect(responce['result_set']['name']).to eq(result_set_name)
     end
 
     it '3. Create run and result set in one time' do
-      run_name, result_set_name = Array.new(4).map { Array.new(30) { StaticData::ALPHABET.sample }.join }
-      product = ProductFunctions.create_new_product(token)
-      product_id = JSON.parse(http.request(product[0]).body)['product']['id']
-
-      plan = PlanFunctions.create_new_plan(token: token, product_id: product_id)
-      plan_id = JSON.parse(http.request(plan[0]).body)['plan']['id']
-      request = ResultSetFunctions.create_new_result_set(token: token,
-                                                         plan_id: plan_id,
-                                                         run_name: run_name,
-                                                         result_set_name: result_set_name)
-      responce = JSON.parse(http.request(request[0]).body)
+      product = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']
+      plan = JSON.parse(PlanFunctions.create_new_plan(http, {product_name: product['name']})[0].body)['plan']
+      run_name, result_set_name = Array.new(4).map { http.random_name }
+      responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, { plan_id: plan['id'],
+                                                                             run_name: run_name,
+                                                                             result_set_name: result_set_name})[0].body)
       expect(responce['errors']).to be_empty
       expect(responce['result_set']['name']).to eq(result_set_name)
     end
 
     it '4. Create result set in one time' do
-      run_name, result_set_name = Array.new(4).map { Array.new(30) { StaticData::ALPHABET.sample }.join }
-      product = ProductFunctions.create_new_product(token)
-      product_id = JSON.parse(http.request(product[0]).body)['product']['id']
-      plan = PlanFunctions.create_new_plan(token: token, product_id: product_id)
-      plan_id = JSON.parse(http.request(plan[0]).body)['plan']['id']
-      run = RunFunctions.create_new_run(token: token, plan_id: plan_id, run_name: run_name)
-      run_id = JSON.parse(http.request(run[0]).body)['run']['id']
-      request = ResultSetFunctions.create_new_result_set(token: token,
-                                                         run_id: run_id,
-                                                         result_set_name: result_set_name)
-      responce = JSON.parse(http.request(request[0]).body)
+      product = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']
+      plan = JSON.parse(PlanFunctions.create_new_plan(http, {product_name: product['name']})[0].body)['plan']
+      run = JSON.parse(RunFunctions.create_new_run(http, {plan_id: plan['id']})[0].body)['run']
+      result_set_name = http.random_name
+      responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, { plan_id: plan['id'],
+                                                                             run_id: run['id'],
+                                                                             result_set_name: result_set_name})[0].body)
       expect(responce['errors']).to be_empty
       expect(responce['result_set']['name']).to eq(result_set_name)
     end
   end
 
   describe 'Show result_set' do
-    before :each do
-      product_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      request = ProductFunctions.create_new_product(token, product_name)[0]
-      product_id = JSON.parse(http.request(request).body)['product']['id']
-
-      plan_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      request = PlanFunctions.create_new_plan(token: token, product_id: product_id, plan_name: plan_name)[0]
-      plan_id = JSON.parse(http.request(request).body)['plan']['id']
-
-      run_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      request = RunFunctions.create_new_run(token: token, plan_id: plan_id, run_name: run_name)
-      run_id = JSON.parse(http.request(request[0]).body)['run']['id']
-
-      result_set_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      request = ResultSetFunctions.create_new_result_set(token: token,
-                                                         run_id: run_id,
-                                                         result_set_name: result_set_name)
-      result_set = JSON.parse(http.request(request[0]).body)
+    it 'get result_sets by run_id' do
+      product = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']
+      plan = JSON.parse(PlanFunctions.create_new_plan(http, {product_name: product['name']})[0].body)['plan']
+      run = JSON.parse(RunFunctions.create_new_run(http, {plan_id: plan['id']})[0].body)['run']
+      result_set = JSON.parse(ResultSetFunctions.create_new_result_set(http, { plan_id: plan['id'],
+                                                                             run_id: run['id']})[0].body)
+      responce = JSON.parse(ResultSetFunctions.get_result_sets(http, id: run['id']).body)
+      expect(responce['errors'].empty?).to be_truthy
+      expect(responce['result_sets'].first['id']).to eq(result_set['result_set']['id'])
+      expect(responce['result_sets'].first['run_id']).to eq(result_set['result_set']['run_id'])
     end
 
-    it 'get result_sets by run_id' do
-      request = ResultSetFunctions.get_result_sets(token: token, id: run_id)
-      result = JSON.parse(http.request(request).body)
-      expect(result['errors'].empty?).to be_truthy
-      expect(result['result_sets'].first['id']).to eq(result_set['result_set']['id'])
-      expect(result['result_sets'].first['run_id']).to eq(result_set['result_set']['run_id'])
+    it 'get result_set | show method' do
+      product = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']
+      plan = JSON.parse(PlanFunctions.create_new_plan(http, {product_name: product['name']})[0].body)['plan']
+      run = JSON.parse(RunFunctions.create_new_run(http, {plan_id: plan['id']})[0].body)['run']
+      result_set = JSON.parse(ResultSetFunctions.create_new_result_set(http, { plan_id: plan['id'],
+                                                                               run_id: run['id']})[0].body)['result_set']
+      responce = JSON.parse(ResultSetFunctions.get_result_set(http, id: result_set['id']).body)['result_set']
+      expect(responce).to eq(result_set)
     end
   end
 
   describe 'Delete result_set' do
-    before :each do
-      product_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      request = ProductFunctions.create_new_product(token, product_name)[0]
-      product_id = JSON.parse(http.request(request).body)['product']['id']
-
-      plan_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      request = PlanFunctions.create_new_plan(token: token, product_id: product_id, plan_name: plan_name)[0]
-      plan_id = JSON.parse(http.request(request).body)['plan']['id']
-
-      run_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      request = RunFunctions.create_new_run(token: token, plan_id: plan_id, run_name: run_name)
-      run_id = JSON.parse(http.request(request[0]).body)['run']['id']
-
-      result_set_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      request = ResultSetFunctions.create_new_result_set(token: token,
-                                                         run_id: run_id,
-                                                         result_set_name: result_set_name)
-      result_set_id = JSON.parse(http.request(request[0]).body)['result_set']['id']
-    end
 
     it 'Delete result set' do
-      request = ResultSetFunctions.delete_result_set(token: token, id: result_set_id)
-      result_set = JSON.parse(http.request(request).body)
-      expect(result_set['result_set']['id']).to eq(result_set_id.to_s)
-      request = ResultSetFunctions.get_result_sets(token: token, id: run_id)
-      result = JSON.parse(http.request(request).body)
-      expect(result['result_sets']).to be_empty
+      product_name, plan_name, run_name, result_set_name = Array.new(4).map { http.random_name }
+      responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, { plan_name: plan_name,
+                                                                             run_name: run_name,
+                                                                             product_name: product_name,
+                                                                             result_set_name: result_set_name})[0].body)['result_set']
+      delete_responce =  JSON.parse(ResultSetFunctions.delete_result_set(http, {id: responce['id']}).body)
+      result_ser_after_deleting = ResultSetFunctions.get_result_set(http, id: responce['id'])
+      expect(delete_responce['result_set']['id']).to eq(responce['id'].to_s)
+      expect(result_ser_after_deleting.code).to eq('500')
     end
   end
 
   describe 'Edit result_set' do
-    before :each do
-      product_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      request = ProductFunctions.create_new_product(token, product_name)[0]
-      product_id = JSON.parse(http.request(request).body)['product']['id']
-
-      plan_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      request = PlanFunctions.create_new_plan(token: token, product_id: product_id, plan_name: plan_name)[0]
-      plan_id = JSON.parse(http.request(request).body)['plan']['id']
-
-      run_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      request = RunFunctions.create_new_run(token: token, plan_id: plan_id, run_name: run_name)
-      run_id = JSON.parse(http.request(request[0]).body)['run']['id']
-
-      result_set_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      request = ResultSetFunctions.create_new_result_set(token: token,
-                                                         run_id: run_id,
-                                                         result_set_name: result_set_name)
-      result_set_id = JSON.parse(http.request(request[0]).body)['result_set']['id']
-    end
-
     it 'Edit result set' do
-      new_result_set_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      request = ResultSetFunctions.update_result_set(token: token, id: result_set_id, name: new_result_set_name)
-      result_set = JSON.parse(http.request(request).body)['result_set_data']
-      expect(result_set['id']).to eq(result_set_id)
-      expect(result_set['name']).to eq(new_result_set_name)
-      request = ResultSetFunctions.get_result_sets(token: token, id: run_id)
-      result = JSON.parse(http.request(request).body)
-      expect(result['result_sets'].first['name']).to eq(new_result_set_name)
+      product = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']
+      plan = JSON.parse(PlanFunctions.create_new_plan(http, {product_name: product['name']})[0].body)['plan']
+      run = JSON.parse(RunFunctions.create_new_run(http, {plan_id: plan['id']})[0].body)['run']
+      result_set_name = http.random_name
+      result_set_new_name = http.random_name
+      result_set = JSON.parse(ResultSetFunctions.create_new_result_set(http, {run_id: run['id'],
+                                                                               result_set_name: result_set_name})[0].body)
+      response = ResultSetFunctions.update_result_set(http, {id: result_set['result_set']['id'], name: result_set_new_name})
+      result_set = JSON.parse(response.body)['result_set_data']
+      expect(result_set['name']).to eq(result_set_new_name)
     end
   end
 end

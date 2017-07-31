@@ -13,9 +13,15 @@ class Api < Sinatra::Base
   end
 
   # region products
-  get '/products' do
+  post '/products' do
     process_request request, 'products' do |_req, _username|
       { products: Product.all.map(&:values) }.to_json
+    end
+  end
+
+  post '/product' do
+    process_request request, 'product' do |_req, _username|
+      { product: Product[id: params['product_data']['id']].values }.to_json
     end
   end
 
@@ -65,6 +71,12 @@ class Api < Sinatra::Base
     end
   end
 
+  post '/plan' do
+    process_request request, 'plan' do |_req, _username|
+      { plan: Plan[id: params['plan_data']['id']].values }.to_json
+    end
+  end
+
   post '/plan_edit' do
     process_request request, 'plan_edit' do |_req, _username|
       plan = Plan.edit(params)
@@ -103,6 +115,12 @@ class Api < Sinatra::Base
     end
   end
 
+  post '/run' do
+    process_request request, 'run' do |_req, _username|
+      { run: Run[id: params['run_data']['id']].values }.to_json
+    end
+  end
+
   post '/run_delete' do
     process_request request, 'run_delete' do |_req, _username|
       errors = Run.run_id_validation(params['run_data']['id'])
@@ -137,6 +155,12 @@ class Api < Sinatra::Base
       result_sets, errors = Run.get_result_sets(params['result_set_data'])
       status 422 unless errors
       { result_sets: result_sets.map(&:values), errors: errors }.to_json
+    end
+  end
+
+  post '/result_set' do
+    process_request request, 'result_set' do |_req, _username|
+      { result_set: ResultSet[id: params['result_set_data']['id']].values }.to_json
     end
   end
 
@@ -202,7 +226,7 @@ class Api < Sinatra::Base
     end
   end
 
-  get '/statuses' do
+  post '/statuses' do
     process_request request, 'statuses' do |_req, _username|
       statuses = Status.all
       statuses_ids = statuses.map(&:id)
@@ -283,10 +307,10 @@ class Public < Sinatra::Base
       exp: Time.now.to_i + 60 * 600,
       iat: Time.now.to_i,
       iss: ENV['JWT_ISSUER'],
-      scopes: %w[products product_new product_delete product_edit
-                 plan_new plans plan_edit plan_delete
-                 run_new runs run_delete run_edit
-                 result_set_new result_sets result_set_delete result_set_edit
+      scopes: %w[products product product_new product_delete product_edit
+                 plan_new plans plan plan_edit plan_delete
+                 run_new runs run run_delete run_edit
+                 result_set_new result_sets result_set result_set_delete result_set_edit
                  result_new results
                  status_new statuses status_edit],
       user: {

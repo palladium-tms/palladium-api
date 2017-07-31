@@ -1,5 +1,6 @@
 require 'net/http'
 require 'json'
+require_relative '../../spec/lib/ObjectWrap/http'
 class AuthFunctions
   # @param [Strung] email for account. If it empty - will be generate
   # @param [String] password  for account. Min size = 6 simbols. If it empty - will be generate

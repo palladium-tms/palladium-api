@@ -3,10 +3,8 @@ require 'json'
 class ResultFunctions
   # @param [Hash] args must has 'result_data[result_set_id_id]' with result_set id, and can has result_data[message] with hash of messages (or will be generate
   # random message). example: {"result_data[result_set_id_id]" => int, "result_data[message]" => hash }
-  def self.create_new_result(*args)
-    request = Net::HTTP::Post.new('/api/result_new', 'Authorization' => args.first[:token])
-    request.set_form_data(get_params(args.first))
-    request
+  def self.create_new_result(http, options = {})
+    http.post_request('/api/result_new', get_params(options).merge("result_data[status]": options[:status]))
   end
 
   def self.get_params(param)
@@ -21,16 +19,14 @@ class ResultFunctions
     params.merge!('plan_data[product_id]': param[:product_id]) if param[:product_id]
 
     params.merge!('plan_data[product_name]': param[:product_name]) if param[:product_name]
+
     params.merge!('result_data[message]': param[:message]) if param[:message]
-    params.merge!('result_data[status]': param[:status]) if param[:status]
+
     params.merge!('result_data[result_set_id][]': param[:result_set_id]) if param[:result_set_id]
     params
   end
 
-  def self.get_results(*args)
-    request = Net::HTTP::Post.new('/api/results', 'Authorization' => args.first[:token])
-    request.set_form_data(  {"result_data[result_set_id]": args.first[:id]})
-    request
+  def self.get_results(http ,options = {})
+    http.post_request('/api/results', {"result_data[result_set_id]": options[:id]})
   end
-
 end
