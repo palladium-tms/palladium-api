@@ -32,7 +32,7 @@ class Result < Sequel::Model
     begin
       result = Result.create(message: data['result_data']['message'])
       if Status[name: data['result_data']['status']].nil?
-        status = Status.create_new('status_name' => data['result_data']['status'])
+        status = Status.create_new('name' => data['result_data']['status'])
         status.add_result(result)
       else
         Status[name: data['result_data']['status']].add_result(result)
