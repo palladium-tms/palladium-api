@@ -17,6 +17,8 @@ describe 'Result Smoke' do
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
       expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
+      expect(JSON.parse(response.body)['run_id'].nil?).to be_falsey
+      expect(JSON.parse(response.body)['result_set_id'].nil?).to be_falsey
     end
 
     it '2. Check creating new result | only product has created before' do

@@ -24,6 +24,7 @@ class Result < Sequel::Model
     return { errors: errors } unless errors.nil?
     if data['result_data']['result_set_id'].nil?
       data, result_set = get_result_and_run_id(data)
+      data['result_set_id'] = data['result_data']['result_set_id']
     else
       result_set = ResultSet.where(id: data['result_data']['result_set_id'])
       data['run_id'] = result_set.select_map(:run_id)
