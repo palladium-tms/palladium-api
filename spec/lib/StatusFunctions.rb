@@ -11,6 +11,10 @@ class StatusFunctions
     http.post_request('/api/statuses')
   end
 
+  def self.get_not_blocked_statuses(http)
+    http.post_request('/api/not_blocked_statuses')
+  end
+
   def self.status_edit(http, options = {})
     http.post_request('/api/status_edit', params(options))
   end

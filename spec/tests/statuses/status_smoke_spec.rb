@@ -77,5 +77,16 @@ describe 'Status Smoke' do
       statuses = JSON.parse(StatusFunctions.get_all_statuses(http).body)['statuses']
       expect(statuses.key?(status['id'].to_s)).to be_truthy
     end
+
+    it 'check get not blocked statuses after create' do
+      status_name_block = http.random_name
+      status_name = http.random_name
+      status_block = JSON.parse(StatusFunctions.create_new_status(http, name: status_name_block).body)['status']
+      status_not_block = JSON.parse(StatusFunctions.create_new_status(http, name: status_name).body)['status']
+      JSON.parse(StatusFunctions.status_edit(http, id: status_block['id'], block: true).body)
+      statuses = JSON.parse(StatusFunctions.get_not_blocked_statuses(http).body)['statuses']
+      expect(statuses.key?(status_not_block['id'].to_s)).to be_truthy
+      expect(statuses.key?(status_block['id'].to_s)).to be_falsey
+    end
   end
 end
