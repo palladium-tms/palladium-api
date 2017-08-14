@@ -235,7 +235,7 @@ class Api < Sinatra::Base
   end
 
   post '/not_blocked_statuses' do
-    process_request request, 'not_block_statuses' do |_req, _username|
+    process_request request, 'not_blocked_statuses' do |_req, _username|
       statuses = Status.where({block: false})
       statuses_ids = statuses.map(&:id)
       { statuses: Hash[statuses_ids.zip statuses.map(&:values)] }.to_json
@@ -319,7 +319,7 @@ class Public < Sinatra::Base
                  run_new runs run run_delete run_edit
                  result_set_new result_sets result_set result_set_delete result_set_edit
                  result_new results
-                 status_new statuses status_edit not_block_statuses],
+                 status_new statuses status_edit not_blocked_statuses],
       user: {
         email: email
       }
