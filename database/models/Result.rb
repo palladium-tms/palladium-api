@@ -36,7 +36,9 @@ class Result < Sequel::Model
         status = Status.create_new('name' => data['result_data']['status'])
         status.add_result(result)
       else
-        Status[name: data['result_data']['status']].add_result(result)
+        status = Status[name: data['result_data']['status']]
+        status.update(block: false) if status.block
+        Status[name: data['result_data']['status']].add_result(result) # FIXME: check speed of this method. Can be optimized
       end
     rescue StandardError
       { errors: result.errors, result: result }
