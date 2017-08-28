@@ -243,14 +243,52 @@ class Api < Sinatra::Base
   end
   # endregion
 
+  # region api_token
+  # {"api_token_data" => {"name": string} }
+  post '/token_new' do
+    process_request request, 'token_new' do |_req, _username|
+      result_token = Token.create_new(params['token_data'], JWT.encode(self.payload(_username), ENV['JWT_SECRET'], 'HS256'), _username)
+      { token_data: result_token.values, errors: result_token.errors }.to_json
+    end
+  end
+
+  post '/tokens' do
+    process_request request, 'tokens' do |_req, _username|
+      result_token = User[email: _username].tokens
+      { tokens: result_token.map(&:values)}.to_json
+    end
+  end
+
+  post '/token_delete' do
+    process_request request, 'token_delete' do |_req, _username|
+      Token[id: params['token_data']['id']].destroy
+      { token: params['token_data']['id']}.to_json
+    end
+  end
+  # endregion
+
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
     username = user['email']
-    if scopes.include?(scope) && User[email: username].exists?
+    user_token = true
+    user_token = User.user_token?(username, req.env['HTTP_AUTHORIZATION']) if scopes == ['result_new']
+    if scopes.include?(scope) && User[email: username].exists? && user_token
       yield req, username
     else
       halt 403
     end
+  end
+
+  def payload(email)
+      {
+          exp: Time.new(2050, 1, 1).to_i,
+          iat: Time.now.to_i,
+          iss: 'API',
+          scopes: %w[result_new],
+          user: {
+              email: email
+          }
+      }
   end
 end
 
@@ -309,20 +347,22 @@ class Public < Sinatra::Base
     JWT.encode payload(email), ENV['JWT_SECRET'], 'HS256'
   end
 
-  def payload(email)
-    {
-      exp: Time.now.to_i + 60 * 600,
-      iat: Time.now.to_i,
-      iss: ENV['JWT_ISSUER'],
-      scopes: %w[products product product_new product_delete product_edit
+  # header + . + payload + . + signature
+  # header = type + algorithm
+  def payload(email = nil)
+      {
+          exp: Time.now.to_i + 60 * 600,
+          iat: Time.now.to_i,
+          iss: ENV['JWT_ISSUER'],
+          scopes: %w[products product product_new product_delete product_edit
                  plan_new plans plan plan_edit plan_delete
                  run_new runs run run_delete run_edit
                  result_set_new result_sets result_set result_set_delete result_set_edit
                  result_new results
-                 status_new statuses status_edit not_blocked_statuses],
-      user: {
-        email: email
+                 status_new statuses status_edit not_blocked_statuses token_new tokens token_delete],
+          user: {
+              email: email
+          }
       }
-    }
   end
 end

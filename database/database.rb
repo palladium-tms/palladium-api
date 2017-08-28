@@ -9,6 +9,13 @@ DB.create_table? :users do
   String :password
 end
 
+DB.create_table? :tokens do
+  primary_key :id
+  String :name
+  String :token
+  foreign_key :user_id, :users
+end
+
 DB.create_table? :products do
   primary_key :id
   String :name
