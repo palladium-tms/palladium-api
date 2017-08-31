@@ -1,8 +1,8 @@
 GIT
-  remote: https://github.com/flaminestone/palladium-ruby.git
-  revision: eb2638e0f154f4cf212451d0216a42ee4e90feef
+  remote: https://github.com/flaminestone/palladium.git
+  revision: de378c606f33c243efe6867edcb15a44af760557
   specs:
-    palladium-ruby (0.0.1)
+    palladium (0.1.2)
 
 GEM
   remote: http://rubygems.org/
@@ -10,14 +10,15 @@ GEM
     ast (2.3.0)
     diff-lcs (1.3)
     jwt (1.5.6)
-    parallel (1.11.2)
+    mustermann (1.0.0)
+    parallel (1.12.0)
     parser (2.4.0.0)
       ast (~> 2.2)
     pg (0.21.0)
     powerpack (0.1.1)
     puma (3.9.1)
-    rack (1.6.8)
-    rack-protection (1.5.3)
+    rack (2.0.3)
+    rack-protection (2.0.0)
       rack
     rainbow (2.2.2)
       rake
@@ -43,13 +44,14 @@ GEM
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-progressbar (1.8.1)
-    sequel (4.48.0)
-    sinatra (1.4.8)
-      rack (~> 1.5)
-      rack-protection (~> 1.4)
-      tilt (>= 1.3, < 3)
+    sequel (4.49.0)
+    sinatra (2.0.0)
+      mustermann (~> 1.0)
+      rack (~> 2.0)
+      rack-protection (= 2.0.0)
+      tilt (~> 2.0)
     sinatra-cross_origin (0.4.0)
-    tilt (2.0.7)
+    tilt (2.0.8)
     unicode-display_width (1.3.0)
 
 PLATFORMS
@@ -57,7 +59,7 @@ PLATFORMS
 
 DEPENDENCIES
   jwt
-  palladium-ruby!
+  palladium!
   pg
   puma
   rspec
@@ -67,4 +69,4 @@ DEPENDENCIES
   sinatra-cross_origin
 
 BUNDLED WITH
-   1.15.2
+   1.15.3

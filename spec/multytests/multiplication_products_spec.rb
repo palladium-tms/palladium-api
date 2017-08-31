@@ -1,66 +1,61 @@
 require 'net/http'
 require 'json'
-require_relative '../../data/tic_data'
+require_relative '../tests/test_management'
 class Palladium
-  def initialize(*args)
-    @http = Net::HTTP.new(args.first[:auth][:host], args.first[:auth][:port])
-    @product = args.first[:product]
-    @plan = args.first[:plan]
-    @run = args.first[:run]
+  def initialize(options = {})
+    options[:port] ||= 80
+    @http = Net::HTTP.new(options[:host], options[:port])
+    @product = options[:product]
+    @plan = options[:plan]
+    @run = options[:run]
+    @token = options[:token]
     @run_id = nil
   end
 
-  def set_result(example)
-    result = get_result(example)
-    request = Net::HTTP::Post.new('/api/result_new', 'Authorization' => StaticData::TOKEN)
-    params = {"plan_data[product_name]": @product,
-              "plan_data[name]": @plan,
-              "run_data[name]": @run + $j.to_s,
-              "result_set_data[name]": example.metadata[:description],
-              "result_data[message]": "message_1",
-              "result_data[status]": "#{result.first}"}
+  def set_result(options = {})
+    p options
+    request = Net::HTTP::Post.new('/api/result_new', 'Authorization' => @token)
+    params = { 'plan_data[product_name]' => @product,
+               'plan_data[name]' => @plan,
+               'run_data[name]' => options[:run_name],
+               'result_set_data[name]' => options[:name],
+               'result_data[message]' => options[:description],
+               'result_data[status]' => options[:status] }
+    params['result_set_data[run_id]'] = @run_id unless @run_id.nil?
     request.set_form_data(params)
-    params.merge!({"result_set_data[run_id]": @run_id}) unless @run_id.nil?
-    @run_id = JSON.parse(@http.request(request).body)['run_id']
-  end
-
-  def get_result(example)
-    case
-      when example.exception.nil?
-        [:Passed, '']
-      when errors_is_contains?(example, %w(got: expected: return))
-        [:Failed, "\n#{example.exception.to_s.gsub('got:', "got:\n").gsub('expected:', "expected:\n")}\nIn line:\n#{example.exception}"]
-    end
-  end
-
-  def errors_is_contains?(example, errors)
-    result = false
-    errors.each do |current_error|
-      result = true if example.exception.to_s.include?(current_error)
-    end
+    result = JSON.parse(@http.request(request).body)
+    @run_id = result['run_id']
     result
   end
 end
+
+
+token = AuthFunctions.create_user_and_get_token
+product = "Product_1"
+
+palladium = Palladium.new(host: '0.0.0.0',
+                          token: AuthFunctions.create_user_and_get_token,
+                          product: product,
+                          port: 9292,
+                          plan: 'v.8.0',
+                          run: File.basename(__FILE__, '_spec.rb'))
+
 $j = 0
 40.times do |i|
-
-  product = "Product_#{i}"
   1.times do |j|
-plan = "v.8_#{i}.#{j}"
-    run = File.basename(__FILE__, '_spec.rb')
-    auth = {host: '0.0.0.0', port: '9292', token: StaticData::TOKEN}
-    palladium = Palladium.new({:product => product,
-                               :plan => plan,
-                               :run => run,
-                               :auth => auth})
-      describe 'Tests' do
-        it "1*1+c" do
-          true
-        end
-        after :each do |example|
-          $j +=1
-          palladium.set_result(example)
-        end
+
+
+
+    describe 'Tests' do
+      it "1*1+c" do
+        true
+      end
+      after :each do |example|
+        $j +=1
+        # result = palladium.get_result(example)
+        # palladium.set_result(result)
+        palladium.set_result(status: 'Passed', description: 'Not right', name: example.metadata[:description], run_name: File.basename(__FILE__))
+      end
     end
   end
 end

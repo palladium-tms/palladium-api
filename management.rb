@@ -14,6 +14,7 @@ require_relative 'database/models/Run'
 require_relative 'database/models/ResultSet'
 require_relative 'database/models/Result'
 require_relative 'database/models/Status'
+require_relative 'database/models/Token'
 
 # core modules
 require_relative 'core/authorization/auth'
