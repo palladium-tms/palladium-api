@@ -333,7 +333,7 @@ class Public < Sinatra::Base
     end
     content_type :json
     status 200
-    halt 401 unless new_user.errors.empty?
+    status 401 unless new_user.errors.empty?
     {email: user_data['email'], errors: new_user.errors}.to_json
   end
 

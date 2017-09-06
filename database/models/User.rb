@@ -5,8 +5,8 @@ class User < Sequel::Model
   plugin :validation_helpers
 
   def validate
-    validates_unique :email
-    validates_format /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i, :email
+    validates_unique :email, message: 'Email is already taken.'
+    validates_format /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i, :email, message: 'Email format error. Please, check email.'
   end
 
   def self.create_new(data)
