@@ -1,6 +1,6 @@
 require_relative '../management'
 require 'yaml'
-sleep 10 # FIXME: need to add wait for database available
+# sleep 10 # FIXME: need to add wait for database available
 DB = Sequel.connect(YAML.load_file('config/sequel.yml')[Sinatra::Application.environment])
 
 DB.create_table? :users do
@@ -68,3 +68,4 @@ DB.create_table? :result_sets_results do
   foreign_key :result_id, :results
   foreign_key :result_set_id, :result_sets
 end
+SuitesAndCases.apply(DB, :up)

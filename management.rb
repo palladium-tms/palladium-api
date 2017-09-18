@@ -4,6 +4,7 @@ require 'json'
 require 'jwt'
 require 'pg'
 require 'sinatra/cross_origin'
+require_relative 'database/migrations/SuitesAndCases'
 require_relative 'database/database'
 
 # models
@@ -15,6 +16,8 @@ require_relative 'database/models/ResultSet'
 require_relative 'database/models/Result'
 require_relative 'database/models/Status'
 require_relative 'database/models/Token'
+require_relative 'database/models/Suite'
+require_relative 'database/models/Case'
 
 # core modules
 require_relative 'core/authorization/auth'

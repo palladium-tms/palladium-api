@@ -22,6 +22,19 @@ class Result < Sequel::Model
   end
 
   def self.create_new(data)
+    # a = Time.now
+    # Plan[name: data['plan_data']['name']].runs_dataset.select_map(:name)
+    # 284.times do |i|
+    #   suite = Suite.create(name: 'asdasd' + i.to_s )
+    #   Product[id: 38].add_suite(suite)
+    #   50.times do |j|
+    #     _case = Case.create(name: 'asdasd' + i.to_s + '_' + j.to_s )
+    #     suite.add_case(_case)
+    #   end
+    # end
+    # b = Time.now - a
+    # Product[id: 38].sutes << Suite.create(name: 'asdasd')
+    # Suite.create(name: 'asdasd')
     errors = data_valid?(data)
     other_data = {}
     return { errors: errors } unless errors.nil?

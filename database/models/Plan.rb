@@ -89,4 +89,9 @@ class Plan < Sequel::Model
       run.merge!({statistic: statistic[run[:id]] || []})
     end
   end
+
+  # Method will created suites with name like run's, and cases with name like result_set's name
+  def self.save_all_as_suites_and_cases(plan_id)
+    Plan[id: plan_id].runs.select(:name)
+  end
 end
