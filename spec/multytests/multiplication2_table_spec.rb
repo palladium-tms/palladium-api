@@ -45,6 +45,7 @@ product_count.times do |product_iterator|
           end
           after :each do |example|
             a = palladium.set_result(status: 'False', description: 'Not right', name: example.metadata[:description])
+            "http://#{palladium.host}/#/product/#{palladium.product_id}/plan/#{palladium.plan_id}/run/#{palladium.run_id}/result_set/#{palladium.result_set_id}"
             p
           end
         end

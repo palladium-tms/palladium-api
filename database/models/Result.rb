@@ -6,16 +6,16 @@ class Result < Sequel::Model
 
   def self.data_valid?(data)
     if data['result_data'].nil?
-      {result_data: "result_data can't be nil"}
+      { result_data: "result_data can't be nil" }
     elsif data['result_data']['status'].nil?
-      {status: "status can't be nil"}
+      { status: "status can't be nil" }
     end
   end
 
   def self.get_result_and_run_id(data)
     result_set, other_data = ResultSet.create_new(data)
-    other_data.merge!({result_set_id: result_set.id})
-    other_data.merge!({run_id: result_set.run_id})
+    other_data[:result_set_id] = result_set.id
+    other_data[:run_id] = result_set.run_id
     # data['result_data']['result_set_id'] = result_set.id
     # data['run_id'] = result_set.run_id
     [other_data, [result_set]]
@@ -44,10 +44,12 @@ class Result < Sequel::Model
       if Status[name: data['result_data']['status']].nil?
         status = Status.create_new('name' => data['result_data']['status'])
         status.add_result(result)
+        other_data.merge!({status: { status_name: data['result_data']['status'], status_color: status.color }})
       else
         status = Status[name: data['result_data']['status']]
         status.update(block: false) if status.block
         Status[name: data['result_data']['status']].add_result(result) # FIXME: check speed of this method. Can be optimized
+        other_data.merge!({status: { status_name: data['result_data']['status'], status_color: status.color }})
       end
     rescue StandardError
       { errors: result.errors, result: result }
