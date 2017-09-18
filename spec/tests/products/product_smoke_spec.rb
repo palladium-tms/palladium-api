@@ -24,7 +24,7 @@ describe 'Product Smoke' do
 
   describe 'Delete product' do
     it 'check deleting product after product create' do
-      res_new_product, _ = ProductFunctions.create_new_product(http)
+      res_new_product, = ProductFunctions.create_new_product(http)
       product_id_for_deleting = JSON.parse(res_new_product.body)['product']['id']
       responce = ProductFunctions.delete_product(http, product_id_for_deleting)
       expect(responce.code).to eq('200')
@@ -33,12 +33,12 @@ describe 'Product Smoke' do
     end
 
     it 'delete product with plans' do
-      res_new_product, _ = ProductFunctions.create_new_product(http)
+      res_new_product, = ProductFunctions.create_new_product(http)
       product_id_for_deleting = JSON.parse(res_new_product.body)['product']['id']
-      plan_response = PlanFunctions.create_new_plan(http, {product_id: product_id_for_deleting})[0]
+      plan_response = PlanFunctions.create_new_plan(http, product_id: product_id_for_deleting)[0]
       products_before_deleting = JSON.parse(ProductFunctions.get_all_products(http).body)['products']
       product_response = ProductFunctions.delete_product(http, product_id_for_deleting)
-      show_plan =  PlanFunctions.show_plan(http, {plan_id: JSON.parse(plan_response.body)['plan']['id']})
+      show_plan = PlanFunctions.show_plan(http, plan_id: JSON.parse(plan_response.body)['plan']['id'])
       products_after_deleting = JSON.parse(ProductFunctions.get_all_products(http).body)['products']
       expect(product_response.code).to eq('200')
       expect(JSON.parse(product_response.body)['product']).to eq(product_id_for_deleting.to_s)
@@ -50,17 +50,17 @@ describe 'Product Smoke' do
 
   describe 'Get Products' do
     it 'get all products after creating' do
-      res_new_product, _ = ProductFunctions.create_new_product(http)
+      res_new_product, = ProductFunctions.create_new_product(http)
       response = ProductFunctions.get_all_products(http)
       products = {}
       JSON.parse(response.body)['products'].each do |current_product|
-        products.merge!({current_product['id'] => current_product})
+        products.merge!(current_product['id'] => current_product)
       end
       expect(products[JSON.parse(res_new_product.body)['product']['id']]['name']).to eq(JSON.parse(res_new_product.body)['product']['name'])
     end
 
     it 'get one product | show method' do
-      res_new_product, _ = ProductFunctions.create_new_product(http)
+      res_new_product, = ProductFunctions.create_new_product(http)
       product_data = JSON.parse(res_new_product.body)
       res_product = ProductFunctions.show_product(http, product_data['product']['id'])
       expect(res_product.code).to eq('200')
@@ -72,7 +72,7 @@ describe 'Product Smoke' do
     it 'edit product after creating' do
       product_name_for_updating = http.random_name
       product_id = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']['id']
-      ProductFunctions.update_product(http, product_id,product_name_for_updating)
+      ProductFunctions.update_product(http, product_id, product_name_for_updating)
       response = ProductFunctions.show_product(http, product_id)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['product']['name']).to eq(product_name_for_updating)

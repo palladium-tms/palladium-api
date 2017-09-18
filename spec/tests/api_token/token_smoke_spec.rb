@@ -29,14 +29,13 @@ describe 'Auth Smoke' do
       token = JSON.parse(TokenFunctions.create_new_api_token(http).body)['token_data']['token']
       http_api = Http.new(token: token)
 
-
       product_name, plan_name, run_name, result_set_name, message = Array.new(5).map { Array.new(30) { StaticData::ALPHABET.sample }.join }
-      response = ResultFunctions.create_new_result(http_api,{ plan_name: plan_name,
-                                                          run_name: run_name,
-                                                          product_name: product_name,
-                                                          result_set_name: result_set_name,
-                                                          message: message,
-                                                          status: 'Passed' })
+      response = ResultFunctions.create_new_result(http_api, plan_name: plan_name,
+                                                             run_name: run_name,
+                                                             product_name: product_name,
+                                                             result_set_name: result_set_name,
+                                                             message: message,
+                                                             status: 'Passed')
       expect(response.code).to eq('200')
     end
 
@@ -53,15 +52,14 @@ describe 'Auth Smoke' do
       TokenFunctions.delete_token(http, token['id'])
 
       product_name, plan_name, run_name, result_set_name, message = Array.new(5).map { Array.new(30) { StaticData::ALPHABET.sample }.join }
-      response = ResultFunctions.create_new_result(http_api,{ plan_name: plan_name,
-                                                              run_name: run_name,
-                                                              product_name: product_name,
-                                                              result_set_name: result_set_name,
-                                                              message: message,
-                                                              status: 'Passed' })
+      response = ResultFunctions.create_new_result(http_api, plan_name: plan_name,
+                                                             run_name: run_name,
+                                                             product_name: product_name,
+                                                             result_set_name: result_set_name,
+                                                             message: message,
+                                                             status: 'Passed')
       expect(response.code).to eq('403')
     end
-
   end
 
   describe 'delete token' do
