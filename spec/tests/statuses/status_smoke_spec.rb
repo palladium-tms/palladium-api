@@ -8,7 +8,7 @@ describe 'Status Smoke' do
   describe 'Create new status' do
     it 'check creating new status' do
       status_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      response = JSON.parse(StatusFunctions.create_new_status(http, {name: status_name}).body)
+      response = JSON.parse(StatusFunctions.create_new_status(http, name: status_name).body)
       expect(response['errors'].empty?).to be_truthy
       expect(response['status']['name']).to eq(status_name)
       expect(response['status']['color']).to eq(DefaultValues::DEFAULT_STATUS_COLOR)
@@ -16,7 +16,7 @@ describe 'Status Smoke' do
 
     it 'check creating new status with color' do
       status_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      response = StatusFunctions.create_new_status(http, {name: status_name, color: '#aaccbb'})
+      response = StatusFunctions.create_new_status(http, name: status_name, color: '#aaccbb')
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
       expect(JSON.parse(response.body)['status']['name']).to eq(status_name)
@@ -26,7 +26,7 @@ describe 'Status Smoke' do
     it 'check creating new status if it has created later' do
       status_name = http.random_name
       status_color = '#aaccbb'
-      StatusFunctions.create_new_status(http, {name: status_name, color: status_color})
+      StatusFunctions.create_new_status(http, name: status_name, color: status_color)
       response = StatusFunctions.create_new_status(http, name: status_name, color: status_color)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
@@ -60,7 +60,7 @@ describe 'Status Smoke' do
     it 'check change name of status' do
       status_name, new_status_name = Array.new(2).map { http.random_name }
       status = JSON.parse(StatusFunctions.create_new_status(http, name: status_name).body)['status']
-      response = StatusFunctions.status_edit(http, {id: status['id'], name: new_status_name})
+      response = StatusFunctions.status_edit(http, id: status['id'], name: new_status_name)
       status_new = JSON.parse(response.body)
       expect(response.code).to eq('200')
       expect(status_new['errors'].empty?).to be_truthy

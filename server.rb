@@ -100,9 +100,9 @@ class Api < Sinatra::Base
   # region runs
   post '/run_new' do
     process_request request, 'run_new' do |_req, _username|
-      run = Run.create_new(params)
+      run, other_data = Run.create_new(params)
       status 422 unless run.errors.empty?
-      { 'run' => run.values, 'errors' => run.errors }.to_json
+      { 'run' => run.values, 'errors' => run.errors, other_data: other_data }.to_json
     end
   end
 
@@ -144,9 +144,9 @@ class Api < Sinatra::Base
   # region result_set
   post '/result_set_new' do
     process_request request, 'result_set_new' do |_req, _username|
-      result_set = ResultSet.create_new(params)
+      result_set, other = ResultSet.create_new(params)
       status 422 unless result_set.errors.empty?
-      { result_set: result_set.values, errors: result_set.errors }.to_json
+      { result_set: result_set.values, errors: result_set.errors, other_data: other }.to_json
     end
   end
 
@@ -190,12 +190,12 @@ class Api < Sinatra::Base
   # region result
   post '/result_new' do
     process_request request, 'result_new' do |_req, _username|
-      responce = Result.create_new(params)
+      responce, other = Result.create_new(params)
       if responce[:errors].nil?
-        { result: responce[:result].values, run_id: responce[:run_id], result_set_id: responce[:result_set_id] }.to_json
+        { result: responce.values, other_data: other }.to_json
       else
         status 422
-        { errors: responce[:errors].values, run_id: responce[:run_id] }.to_json
+        { errors: responce.errors.values, other_data: other }.to_json
       end
     end
   end

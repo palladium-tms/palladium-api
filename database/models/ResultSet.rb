@@ -23,23 +23,25 @@ class ResultSet < Sequel::Model
   end
 
   def self.create_new(data)
-    if data['result_set_data']['run_id'].nil?
-      run = Run.create_new(data)
-      data['result_set_data']['run_id'] = run.id
-      data['run_data']['plan_id'] ||= run.plan_id
-    else
-      Run[data['result_set_data']['run_id']].plan_id
-      data.merge!({'run_data' => {'plan_id' => Run[data['result_set_data']['run_id']].plan_id}})
-    end
+    other_data = {}
+    run = if data['result_set_data']['run_id'].nil?
+            run, other_run_data = Run.create_new(data)
+            other_data.merge!(other_run_data)
+            run
+          else
+            Run[data['result_set_data']['run_id']]
+          end
+    other_data[:run_id] = run.id
+    other_data[:plan_id] = run.plan_id
     begin
-      result_set = ResultSet.find_or_create(name:  data['result_set_data']['name'], run_id:  data['result_set_data']['run_id']){|result_set|
+      result_set = ResultSet.find_or_create(name: data['result_set_data']['name'], run_id: other_data[:run_id]) {|result_set|
         result_set.name = data['result_set_data']['name']
-        result_set.plan_id = data['run_data']['plan_id']
+        result_set.plan_id = other_data[:plan_id]
       }
     rescue StandardError
-      return self.run_id_validation(Run.new(data['result_set_data']), data['plan_data']['plan_id'])
+      return self.run_id_validation(Run.new(data['result_set_data']), other_data[:plan_id])
     end
-    Run[id: data['result_set_data']['run_id']].add_result_set(result_set)
+    [run.add_result_set(result_set), other_data]
   end
 
   def self.edit(data)
@@ -54,7 +56,7 @@ class ResultSet < Sequel::Model
   end
 
   def self.get_results(*args)
-    result_set =  ResultSet[:id => args.first['result_set_id']]
+    result_set = ResultSet[:id => args.first['result_set_id']]
     begin
       [result_set.results, []]
     rescue StandardError

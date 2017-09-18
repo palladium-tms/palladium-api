@@ -3,7 +3,7 @@ class Run < Sequel::Model
   one_to_many :result_sets
   plugin :validation_helpers
   plugin :association_dependencies
-  self.add_association_dependencies :result_sets=>:destroy
+  self.add_association_dependencies :result_sets => :destroy
   self.raise_on_save_failure = false
   self.plugin :timestamps
 
@@ -38,15 +38,22 @@ class Run < Sequel::Model
   end
 
   def self.create_new(data)
-    data['run_data']['plan_id'] ||= Plan.create_new(data).id
+    other_data = {}
+    plan = if data['run_data']['plan_id'].nil?
+             Plan.create_new(data)
+           else
+             Plan[id: data['run_data']['plan_id']]
+           end
+    other_data[:plan_id] = plan.id
+    other_data.merge!({product_id: plan.product_id})
     begin
-      run = Run.find_or_create(name:  data['run_data']['name'], plan_id:  data['run_data']['plan_id']){|run|
-        run.name =  data['run_data']['name']
+      run = Run.find_or_create(name: data['run_data']['name'], plan_id: other_data[:plan_id]) {|run|
+        run.name = data['run_data']['name']
       }
     rescue StandardError
-      return self.plan_id_validation(Plan.new(data['plan_data']), data['plan_data']['plan_id'])
+      return self.plan_id_validation(Plan.new(data['plan_data']), other_data[:plan_id])
     end
-    Plan[id: data['run_data']['plan_id']].add_run(run)
+    [plan.add_run(run), other_data]
   end
 
   def self.edit(data)
@@ -61,7 +68,7 @@ class Run < Sequel::Model
   end
 
   def self.get_result_sets(*args)
-    run =  Run[:id => args.first['run_id']]
+    run = Run[:id => args.first['run_id']]
     begin
       [run.result_sets, []]
     rescue StandardError
