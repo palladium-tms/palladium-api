@@ -91,7 +91,7 @@ class Api < Sinatra::Base
       errors = Plan.plan_id_validation(params['plan_data']['id'])
       if errors.empty?
         Plan[id: params['plan_data']['id']].remove_all_runs
-        Plan[id: params['plan_data']['id']].delete
+        Plan[id: params['plan_data']['id']].destroy
       end
       { plan: params['plan_data']['id'], errors: errors }.to_json
     end
@@ -126,7 +126,12 @@ class Api < Sinatra::Base
     process_request request, 'run_delete' do |_req, _username|
       errors = Run.run_id_validation(params['run_data']['id'])
       if errors.empty?
+        result_sets = Run[id: params['run_data']['id']].result_sets
         Run[id: params['run_data']['id']].remove_all_result_sets
+        result_sets.each do |result_set|
+          result_set.remove_all_results
+          result_set.destroy
+        end
         Run[id: params['run_data']['id']].destroy
       end
       { run: params['run_data']['id'], errors: errors }.to_json
@@ -171,7 +176,7 @@ class Api < Sinatra::Base
       begin
         result_set_id = params['result_set_data']['id']
         ResultSet[id: result_set_id].remove_all_results
-        ResultSet[id: result_set_id].delete
+        ResultSet[id: result_set_id].destroy
       rescue StandardError => e
         errors = e
       end

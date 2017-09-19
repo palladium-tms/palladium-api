@@ -1,5 +1,6 @@
 class ResultSet < Sequel::Model
   many_to_one :run
+  many_to_one :plan
   many_to_many :results
   plugin :validation_helpers
   self.raise_on_save_failure = false
@@ -38,6 +39,7 @@ class ResultSet < Sequel::Model
         result_set.name = data['result_set_data']['name']
         result_set.plan_id = other_data[:plan_id]
       }
+      Plan[id: other_data[:plan_id]].add_result_set(result_set)
     rescue StandardError
       return self.run_id_validation(Run.new(data['result_set_data']), other_data[:plan_id])
     end
