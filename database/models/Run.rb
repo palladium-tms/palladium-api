@@ -53,15 +53,17 @@ class Run < Sequel::Model
     rescue StandardError
       return self.plan_id_validation(Plan.new(data['plan_data']), other_data[:plan_id])
     end
-    suite_detected(plan, run)
+    other_data = suite_detected(plan, run, other_data)
     [plan.add_run(run), other_data]
   end
 
-  def self.suite_detected(plan, run)
+  def self.suite_detected(plan, run, other_data)
     if Suite.find(product_id: plan.product_id, name: run.name).nil?
       suite = Suite.create(name: run.name)
       Product[id: plan.product_id].add_suite(suite)
+      other_data[:suite_id] = suite.id
     end
+    other_data
   end
 
   def self.edit(data)
