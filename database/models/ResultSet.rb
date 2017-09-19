@@ -41,7 +41,18 @@ class ResultSet < Sequel::Model
     rescue StandardError
       return self.run_id_validation(Run.new(data['result_set_data']), other_data[:plan_id])
     end
+    self.case_detected(result_set.name, run)
     [run.add_result_set(result_set), other_data]
+  end
+
+  def self.case_detected(result_set_name, run)
+    suite = Suite.find_or_create(product_id: Plan[id: run.plan_id].product_id, name: run.name) {|suite|
+      suite.name = run.name
+    }
+    if suite.cases_dataset[name: result_set_name].nil?
+      _case = Case.create(name: result_set_name)
+      suite.add_case(_case)
+    end
   end
 
   def self.edit(data)

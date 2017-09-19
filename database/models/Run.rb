@@ -58,10 +58,10 @@ class Run < Sequel::Model
   end
 
   def self.suite_detected(plan, run)
-   if Suite.where(product_id: plan.product_id, name: run.name).count == 0
-     suite = Suite.create(name: run.name)
-     Product[id: plan.product_id].add_suite(suite)
-   end
+    if Suite.find(product_id: plan.product_id, name: run.name).nil?
+      suite = Suite.create(name: run.name)
+      Product[id: plan.product_id].add_suite(suite)
+    end
   end
 
   def self.edit(data)

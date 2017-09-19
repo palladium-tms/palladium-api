@@ -6,8 +6,4 @@ class Suite < Sequel::Model
   add_association_dependencies cases: :destroy
   self.raise_on_save_failure = false
   plugin :timestamps
-
-  # create new suite with cases
-  def self.create_new(data)
-  end
 end
