@@ -125,15 +125,10 @@ class Api < Sinatra::Base
   post '/run_delete' do
     process_request request, 'run_delete' do |_req, _username|
       errors = Run.run_id_validation(params['run_data']['id'])
-      if errors.empty?
-        result_sets = Run[id: params['run_data']['id']].result_sets
-        Run[id: params['run_data']['id']].remove_all_result_sets
-        result_sets.each do |result_set|
-          result_set.remove_all_results
-          result_set.destroy
-        end
-        Run[id: params['run_data']['id']].destroy
-      end
+     if errors.empty?
+       Run[id: params['run_data']['id']].remove_all_result_sets
+       Run[id: params['run_data']['id']].destroy
+     end
       { run: params['run_data']['id'], errors: errors }.to_json
     end
   end
@@ -176,7 +171,7 @@ class Api < Sinatra::Base
       begin
         result_set_id = params['result_set_data']['id']
         ResultSet[id: result_set_id].remove_all_results
-        ResultSet[id: result_set_id].destroy
+        ResultSet[id: result_set_id].delete
       rescue StandardError => e
         errors = e
       end
@@ -242,7 +237,7 @@ class Api < Sinatra::Base
 
   post '/not_blocked_statuses' do
     process_request request, 'not_blocked_statuses' do |_req, _username|
-      statuses = Status.where(block: false)
+      statuses = Status.where({block: false})
       statuses_ids = statuses.map(&:id)
       { statuses: Hash[statuses_ids.zip statuses.map(&:values)] }.to_json
     end
@@ -260,9 +255,7 @@ class Api < Sinatra::Base
   post '/suite_delete' do
     process_request request, 'suite_delete' do |_req, _username|
       begin
-        suite = Suite[id: params['suite_data']['id']]
-        suite.remove_all_cases
-        suite.delete
+        suite = Suite[id: params['suite_data']['id']].delete
       rescue StandardError => e
         errors = e
       end
@@ -271,27 +264,11 @@ class Api < Sinatra::Base
   end
   # endregion
 
-  # region cases
-  post '/cases' do
-    process_request request, 'cases' do |_req, _username|
-      cases = Case.where(suite_id: params['case_data']['suite_id']).map(&:values)
-      { cases: cases }.to_json
-    end
-  end
-
-  post '/case_delete' do
-    process_request request, 'case_delete' do |_req, _username|
-      result = Case[id: params['case_data']['id']].delete
-      { cases: result.values }.to_json
-    end
-  end
-  # endregion
-
   # region api_token
   # {"api_token_data" => {"name": string} }
   post '/token_new' do
     process_request request, 'token_new' do |_req, _username|
-      result_token = Token.create_new(params['token_data'], JWT.encode(payload(_username), ENV['JWT_SECRET'], 'HS256'), _username)
+      result_token = Token.create_new(params['token_data'], JWT.encode(self.payload(_username), ENV['JWT_SECRET'], 'HS256'), _username)
       { token_data: result_token.values, errors: result_token.errors }.to_json
     end
   end
@@ -299,14 +276,14 @@ class Api < Sinatra::Base
   post '/tokens' do
     process_request request, 'tokens' do |_req, _username|
       result_token = User[email: _username].tokens
-      { tokens: result_token.map(&:values) }.to_json
+      { tokens: result_token.map(&:values)}.to_json
     end
   end
 
   post '/token_delete' do
     process_request request, 'token_delete' do |_req, _username|
       Token[id: params['token_data']['id']].destroy
-      { token: params['token_data']['id'] }.to_json
+      { token: params['token_data']['id']}.to_json
     end
   end
   # endregion
@@ -324,15 +301,15 @@ class Api < Sinatra::Base
   end
 
   def payload(email)
-    {
-      exp: Time.new(2050, 1, 1).to_i,
-      iat: Time.now.to_i,
-      iss: 'API',
-      scopes: %w[result_new],
-      user: {
-        email: email
+      {
+          exp: Time.new(2050, 1, 1).to_i,
+          iat: Time.now.to_i,
+          iss: 'API',
+          scopes: %w[result_new],
+          user: {
+              email: email
+          }
       }
-    }
   end
 end
 
@@ -378,7 +355,7 @@ class Public < Sinatra::Base
     content_type :json
     status 200
     status 401 unless new_user.errors.empty?
-    { email: user_data['email'], errors: new_user.errors }.to_json
+    {email: user_data['email'], errors: new_user.errors}.to_json
   end
 
   def user_data
@@ -394,20 +371,19 @@ class Public < Sinatra::Base
   # header + . + payload + . + signature
   # header = type + algorithm
   def payload(email = nil)
-    {
-      exp: Time.now.to_i + 60 * 600,
-      iat: Time.now.to_i,
-      iss: ENV['JWT_ISSUER'],
-      scopes: %w[products product product_new product_delete product_edit
+      {
+          exp: Time.now.to_i + 60 * 600,
+          iat: Time.now.to_i,
+          iss: ENV['JWT_ISSUER'],
+          scopes: %w[products product product_new product_delete product_edit
                  plan_new plans plan plan_edit plan_delete
                  run_new runs run run_delete run_edit
                  result_set_new result_sets result_set result_set_delete result_set_edit
                  result_new results
-                 status_new statuses status_edit not_blocked_statuses token_new tokens token_delete
-                 suites suite_delete cases case_delete],
-      user: {
-        email: email
+                 status_new statuses status_edit not_blocked_statuses token_new tokens token_delete suites suite_delete],
+          user: {
+              email: email
+          }
       }
-    }
   end
 end
