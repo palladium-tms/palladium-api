@@ -44,6 +44,7 @@ class Api < Sinatra::Base
       if errors.empty?
         product = Product[id: params['product_data']['id']]
         product.remove_all_plans
+        product.remove_all_suites
         product.delete
       end
       content_type :json
@@ -243,6 +244,26 @@ class Api < Sinatra::Base
   end
   # endregion
 
+  # region suites
+  post '/suites' do
+    process_request request, 'suites' do |_req, _username|
+      suites = Suite.where(product_id: params['suite_data']['product_id']).map(&:values)
+      { suites: suites }.to_json
+    end
+  end
+
+  post '/suite_delete' do
+    process_request request, 'suite_delete' do |_req, _username|
+      begin
+        suite = Suite[id: params['suite_data']['id']].delete
+      rescue StandardError => e
+        errors = e
+      end
+      { result_set: suite.values, errors: errors }.to_json
+    end
+  end
+  # endregion
+
   # region api_token
   # {"api_token_data" => {"name": string} }
   post '/token_new' do
@@ -359,7 +380,7 @@ class Public < Sinatra::Base
                  run_new runs run run_delete run_edit
                  result_set_new result_sets result_set result_set_delete result_set_edit
                  result_new results
-                 status_new statuses status_edit not_blocked_statuses token_new tokens token_delete],
+                 status_new statuses status_edit not_blocked_statuses token_new tokens token_delete suites suite_delete],
           user: {
               email: email
           }
