@@ -67,4 +67,17 @@ class Product < Sequel::Model
       plan.merge!({statistic: statistic[plan[:id]] || []})
     end
   end
+
+  def self.add_case_counts(suites)
+    statistic = get_cases_count(suites)
+    suites.map(&:values).map do |suite|
+      suite.merge!({statistic: statistic[suite[:id]].first.merge!({status: 0}) || []})
+    end
+  end
+
+  def self.get_cases_count(suites)
+     Case.where(:suite_id => suites.map(&:id)).group_and_count(:suite_id).map(&:values).group_by do |e|
+       e[:suite_id]
+     end
+  end
 end

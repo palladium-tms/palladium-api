@@ -247,7 +247,8 @@ class Api < Sinatra::Base
   # region suites
   post '/suites' do
     process_request request, 'suites' do |_req, _username|
-      suites = Suite.where(product_id: params['suite_data']['product_id']).map(&:values)
+      suites = Suite.where(product_id: params['suite_data']['product_id'])
+      suites = Product.add_case_counts(suites)
       { suites: suites }.to_json
     end
   end
