@@ -4,9 +4,15 @@ class Plan < Sequel::Model
   one_to_many :result_sets
   plugin :validation_helpers
   plugin :association_dependencies
-  self.add_association_dependencies :runs => :destroy
   self.raise_on_save_failure = false
   self.plugin :timestamps
+
+  def before_destroy
+    super
+    Run.where(plan_id: self.id).each do |run|
+      run.destroy
+    end
+  end
 
   def validate
     super

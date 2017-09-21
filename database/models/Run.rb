@@ -3,9 +3,18 @@ class Run < Sequel::Model
   one_to_many :result_sets
   plugin :validation_helpers
   plugin :association_dependencies
-  self.add_association_dependencies :result_sets => :nullify
   self.raise_on_save_failure = false
   self.plugin :timestamps
+
+  def before_destroy
+    super
+    self.result_sets
+    ResultSet.where(run_id: self.id).each do |result_set|
+      result_set.remove_all_results
+      Plan[result_set.plan_id].remove_result_set(result_set)
+      result_set.destroy
+    end
+  end
 
   def validate
     super

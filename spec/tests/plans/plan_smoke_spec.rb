@@ -84,6 +84,15 @@ describe 'Plan Smoke' do
       expect(response['plan']).to eq(plan['id'].to_s)
       expect(plans['plans']).to be_empty
     end
+
+    it 'check deleting plan with runs' do
+      response, run_name = RunFunctions.create_new_run(http, plan_id: plan['id'])
+      response = JSON.parse(PlanFunctions.delete_plan(http, id: plan['id']).body)
+      plans = JSON.parse(PlanFunctions.get_plans(http, product_id: plan['product_id']).body)
+      expect(response['errors'].empty?).to be_truthy
+      expect(response['plan']).to eq(plan['id'].to_s)
+      expect(plans['plans']).to be_empty
+    end
   end
 
   describe 'Edit Plan' do

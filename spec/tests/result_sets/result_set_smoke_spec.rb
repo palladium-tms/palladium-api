@@ -43,8 +43,7 @@ describe 'Result Set Smoke' do
       plan = JSON.parse(PlanFunctions.create_new_plan(http, product_name: product['name'])[0].body)['plan']
       run = JSON.parse(RunFunctions.create_new_run(http, plan_id: plan['id'])[0].body)['run']
       result_set_name = http.random_name
-      responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, plan_id: plan['id'],
-                                                                           run_id: run['id'],
+      responce = JSON.parse(ResultSetFunctions.create_new_result_set(http,run_id: run['id'],
                                                                            result_set_name: result_set_name)[0].body)
       expect(responce['errors']).to be_empty
       expect(responce['result_set']['name']).to eq(result_set_name)

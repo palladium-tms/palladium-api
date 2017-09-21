@@ -52,25 +52,6 @@ describe 'Run Smoke' do
       result = JSON.parse(RunFunctions.get_run(http, id: run['id']).body)
       expect(result['run']).to eq(run)
     end
-    #
-    # it 'Get runs by plan_id | statistic check' do
-    #   run_name, product_name, result_set_name, message, plan_name = Array.new(5).map { http.random_name }
-    #
-    #   run = JSON.parse(RunFunctions.create_new_run(http, {plan_id: plan['id'],
-    #                                                       product_name: product_name})[0].body)
-    #
-    #   request = RunFunctions.create_new_run(token: token, plan_id: plan_id, run_name: run_name)
-    #   run_id = JSON.parse(http.request(request[0]).body)['run']['id']
-    #   request = RunFunctions.get_runs(token: token, id: plan_id)
-    #   request = ResultFunctions.create_new_result(token: token,
-    #                                               run_id: run_id,
-    #                                               result_set_name: result_set_name,
-    #                                               message: message,
-    #                                               status: 'Passed')
-    #   http.request(request)
-    #   response = http.request(RunFunctions.get_runs(token: token, id: plan_id))
-    #   expect(JSON.parse(response.body)['runs'].first['statistic']).not_to be_empty
-    # end
   end
 
   describe 'Delete Run' do
@@ -80,6 +61,19 @@ describe 'Run Smoke' do
       run_after_deleting = RunFunctions.get_run(http, id: run['id'])
       expect(result['run']).to eq(run['id'].to_s)
       expect(run_after_deleting.code).to eq('500')
+    end
+
+    it 'Delete run with result_sets by run_id' do
+      run = JSON.parse(RunFunctions.create_new_run(http, plan_id: plan['id'])[0].body)['run']
+      result_set_name = http.random_name
+      responce = JSON.parse(ResultSetFunctions.create_new_result_set(http,run_id: run['id'],
+                                                                     result_set_name: result_set_name)[0].body)
+      result = JSON.parse(RunFunctions.delete_run(http, id: run['id']).body)
+      run_after_deleting = RunFunctions.get_run(http, id: run['id'])
+      result_set = JSON.parse(ResultSetFunctions.get_result_sets(http, id: run['id']).body)['result_set']
+      expect(result['run']).to eq(run['id'].to_s)
+      expect(run_after_deleting.code).to eq('500')
+      expect(result_set).to be_nil
     end
   end
 

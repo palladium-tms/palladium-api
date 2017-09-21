@@ -2,10 +2,16 @@ class Product < Sequel::Model
   one_to_many :plans
   one_to_many :suites
   plugin :validation_helpers
-  plugin :association_dependencies
-  self.add_association_dependencies :plans=>:destroy
   self.raise_on_save_failure = false
   plugin :timestamps, :force => true, :update_on_create => true, :create => :created_at
+
+
+  def before_destroy
+    super
+    Plan.where(product_id: self.id).each do |plan|
+      plan.destroy
+    end
+  end
 
   def validate
     validates_unique :name

@@ -43,9 +43,8 @@ class Api < Sinatra::Base
       errors = Product.product_id_validation(params['product_data']['id'])
       if errors.empty?
         product = Product[id: params['product_data']['id']]
-        product.remove_all_plans
         product.remove_all_suites
-        product.delete
+        product.destroy
       end
       content_type :json
       status 200
@@ -74,7 +73,9 @@ class Api < Sinatra::Base
 
   post '/plan' do
     process_request request, 'plan' do |_req, _username|
-      { plan: Plan[id: params['plan_data']['id']].values }.to_json
+      plan = Plan[id: params['plan_data']['id']]
+      plan = plan.values unless plan.nil?
+      { plan: plan }.to_json
     end
   end
 
@@ -90,7 +91,6 @@ class Api < Sinatra::Base
     process_request request, 'plan_delete' do |_req, _username|
       errors = Plan.plan_id_validation(params['plan_data']['id'])
       if errors.empty?
-        Plan[id: params['plan_data']['id']].remove_all_runs
         Plan[id: params['plan_data']['id']].destroy
       end
       { plan: params['plan_data']['id'], errors: errors }.to_json
@@ -126,7 +126,6 @@ class Api < Sinatra::Base
     process_request request, 'run_delete' do |_req, _username|
       errors = Run.run_id_validation(params['run_data']['id'])
      if errors.empty?
-       Run[id: params['run_data']['id']].remove_all_result_sets
        Run[id: params['run_data']['id']].destroy
      end
       { run: params['run_data']['id'], errors: errors }.to_json
