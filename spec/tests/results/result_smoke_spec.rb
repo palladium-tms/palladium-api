@@ -97,7 +97,7 @@ describe 'Result Smoke' do
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
       expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
-      expect(JSON.parse(response.body)['other_data']['result_set_id']).to eq(result_set_array)
+      expect(JSON.parse(response.body)['other_data']['result_set_id'].size).to eq(3)
     end
   end
 

@@ -264,6 +264,22 @@ class Api < Sinatra::Base
   end
   # endregion
 
+  # region suites
+  post '/cases' do
+    process_request request, 'cases' do |_req, _username|
+      cases = Case.where(suite_id: params['case_data']['suite_id'])
+      { cases: cases.map(&:values) }.to_json
+    end
+  end
+
+  post '/case_delete' do
+    process_request request, 'case_delete' do |_req, _username|
+      this_case = Case[params['case_data']['id']].destroy
+      { cases: this_case .values }.to_json
+    end
+  end
+  # endregion
+
   # region api_token
   # {"api_token_data" => {"name": string} }
   post '/token_new' do
@@ -380,7 +396,8 @@ class Public < Sinatra::Base
                  run_new runs run run_delete run_edit
                  result_set_new result_sets result_set result_set_delete result_set_edit
                  result_new results
-                 status_new statuses status_edit not_blocked_statuses token_new tokens token_delete suites suite_delete],
+                 status_new statuses status_edit not_blocked_statuses token_new tokens
+                 token_delete suites suite_delete cases case_delete],
           user: {
               email: email
           }

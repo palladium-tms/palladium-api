@@ -30,16 +30,5 @@ describe 'Cases Smoke' do
       responce = JSON.parse(CaseFunctions.get_cases(http, id: responce_result_set['other_data']['suite_id']).body)
       expect(responce['cases'].size).to eq(0)
     end
-
-    it 'delete case if suite is deleted' do
-      product_name, plan_name, run_name, result_set_name = Array.new(4).map {http.random_name}
-      responce_result_set = JSON.parse(ResultSetFunctions.create_new_result_set(http, plan_name: plan_name,
-                                                                                run_name: run_name,
-                                                                                product_name: product_name,
-                                                                                result_set_name: result_set_name)[0].body)
-      SuiteFunctions.delete_suite(http, id: responce_result_set['other_data']['suite_id']) # deleting suite
-      responce = JSON.parse(CaseFunctions.get_cases(http, id: responce_result_set['other_data']['suite_id']).body)
-      expect(responce['cases']).to be_empty
-    end
   end
 end

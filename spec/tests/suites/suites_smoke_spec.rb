@@ -7,7 +7,7 @@ describe 'Suites Smoke' do
 
   describe 'Create suite' do
     it 'check creating new suite after run created' do
-      plan_name  = Array.new(1).map { http.random_name }
+      plan_name = Array.new(1).map { http.random_name }
       response, run_name = RunFunctions.create_new_run(http, plan_name: plan_name)
       responce = SuiteFunctions.get_suites(http, id: JSON.parse(response.body)['other_data']['product_id'])
       response = JSON.parse(responce.body)
@@ -18,15 +18,13 @@ describe 'Suites Smoke' do
   describe 'Get suites' do
     it 'check getting suite' do
       plan_name = Array.new(1).map { http.random_name }
-      run_responce, run_name = RunFunctions.create_new_run(http, plan_name: plan_name)
-      run_responce, run_name1 = RunFunctions.create_new_run(http, plan_name: plan_name)
+      _, run_name = RunFunctions.create_new_run(http, plan_name: plan_name)
+      _, run_name1 = RunFunctions.create_new_run(http, plan_name: plan_name)
       run_responce, run_name2 = RunFunctions.create_new_run(http, plan_name: plan_name)
       responce = JSON.parse(SuiteFunctions.get_suites(http, id: JSON.parse(run_responce.body)['other_data']['product_id']).body)
-      expect(responce['suites'].find {|suite|
-        suite['name'] == run_name
-      }.nil?).to be_falsey
-      expect(responce['suites'].find {|suite| suite['name'] == run_name1}.nil?).to be_falsey
-      expect(responce['suites'].find {|suite| suite['name'] == run_name2}.nil?).to be_falsey
+      expect(responce['suites'].find { |suite| suite['name'] == run_name }.nil? ).to be_falsey
+      expect(responce['suites'].find { |suite| suite['name'] == run_name1 }.nil? ).to be_falsey
+      expect(responce['suites'].find { |suite| suite['name'] == run_name2 }.nil? ).to be_falsey
     end
   end
 

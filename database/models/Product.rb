@@ -11,6 +11,9 @@ class Product < Sequel::Model
     Plan.where(product_id: self.id).each do |plan|
       plan.destroy
     end
+    Suite.where(product_id: self.id).each do |suite|
+      suite.destroy
+    end
   end
 
   def validate
@@ -77,7 +80,11 @@ class Product < Sequel::Model
   def self.add_case_counts(suites)
     statistic = get_cases_count(suites)
     suites.map(&:values).map do |suite|
-      suite.merge!({statistic: statistic[suite[:id]].first.merge!({status: 0}) || []})
+       if statistic.has_key?(suite[:id])
+         suite.merge!({statistic: statistic[suite[:id]].first.merge!({status: 0})})
+       else
+         suite.merge!({statistic: {status: 0, count: 0, suite_id: suite[:id]}})
+       end
     end
   end
 
