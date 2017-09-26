@@ -81,9 +81,9 @@ class Product < Sequel::Model
     statistic = get_cases_count(suites)
     suites.map(&:values).map do |suite|
        if statistic.has_key?(suite[:id])
-         suite.merge!({statistic: statistic[suite[:id]].first.merge!({status: 0})})
+         suite.merge!({statistic: [statistic[suite[:id]].first.merge!({status: 0})]})
        else
-         suite.merge!({statistic: {status: 0, count: 0, suite_id: suite[:id]}})
+         suite.merge!({statistic: [{status: 0, count: 0, suite_id: suite[:id]}]})
        end
     end
   end
