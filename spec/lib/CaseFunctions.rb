@@ -4,7 +4,11 @@ class CaseFunctions
   # @param [Hash] args must has :id with exist product id
 
   def self.get_cases(http, options = {})
-    http.post_request('/api/cases',{"case_data[suite_id]": options[:id]})
+    if  options[:id]
+      http.post_request('/api/cases',{"case_data[suite_id]": options[:id]})
+    else
+      http.post_request('/api/cases',{"case_data[run_id]": options[:run_id], "case_data[product_id]": options[:product_id]})
+    end
   end
 
 

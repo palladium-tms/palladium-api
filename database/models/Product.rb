@@ -2,7 +2,6 @@ class Product < Sequel::Model
   one_to_many :plans
   one_to_many :suites
   plugin :validation_helpers
-  self.raise_on_save_failure = false
   plugin :timestamps, :force => true, :update_on_create => true, :create => :created_at
 
 
@@ -17,7 +16,9 @@ class Product < Sequel::Model
   end
 
   def validate
+    super
     validates_unique :name
+    validates_presence :name
   end
 
   def self.product_id_validation(product_id)
@@ -37,11 +38,13 @@ class Product < Sequel::Model
   def self.create_new(data)
     err_product = nil
     product_name = data['product_data']['name']
-    new_product = Product.find_or_create(:name => product_name) {|product|
-      product.name = data['product_data']['name']
-      err_product = product unless product.valid?
-    }
-    err_product.nil? ? new_product : err_product
+    if product_name.nil? || product_name == ''
+      Product.new(name: product_name)
+    else
+      Product.find_or_create(:name => product_name) {|product|
+        product.name = data['product_data']['name']
+      }
+    end
   end
 
   def self.edit(product_id, product_name)

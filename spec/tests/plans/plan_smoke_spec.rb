@@ -65,7 +65,7 @@ describe 'Plan Smoke' do
     end
 
     it 'get one plan | show method' do
-      plan_data = JSON.parse(PlanFunctions.create_new_plan(http)[0].body)
+      plan_data = JSON.parse(PlanFunctions.create_new_plan(http, product_name: http.random_name)[0].body)
       res_plan = PlanFunctions.show_plan(http, id: plan_data['plan']['id'])
       expect(res_plan.code).to eq('200')
       expect(JSON.parse(res_plan.body)['plan']).to eq(plan_data['plan'])

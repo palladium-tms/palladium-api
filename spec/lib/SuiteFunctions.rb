@@ -11,4 +11,9 @@ class SuiteFunctions
   def self.delete_suite(http, options = {})
     http.post_request('/api/suite_delete',{"suite_data[id]": options[:id]})
   end
+
+  def self.get_suites_and_parse(http, options = {})
+    responce = self.get_suites(http, options)
+    suites = JSON.parse(responce.body)
+  end
 end

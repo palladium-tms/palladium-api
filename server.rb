@@ -255,7 +255,7 @@ class Api < Sinatra::Base
   post '/suite_delete' do
     process_request request, 'suite_delete' do |_req, _username|
       begin
-        suite = Suite[id: params['suite_data']['id']].delete
+        suite = Suite[id: params['suite_data']['id']].destroy
       rescue StandardError => e
         errors = e
       end
@@ -267,7 +267,7 @@ class Api < Sinatra::Base
   # region suites
   post '/cases' do
     process_request request, 'cases' do |_req, _username|
-      cases = Case.where(suite_id: params['case_data']['suite_id'])
+      cases = Case.get_cases(params['case_data'])
       { cases: cases.map(&:values) }.to_json
     end
   end
@@ -371,7 +371,7 @@ class Public < Sinatra::Base
     content_type :json
     status 200
     status 401 unless new_user.errors.empty?
-    {email: user_data['email'], errors: new_user.errors}.to_json
+    { email: user_data['email'], errors: new_user.errors }.to_json
   end
 
   def user_data

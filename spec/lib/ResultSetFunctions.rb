@@ -13,6 +13,11 @@ class ResultSetFunctions
     [response, options[:result_set_name]  ]
   end
 
+  def self.create_new_result_set_and_parse(http, options = {})
+    responce, result_set_name = create_new_result_set(http, options)
+    [JSON.parse(responce.body), result_set_name]
+  end
+
   def self.get_params(param)
     params = {}
     params.merge!('result_set_data[name]': param[:result_set_name]) if param[:result_set_name]
