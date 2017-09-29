@@ -33,6 +33,10 @@ class RunFunctions
     http.post_request('/api/runs',{"run_data[plan_id]": options[:id]})
   end
 
+  def self.get_runs_and_parse(http, options = {})
+    JSON.parse(self.get_runs(http, options).body)
+  end
+
   def self.get_run(http, options = {})
     http.post_request('/api/run',{"run_data[id]": options[:id]})
   end

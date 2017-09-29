@@ -252,6 +252,17 @@ class Api < Sinatra::Base
     end
   end
 
+  post '/suite_edit' do
+    process_request request, 'suite_edit' do |_req, _username|
+      begin
+        suite = Suite.edit(params['suite_data'])
+      rescue StandardError => e
+        errors = e
+      end
+      { suite: suite.values.merge({statistic: [{'suite_id': suite.id, 'status': 0, 'count': 0}]}), errors: errors }.to_json
+    end
+  end
+
   post '/suite_delete' do
     process_request request, 'suite_delete' do |_req, _username|
       begin
@@ -397,7 +408,7 @@ class Public < Sinatra::Base
                  result_set_new result_sets result_set result_set_delete result_set_edit
                  result_new results
                  status_new statuses status_edit not_blocked_statuses token_new tokens
-                 token_delete suites suite_delete cases case_delete],
+                 token_delete suites suite_edit suite_delete cases case_delete],
           user: {
               email: email
           }

@@ -14,6 +14,10 @@ class SuiteFunctions
 
   def self.get_suites_and_parse(http, options = {})
     responce = self.get_suites(http, options)
-    suites = JSON.parse(responce.body)
+    JSON.parse(responce.body)['suites']
+  end
+
+  def self.update_suite(http, options = {})
+    http.post_request('/api/suite_edit',{"suite_data[name]": options[:name], "suite_data[id]": options[:id]})
   end
 end

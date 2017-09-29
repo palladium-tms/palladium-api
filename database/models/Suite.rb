@@ -9,10 +9,17 @@ class Suite < Sequel::Model
 
   def before_destroy
     super
-    self
-    plan_ids = Product[id: self.product_id].plans.map(&:id)
-    Run.where(name: self.name, plan_id: plan_ids).each do |current_run|
-      current_run.destroy
+    plan_ids = Product[id: product_id].plans.map(&:id)
+    Run.where(name: name, plan_id: plan_ids).each(&:destroy)
+  end
+
+  def self.edit(suite_data)
+    suite = Suite[id: suite_data['id']]
+    plan_ids = Product[id: suite.product_id].plans.map(&:id)
+    time_for_update = Time.now
+    Run.where(name: suite.name, plan_id: plan_ids).each do |current_run|
+      current_run.update(name: suite_data['name'], updated_at: time_for_update)
     end
+    suite.update(name: suite_data['name'], updated_at: time_for_update)
   end
 end

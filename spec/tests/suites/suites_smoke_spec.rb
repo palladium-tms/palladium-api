@@ -28,6 +28,45 @@ describe 'Suites Smoke' do
     end
   end
 
+  describe 'Update suite' do
+    it 'check update suite' do
+      product_name, plan_name, new_suite_name = Array.new(3).map { http.random_name }
+      run_responce, run_name = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)
+      responce = JSON.parse(SuiteFunctions.get_suites(http, id: JSON.parse(run_responce.body)['other_data']['product_id']).body)
+      created_suite = responce['suites'].find {|suite| suite['name'] == run_name}
+      new_suite = SuiteFunctions.update_suite(http, id: created_suite['id'], name: new_suite_name)
+      responce = JSON.parse(SuiteFunctions.get_suites(http, id: JSON.parse(run_responce.body)['other_data']['product_id']).body)
+      expect(new_suite.code).to eq('200')
+      expect(responce['suites'].find {|suite| suite['name'] == run_name}.nil?).to be_truthy
+      expect(responce['suites'].find {|suite| suite['name'] == new_suite_name}.nil?).to be_falsey
+      expect(new_suite.code).to eq('200')
+    end
+
+    it 'check update suite and runs' do
+      product_name, plan_name, new_suite_name = Array.new(3).map { http.random_name }
+      run_responce, run_name = RunFunctions.create_new_run_and_parse(http, plan_name: plan_name, product_name: product_name)
+      suites = SuiteFunctions.get_suites_and_parse(http, id: run_responce['other_data']['product_id'])
+      created_suite = suites.find {|suite| suite['name'] == run_name}
+      new_suite = SuiteFunctions.update_suite(http, id: created_suite['id'], name: new_suite_name)
+      run_after_update = JSON.parse(RunFunctions.get_runs(http, id: run_responce['other_data']['plan_id']).body)['runs']
+      expect(new_suite.code).to eq('200')
+      expect(run_after_update.find {|run| run['name'] == new_suite_name}.nil?).to be_falsey
+    end
+
+    it 'check update suite and runs only in one product' do
+      product_name, product_name1, plan_name, new_suite_name = Array.new(4).map { http.random_name }
+      run_responce, run_name = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)
+      anternate, run_name = RunFunctions.create_new_run(http, run_name: run_name, plan_name: plan_name, product_name: product_name1)
+      responce = JSON.parse(SuiteFunctions.get_suites(http, id: JSON.parse(run_responce.body)['other_data']['product_id']).body)
+      created_suite = responce['suites'].find {|suite| suite['name'] == run_name}
+      new_suite = SuiteFunctions.update_suite(http, id: created_suite['id'], name: new_suite_name)
+      runs_in_other_product_after_update = JSON.parse(RunFunctions.get_runs(http, id: JSON.parse(anternate.body)['other_data']['plan_id']).body)['runs']
+      expect(new_suite.code).to eq('200')
+      expect(runs_in_other_product_after_update.find {|run| run['name'] == new_suite_name}.nil?).to be_truthy
+      expect(runs_in_other_product_after_update.find {|run| run['name'] == run_name}.nil?).to be_falsey
+    end
+  end
+
   describe 'Delete suite' do
     it 'check deleting suite' do
       product_name, plan_name = Array.new(2).map { http.random_name }
@@ -69,21 +108,21 @@ describe 'Suites Smoke' do
       plan_name1, plan_name2, product_name1, product_name2 = Array.new(4).map { http.random_name }
 
       run_responce_for_delete, run_name = RunFunctions.create_new_run_and_parse(http, plan_name: plan_name1, product_name: product_name1)
-      suites_for_delete = SuiteFunctions.get_suites_and_parse(http, id: run_responce_for_delete['other_data']['product_id'])['suites']
+      suites_for_delete = SuiteFunctions.get_suites_and_parse(http, id: run_responce_for_delete['other_data']['product_id'])
 
       run_responce_for_keep, run_name = RunFunctions.create_new_run_and_parse(http, plan_name: plan_name1,
                                                                      product_name: product_name2, run_name: run_name)
-      suites_for_keep = SuiteFunctions.get_suites_and_parse(http, id: run_responce_for_keep['other_data']['product_id'])['suites']
+      suites_for_keep = SuiteFunctions.get_suites_and_parse(http, id: run_responce_for_keep['other_data']['product_id'])
       runs_for_delete = JSON.parse(RunFunctions.get_runs(http, id: run_responce_for_delete['other_data']['plan_id']).body)['runs']
 
       runs_for_delete = JSON.parse(RunFunctions.get_runs(http, id: run_responce_for_delete['other_data']['plan_id']).body)['runs']
       runs_for_keep = JSON.parse(RunFunctions.get_runs(http, id: run_responce_for_keep['other_data']['plan_id']).body)['runs']
 
       SuiteFunctions.delete_suite(http, id: suites_for_delete[0]['id']) # deleting
-      suites_for_delete = JSON.parse(SuiteFunctions.get_suites(http, id: run_responce_for_delete['other_data']['product_id']).body)['suites']
-      suites_for_keep = JSON.parse(SuiteFunctions.get_suites(http, id: run_responce_for_keep['other_data']['product_id']).body)['suites']
-      runs_for_delete = JSON.parse(RunFunctions.get_runs(http, id: run_responce_for_delete['other_data']['plan_id']).body)['runs']
-      runs_for_keep = JSON.parse(RunFunctions.get_runs(http, id: run_responce_for_keep['other_data']['plan_id']).body)['runs']
+      suites_for_delete = SuiteFunctions.get_suites_and_parse(http, id: run_responce_for_delete['other_data']['product_id'])
+      suites_for_keep = SuiteFunctions.get_suites_and_parse(http, id: run_responce_for_keep['other_data']['product_id'])
+      runs_for_delete = RunFunctions.get_runs_and_parse(http, id: run_responce_for_delete['other_data']['plan_id'])['runs']
+      runs_for_keep = RunFunctions.get_runs_and_parse(http, id: run_responce_for_keep['other_data']['plan_id'])['runs']
       expect(suites_for_delete).to be_empty
       expect(suites_for_keep.empty?).to be_falsey
       expect(runs_for_delete).to be_empty
