@@ -62,9 +62,9 @@ class ResultSet < Sequel::Model
       result_set = ResultSet[:id => data['result_set_data']['id']]
       result_set.update(:name => data['result_set_data']['result_set_name'], :updated_at => Time.now)
       result_set.valid?
-      {'result_set_data': result_set.values, 'errors': result_set.errors}
+      {'result_set_data' => result_set.values, 'errors' => result_set.errors}
     rescue StandardError
-      {'result_set_data': ResultSet.new.values, 'errors': [params: 'Run data is incorrect FIXME!!']} # FIXME: add validate
+      {'result_set_data' => ResultSet.new.values, 'errors' => [params: 'Run data is incorrect FIXME!!']} # FIXME: add validate
     end
   end
 

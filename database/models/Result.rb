@@ -57,12 +57,12 @@ class Result < Sequel::Model
       if Status[name: data['result_data']['status']].nil?
         status = Status.create_new('name' => data['result_data']['status'])
         status.add_result(result)
-        other_data.merge!({status: { status_name: data['result_data']['status'], status_color: status.color }})
+        other_data.merge!(status: { status_name: data['result_data']['status'], status_color: status.color })
       else
         status = Status[name: data['result_data']['status']]
         status.update(block: false) if status.block
         Status[name: data['result_data']['status']].add_result(result) # FIXME: check speed of this method. Can be optimized
-        other_data.merge!({status: { status_name: data['result_data']['status'], status_color: status.color }})
+        other_data.merge!(status: { status_name: data['result_data']['status'], status_color: status.color })
       end
     rescue StandardError
       { errors: result.errors, result: result }

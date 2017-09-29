@@ -2,7 +2,7 @@ class Token < Sequel::Model
   many_to_one :user
   plugin :validation_helpers
   self.raise_on_save_failure = false
-  self.plugin :timestamps
+  plugin :timestamps
 
   def validate
     super

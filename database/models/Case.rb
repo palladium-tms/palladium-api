@@ -6,8 +6,8 @@ class Case < Sequel::Model
   plugin :timestamps
 
   def before_destroy
-    plan_ids = self.suite.product.plans.map(&:id)
-    ResultSet.where(name: self.name, plan_id: plan_ids).each do |current_result_set|
+    plan_ids = suite.product.plans.map(&:id)
+    ResultSet.where(name: name, plan_id: plan_ids).each do |current_result_set|
       current_result_set.remove_all_results
       current_result_set.destroy
     end

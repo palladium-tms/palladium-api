@@ -82,7 +82,7 @@ class Api < Sinatra::Base
   post '/plan_edit' do
     process_request request, 'plan_edit' do |_req, _username|
       plan = Plan.edit(params)
-      status 422 unless plan[:errors].empty?
+      status 422 unless plan['errors'].empty?
       plan.to_json
     end
   end
@@ -135,7 +135,7 @@ class Api < Sinatra::Base
   post '/run_edit' do
     process_request request, 'run_edit' do |_req, _username|
       run = Run.edit(params)
-      status 422 unless run[:errors].empty?
+      status 422 unless run['errors'].empty?
       run.to_json
     end
   end
@@ -181,7 +181,7 @@ class Api < Sinatra::Base
   post '/result_set_edit' do
     process_request request, 'result_set_edit' do |_req, _username|
       result_set = ResultSet.edit(params)
-      status 422 unless result_set[:errors].empty?
+      status 422 unless result_set['errors'].empty?
       result_set.to_json
     end
   end
@@ -259,7 +259,7 @@ class Api < Sinatra::Base
       rescue StandardError => e
         errors = e
       end
-      { suite: suite.values.merge({statistic: [{'suite_id': suite.id, 'status': 0, 'count': 0}]}), errors: errors }.to_json
+      { suite: suite.values.merge({statistic: [{'suite_id' => suite.id, 'status' => 0, 'count' => 0}]}), errors: errors }.to_json
     end
   end
 
@@ -270,7 +270,7 @@ class Api < Sinatra::Base
       rescue StandardError => e
         errors = e
       end
-      { suite: suite.values.merge({statistic: [{'suite_id': 0, 'status': 0, 'count': 0}]}), errors: errors }.to_json
+      { suite: suite.values.merge({statistic: [{'suite_id' => 0, 'status' => 0, 'count' => 0}]}), errors: errors }.to_json
     end
   end
   # endregion
