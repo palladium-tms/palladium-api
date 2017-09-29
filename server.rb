@@ -259,7 +259,7 @@ class Api < Sinatra::Base
       rescue StandardError => e
         errors = e
       end
-      { result_set: suite.values, errors: errors }.to_json
+      { suite: suite.values.merge({statistic: [{'suite_id': 0, 'status': 0, 'count': 0}]}), errors: errors }.to_json
     end
   end
   # endregion
@@ -275,7 +275,7 @@ class Api < Sinatra::Base
   post '/case_delete' do
     process_request request, 'case_delete' do |_req, _username|
       this_case = Case[params['case_data']['id']].destroy
-      { cases: this_case .values }.to_json
+      { case: this_case.values }.to_json
     end
   end
   # endregion
