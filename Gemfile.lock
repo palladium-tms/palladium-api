@@ -1,5 +1,6 @@
-PATH
-  remote: /home/flamine/RubymineProjects/palladium
+GIT
+  remote: https://github.com/flaminestone/palladium.git
+  revision: d079357f993ff545c2fe05a4dd5b89addf32cd2e
   specs:
     palladium (0.1.6)
 
@@ -9,14 +10,15 @@ GEM
     ast (2.3.0)
     diff-lcs (1.3)
     jwt (2.0.0)
+    mustermann (1.0.1)
     parallel (1.12.0)
     parser (2.4.0.0)
       ast (~> 2.2)
     pg (0.21.0)
     powerpack (0.1.1)
     puma (3.10.0)
-    rack (1.6.8)
-    rack-protection (1.5.3)
+    rack (2.0.3)
+    rack-protection (2.0.0)
       rack
     rainbow (2.2.2)
       rake
@@ -41,12 +43,13 @@ GEM
       rainbow (>= 2.2.2, < 3.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
-    ruby-progressbar (1.8.3)
+    ruby-progressbar (1.9.0)
     sequel (5.0.0)
-    sinatra (1.4.8)
-      rack (~> 1.5)
-      rack-protection (~> 1.4)
-      tilt (>= 1.3, < 3)
+    sinatra (2.0.0)
+      mustermann (~> 1.0)
+      rack (~> 2.0)
+      rack-protection (= 2.0.0)
+      tilt (~> 2.0)
     sinatra-cross_origin (0.4.0)
     tilt (2.0.8)
     unicode-display_width (1.3.0)

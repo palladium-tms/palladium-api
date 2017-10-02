@@ -45,8 +45,4 @@ class RunFunctions
   def self.delete_run(http, options = {})
     http.post_request('/api/run_delete', { "run_data[id]": options[:id]})
   end
-
-  def self.update_run(http, options = {})
-    http.post_request('/api/run_edit', {"run_data[id]": options[:id], "run_data[run_name]": options[:name]})
-  end
 end
