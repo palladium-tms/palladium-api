@@ -88,18 +88,18 @@ describe 'Result Set Smoke' do
     end
   end
 
-  describe 'Edit result_set' do
-    it 'Edit result set' do
-      product = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']
-      plan = JSON.parse(PlanFunctions.create_new_plan(http, product_name: product['name'])[0].body)['plan']
-      run = JSON.parse(RunFunctions.create_new_run(http, plan_id: plan['id'])[0].body)['run']
-      result_set_name = http.random_name
-      result_set_new_name = http.random_name
-      result_set = JSON.parse(ResultSetFunctions.create_new_result_set(http, run_id: run['id'],
-                                                                             result_set_name: result_set_name)[0].body)
-      response = ResultSetFunctions.update_result_set(http, id: result_set['result_set']['id'], name: result_set_new_name)
-      result_set = JSON.parse(response.body)['result_set_data']
-      expect(result_set['name']).to eq(result_set_new_name)
-    end
-  end
+  # describe 'Edit result_set' do
+  #   it 'Edit result set' do
+  #     product = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']
+  #     plan = JSON.parse(PlanFunctions.create_new_plan(http, product_name: product['name'])[0].body)['plan']
+  #     run = JSON.parse(RunFunctions.create_new_run(http, plan_id: plan['id'])[0].body)['run']
+  #     result_set_name = http.random_name
+  #     result_set_new_name = http.random_name
+  #     result_set = JSON.parse(ResultSetFunctions.create_new_result_set(http, run_id: run['id'],
+  #                                                                            result_set_name: result_set_name)[0].body)
+  #     response = ResultSetFunctions.update_result_set(http, id: result_set['result_set']['id'], name: result_set_new_name)
+  #     result_set = JSON.parse(response.body)['result_set_data']
+  #     expect(result_set['name']).to eq(result_set_new_name)
+  #   end
+  # end
 end
