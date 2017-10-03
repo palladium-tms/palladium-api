@@ -131,6 +131,14 @@ class Api < Sinatra::Base
       {run: params['run_data']['id'], errors: errors}.to_json
     end
   end
+
+  post '/run_edit' do
+    process_request request, 'run_edit' do |_req, _username|
+      run = Run.edit(params)
+      status 422 unless run['errors'].empty?
+      run.to_json
+    end
+  end
   # endregion runs
 
   # region result_set
@@ -403,7 +411,7 @@ class Public < Sinatra::Base
         iss: ENV['JWT_ISSUER'],
         scopes: %w[products product product_new product_delete product_edit
                  plan_new plans plan plan_edit plan_delete
-                 run_new runs run run_delete
+                 run_new runs run run_delete run_edit
                  result_set_new result_sets result_set result_set_delete
                  result_new results
                  status_new statuses status_edit not_blocked_statuses token_new tokens

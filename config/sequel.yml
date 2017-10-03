@@ -2,4 +2,4 @@
     adapter: postgres
     database: postgres
     username: postgres
-    host: localhost
+    host: db

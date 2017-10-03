@@ -7,7 +7,6 @@ gem 'sequel' # gem for work with database
 gem 'sinatra' # main web framework
 gem 'sinatra-cross_origin'
 gem 'rspec'
-gem 'palladium', git: 'https://github.com/flaminestone/palladium.git'
 
 group :test, :development do
   gem 'palladium', git: 'https://github.com/flaminestone/palladium.git'

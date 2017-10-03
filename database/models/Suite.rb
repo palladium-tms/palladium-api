@@ -14,15 +14,9 @@ class Suite < Sequel::Model
   end
 
   def self.edit(suite_data)
+    suite = Suite[id: suite_data['id']]
+    plan_ids = Product[id: suite.product_id].plans.map(&:id)
     time_for_update = Time.now
-    if suite_data['run_id'].nil?
-      suite = Suite[id: suite_data['id']]
-      plan_ids = Product[id: suite.product_id].plans.map(&:id)
-    else
-      product = Run[suite_data['run_id']].plan.product
-      suite = Suite[name: Run[suite_data['run_id']].name, product_id: product.id]
-      plan_ids = product.plans.map(&:id)
-    end
     Run.where(name: suite.name, plan_id: plan_ids).each do |current_run|
       current_run.update(name: suite_data['name'], updated_at: time_for_update)
     end

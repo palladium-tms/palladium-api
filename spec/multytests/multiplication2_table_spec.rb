@@ -1,14 +1,15 @@
 require 'palladium'
 require_relative '../tests/test_management'
 
+
 token = AuthFunctions.create_user_and_get_token
 product_count = 1
 plan_count = 1
 product_count.times do |product_iterator|
   plan_count.times do |plan_iterator|
-    product = "Product_1"
+    product = "Product_#{product_iterator}"
     plan = "v.1"
-    run = 'multy_1'
+    run = File.basename(__FILE__, '_spec.rb')
     palladium = Palladium.new(host: '0.0.0.0',
                               token: token,
                               product: product,
@@ -43,7 +44,7 @@ product_count.times do |product_iterator|
           #   true
           # end
           after :each do |example|
-            a = palladium.set_result(status: 'Passed', description: 'Not right', name: example.metadata[:description])
+            a = palladium.set_result(status: 'Failed', description: 'Not right', name: example.metadata[:description])
             # "http://#{palladium.host}/#/product/#{palladium.product_id}/plan/#{palladium.plan_id}/run/#{palladium.run_id}/result_set/#{palladium.result_set_id}"
             p
           end
