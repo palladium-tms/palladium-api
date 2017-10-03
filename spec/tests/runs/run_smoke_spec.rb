@@ -76,14 +76,4 @@ describe 'Run Smoke' do
       expect(result_set).to be_nil
     end
   end
-
-  describe 'Edit Run' do
-    it 'Edit run by run_id' do
-      new_run_name = http.random_name
-      run = JSON.parse(RunFunctions.create_new_run(http, plan_id: plan['id'])[0].body)['run']
-      response = JSON.parse(RunFunctions.update_run(http, name: new_run_name, id: run['id']).body)
-      run = JSON.parse(RunFunctions.get_run(http, id: run['id']).body)['run']
-      expect(response['run_data']['name']).to eq(run['name'])
-    end
-  end
 end
