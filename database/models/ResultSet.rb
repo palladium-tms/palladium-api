@@ -34,17 +34,21 @@ class ResultSet < Sequel::Model
           end
     other_data[:run_id] = run.id
     other_data[:plan_id] = run.plan_id
-    begin
-      result_set = ResultSet.find_or_create(name: data['result_set_data']['name'], run_id: other_data[:run_id]) {|result_set|
-        result_set.name = data['result_set_data']['name']
-        result_set.plan_id = other_data[:plan_id]
-      }
-      Plan[id: other_data[:plan_id]].add_result_set(result_set)
-    rescue StandardError
-      return self.run_id_validation(Run.new(data['result_set_data']), other_data[:plan_id])
+    data['result_set_data']['name'] = [data['result_set_data']['name']] unless data['result_set_data']['name'].is_a?(Array)
+    result_sets = data['result_set_data']['name'].map do |name|
+      begin
+        result_set = ResultSet.find_or_create(name: name, run_id: other_data[:run_id]) do |result_set|
+          result_set.name = name
+          result_set.plan_id = other_data[:plan_id]
+        end
+        Plan[id: other_data[:plan_id]].add_result_set(result_set)
+      rescue StandardError
+        return self.run_id_validation(Run.new(data['result_set_data']), other_data[:plan_id])
+      end
+      self.case_detected(result_set.name, run)
+      run.add_result_set(result_set)
     end
-    self.case_detected(result_set.name, run)
-    [run.add_result_set(result_set), other_data]
+    [result_sets, other_data]
   end
 
   def self.case_detected(result_set_name, run)

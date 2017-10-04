@@ -58,7 +58,8 @@ describe 'Cases Smoke' do
       case_id_for_edit = cases.first['id']
       responce_update = CaseFunctions.update_case(http, id: case_id_for_edit, name: new_case_name)
       responce_new = JSON.parse(CaseFunctions.get_cases(http, id: responce['other_data']['suite_id']).body)
-      result_set = JSON.parse(ResultSetFunctions.get_result_set(http, id:  responce['result_set']['id']).body)
+      result_set = ResultSetFunctions.get_result_set(http, id:  responce['result_set'][0]['id'])
+      result_set = JSON.parse(ResultSetFunctions.get_result_set(http, id:  responce['result_set'][0]['id']).body)
       expect(result_set['result_set']['name']).to eq(new_case_name)
     end
 
@@ -77,7 +78,7 @@ describe 'Cases Smoke' do
       responce_update = CaseFunctions.update_case(http, id: case_id_for_edit, name: new_case_name)
       responce_new = JSON.parse(CaseFunctions.get_cases(http, id: responce_first['other_data']['suite_id']).body)
       responce_second = JSON.parse(CaseFunctions.get_cases(http, id: responce_second['other_data']['suite_id']).body)
-      result_set = JSON.parse(ResultSetFunctions.get_result_set(http, id:  responce_first['result_set']['id']).body)
+      result_set = JSON.parse(ResultSetFunctions.get_result_set(http, id:  responce_first['result_set'][0]['id']).body)
       expect(result_set['result_set']['name']).to eq(new_case_name)
       expect(responce_new['cases'].first['name']).to eq(new_case_name)
       expect(responce_second['cases'].first['name']).to eq(result_set_name)
@@ -91,7 +92,7 @@ describe 'Cases Smoke' do
                                                                     result_set_name: result_set_name)[0]
       cases = JSON.parse(CaseFunctions.get_cases(http, id: responce['other_data']['suite_id']).body)['cases']
       case_id_for_edit = cases.first['id']
-      responce_update = CaseFunctions.update_case(http, result_set_id: responce['result_set']['id'], name: new_case_name)
+      responce_update = CaseFunctions.update_case(http, result_set_id: responce['result_set'][0]['id'], name: new_case_name)
       responce_new = JSON.parse(CaseFunctions.get_cases(http, id: responce['other_data']['suite_id']).body)
       expect(responce_update.code).to eq('200')
       expect(responce_new['cases'].first['name']).to eq(new_case_name)

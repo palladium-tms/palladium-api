@@ -9,7 +9,7 @@ class ResultFunctions
 
   def self.get_params(param)
     params = {}
-    params.merge!('result_set_data[name]': param[:result_set_name]) if param[:result_set_name]
+    params.merge!('result_set_data[name][]': param[:result_set_name]) if param[:result_set_name]
     params.merge!('result_set_data[run_id]': param[:run_id]) if param[:run_id]
 
     params.merge!('run_data[name]': param[:run_name]) if param[:run_name]

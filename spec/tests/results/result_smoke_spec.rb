@@ -56,7 +56,7 @@ describe 'Result Smoke' do
     it '4. Check creating new result | only product, plan and run has created before' do
       result_set_name, message = Array.new(5).map { Array.new(30) { http.random_name }.join }
       run_id = JSON.parse(RunFunctions.create_new_run(http, plan_name: http.random_name,
-                                                      product_name: http.random_name)[0].body)['run']['id']
+                                                            product_name: http.random_name)[0].body)['run']['id']
       response = ResultFunctions.create_new_result(http, run_id: run_id,
                                                          result_set_name: result_set_name,
                                                          message: message,
@@ -69,9 +69,10 @@ describe 'Result Smoke' do
     it '5. Check creating new result | only product, plan, run and result set has created before' do
       result_set_name, message = Array.new(5).map { Array.new(30) { http.random_name }.join }
       run_id = JSON.parse(RunFunctions.create_new_run(http, plan_name: http.random_name,
-                                                      product_name: http.random_name)[0].body)['run']['id']
-      result_set_id = JSON.parse(ResultSetFunctions.create_new_result_set(http, run_id: run_id,
-                                                                                result_set_name: result_set_name)[0].body)['result_set']['id']
+                                                            product_name: http.random_name)[0].body)['run']['id']
+      result_set_id = ResultSetFunctions.create_new_result_set_and_parse(http,
+                                                                         run_id: run_id,
+                                                                         result_set_name: result_set_name)[0]['result_set'][0]['id']
       response = ResultFunctions.create_new_result(http,
                                                    result_set_id: result_set_id,
                                                    message: message,
@@ -89,7 +90,7 @@ describe 'Result Smoke' do
       result_set_array = (1..3).to_a.map do |iterator|
         JSON.parse(ResultSetFunctions.create_new_result_set(http,
                                                             run_id: run_id,
-                                                            result_set_name: result_set_name + iterator.to_s)[0].body)['result_set']['id']
+                                                            result_set_name: result_set_name + iterator.to_s)[0].body)['result_set'][0]['id']
       end
 
       response = ResultFunctions.create_new_result(http,
@@ -101,6 +102,21 @@ describe 'Result Smoke' do
       expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
       expect(JSON.parse(response.body)['other_data']['result_set_id'].size).to eq(3)
     end
+
+    it '7. Create result and result_sets from name array and run id' do
+      result_set_name1, result_set_name2, result_set_name3, message = Array.new(4).map { http.random_name }
+      run_id = JSON.parse(RunFunctions.create_new_run(http, plan_name: http.random_name,
+                                                            product_name: http.random_name)[0].body)['run']['id']
+      response = ResultFunctions.create_new_result(http, run_id: run_id,
+                                                         result_set_name: [result_set_name1,
+                                                                           result_set_name2,
+                                                                           result_set_name3],
+                                                         message: message,
+                                                         status: 'Passed')
+      expect(response.code).to eq('200')
+      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
+      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
+    end
   end
 
   describe 'Get results' do
@@ -108,7 +124,7 @@ describe 'Result Smoke' do
       result_set_name, message, product_name, plan_name = Array.new(5).map { http.random_name }
       run_id = JSON.parse(RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)[0].body)['run']['id']
       result_set_id = ResultSetFunctions.create_new_result_set_and_parse(http, run_id: run_id,
-                                                                                result_set_name: result_set_name)[0]['result_set']['id']
+                                                                               result_set_name: result_set_name)[0]['result_set'][0]['id']
       response = ResultFunctions.create_new_result(http,
                                                    result_set_id: result_set_id,
                                                    message: message,

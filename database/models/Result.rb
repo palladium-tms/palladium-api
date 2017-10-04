@@ -16,40 +16,25 @@ class Result < Sequel::Model
     result_set, other_data = ResultSet.create_new(data)
     other_data[:result_set_id] = result_set.id
     other_data[:run_id] = result_set.run_id
-    # data['result_data']['result_set_id'] = result_set.id
-    # data['run_id'] = result_set.run_id
     [other_data, [result_set]]
   end
 
   def self.create_new(data)
-    # a = Time.now
-    # Plan[name: data['plan_data']['name']].runs_dataset.select_map(:name)
-    # 284.times do |i|
-    #   suite = Suite.create(name: 'asdasd' + i.to_s )
-    #   Product[id: 38].add_suite(suite)
-    #   50.times do |j|
-    #     _case = Case.create(name: 'asdasd' + i.to_s + '_' + j.to_s )
-    #     suite.add_case(_case)
-    #   end
-    # end
-    # b = Time.now - a
-    # Product[id: 38].sutes << Suite.create(name: 'asdasd')
-    # Suite.create(name: 'asdasd')
     errors = data_valid?(data)
     other_data = {}
     return { errors: errors } unless errors.nil?
     result_set = if data['result_data']['result_set_id'].nil?
                    result_set, other_result_set_data = ResultSet.create_new(data)
+                   result_set = [result_set] unless result_set.is_a?(Array)
                    other_data.merge!(other_result_set_data)
-                   other_data[:result_set_id] = result_set.id
-                   other_data[:run_id] = result_set.run_id
-                   [result_set]
+                   other_data[:result_set_id] = result_set.map(&:id)
+                   other_data[:run_id] = result_set.map(&:run_id)
+                   result_set
                  else
                    result_set = ResultSet.where(id: data['result_data']['result_set_id'])
-                   data['run_id'] = result_set.select_map(:run_id)
-                   other_data[:result_set_id] = result_set.select_map(:id)
-                   other_data[:run_id] = result_set.select_map(:run_id)
-                   # result_set = [result_set] unless result_set.is_a?(Array)
+                   data['run_id'] = result_set.map(&:run_id)
+                   other_data[:result_set_id] = result_set.map(&:id)
+                   other_data[:run_id] = result_set.map(&:run_id)
                    result_set
                  end
     begin
