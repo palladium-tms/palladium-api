@@ -38,13 +38,13 @@ describe 'Product Smoke' do
       plan_response = PlanFunctions.create_new_plan(http, product_id: product_id_for_deleting)[0]
       products_before_deleting = JSON.parse(ProductFunctions.get_all_products(http).body)['products']
       product_response = ProductFunctions.delete_product(http, product_id_for_deleting)
-      show_plan = PlanFunctions.show_plan(http, plan_id: JSON.parse(plan_response.body)['plan']['id'])
       products_after_deleting = JSON.parse(ProductFunctions.get_all_products(http).body)['products']
+      show_plan = PlanFunctions.show_plan(http, id: JSON.parse(plan_response.body)['plan']['id'])
       expect(product_response.code).to eq('200')
       expect(JSON.parse(product_response.body)['product']).to eq(product_id_for_deleting.to_s)
       expect(products_before_deleting - products_after_deleting).to eq([JSON.parse(res_new_product.body)['product']])
       expect(JSON.parse(product_response.body)['errors'].empty?).to be_truthy
-      expect(show_plan.code).to eq('500')
+      expect(JSON.parse(show_plan.body)['plan']).to be_nil
     end
   end
 

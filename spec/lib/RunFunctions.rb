@@ -23,9 +23,18 @@ class RunFunctions
     [responce, options[:run_name] ]
   end
 
+  def self.create_new_run_and_parse(http, options = {})
+    responce, run_name = self.create_new_run(http, options)
+    [JSON.parse(responce.body), run_name]
+  end
+
   # @param [Hash] args must has :run_data[name] with plan name and run_data[plan_id] with plan id
   def self.get_runs(http, options = {})
     http.post_request('/api/runs',{"run_data[plan_id]": options[:id]})
+  end
+
+  def self.get_runs_and_parse(http, options = {})
+    JSON.parse(self.get_runs(http, options).body)
   end
 
   def self.get_run(http, options = {})
@@ -35,9 +44,5 @@ class RunFunctions
   # @param [Hash] args must has :run_data[name] with plan name and run_data[plan_id] with plan id
   def self.delete_run(http, options = {})
     http.post_request('/api/run_delete', { "run_data[id]": options[:id]})
-  end
-
-  def self.update_run(http, options = {})
-    http.post_request('/api/run_edit', {"run_data[id]": options[:id], "run_data[run_name]": options[:name]})
   end
 end

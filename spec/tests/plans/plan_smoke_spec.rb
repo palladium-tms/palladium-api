@@ -65,7 +65,7 @@ describe 'Plan Smoke' do
     end
 
     it 'get one plan | show method' do
-      plan_data = JSON.parse(PlanFunctions.create_new_plan(http)[0].body)
+      plan_data = JSON.parse(PlanFunctions.create_new_plan(http, product_name: http.random_name)[0].body)
       res_plan = PlanFunctions.show_plan(http, id: plan_data['plan']['id'])
       expect(res_plan.code).to eq('200')
       expect(JSON.parse(res_plan.body)['plan']).to eq(plan_data['plan'])
@@ -78,6 +78,15 @@ describe 'Plan Smoke' do
     end
 
     it 'check deleting plan' do
+      response = JSON.parse(PlanFunctions.delete_plan(http, id: plan['id']).body)
+      plans = JSON.parse(PlanFunctions.get_plans(http, product_id: plan['product_id']).body)
+      expect(response['errors'].empty?).to be_truthy
+      expect(response['plan']).to eq(plan['id'].to_s)
+      expect(plans['plans']).to be_empty
+    end
+
+    it 'check deleting plan with runs' do
+      response, run_name = RunFunctions.create_new_run(http, plan_id: plan['id'])
       response = JSON.parse(PlanFunctions.delete_plan(http, id: plan['id']).body)
       plans = JSON.parse(PlanFunctions.get_plans(http, product_id: plan['product_id']).body)
       expect(response['errors'].empty?).to be_truthy

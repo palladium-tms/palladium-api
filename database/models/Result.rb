@@ -16,8 +16,6 @@ class Result < Sequel::Model
     result_set, other_data = ResultSet.create_new(data)
     other_data[:result_set_id] = result_set.id
     other_data[:run_id] = result_set.run_id
-    # data['result_data']['result_set_id'] = result_set.id
-    # data['run_id'] = result_set.run_id
     [other_data, [result_set]]
   end
 
@@ -27,16 +25,16 @@ class Result < Sequel::Model
     return { errors: errors } unless errors.nil?
     result_set = if data['result_data']['result_set_id'].nil?
                    result_set, other_result_set_data = ResultSet.create_new(data)
+                   result_set = [result_set] unless result_set.is_a?(Array)
                    other_data.merge!(other_result_set_data)
-                   other_data[:result_set_id] = result_set.id
-                   other_data[:run_id] = result_set.run_id
-                   [result_set]
+                   other_data[:result_set_id] = result_set.map(&:id)
+                   other_data[:run_id] = result_set.map(&:run_id)
+                   result_set
                  else
                    result_set = ResultSet.where(id: data['result_data']['result_set_id'])
-                   data['run_id'] = result_set.select_map(:run_id)
-                   other_data[:result_set_id] = result_set.select_map(:id)
-                   other_data[:run_id] = result_set.select_map(:run_id)
-                   # result_set = [result_set] unless result_set.is_a?(Array)
+                   data['run_id'] = result_set.map(&:run_id)
+                   other_data[:result_set_id] = result_set.map(&:id)
+                   other_data[:run_id] = result_set.map(&:run_id)
                    result_set
                  end
     begin
@@ -44,12 +42,12 @@ class Result < Sequel::Model
       if Status[name: data['result_data']['status']].nil?
         status = Status.create_new('name' => data['result_data']['status'])
         status.add_result(result)
-        other_data.merge!({status: { status_name: data['result_data']['status'], status_color: status.color }})
+        other_data.merge!(status: { status_name: data['result_data']['status'], status_color: status.color })
       else
         status = Status[name: data['result_data']['status']]
         status.update(block: false) if status.block
         Status[name: data['result_data']['status']].add_result(result) # FIXME: check speed of this method. Can be optimized
-        other_data.merge!({status: { status_name: data['result_data']['status'], status_color: status.color }})
+        other_data.merge!(status: { status_name: data['result_data']['status'], status_color: status.color })
       end
     rescue StandardError
       { errors: result.errors, result: result }

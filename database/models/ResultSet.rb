@@ -1,4 +1,5 @@
 class ResultSet < Sequel::Model
+  many_to_one :plan
   many_to_one :run
   many_to_many :results
   plugin :validation_helpers
@@ -33,15 +34,31 @@ class ResultSet < Sequel::Model
           end
     other_data[:run_id] = run.id
     other_data[:plan_id] = run.plan_id
-    begin
-      result_set = ResultSet.find_or_create(name: data['result_set_data']['name'], run_id: other_data[:run_id]) {|result_set|
-        result_set.name = data['result_set_data']['name']
-        result_set.plan_id = other_data[:plan_id]
-      }
-    rescue StandardError
-      return self.run_id_validation(Run.new(data['result_set_data']), other_data[:plan_id])
+    data['result_set_data']['name'] = [data['result_set_data']['name']] unless data['result_set_data']['name'].is_a?(Array)
+    result_sets = data['result_set_data']['name'].map do |name|
+      begin
+        result_set = ResultSet.find_or_create(name: name, run_id: other_data[:run_id]) do |result_set|
+          result_set.name = name
+          result_set.plan_id = other_data[:plan_id]
+        end
+        Plan[id: other_data[:plan_id]].add_result_set(result_set)
+      rescue StandardError
+        return self.run_id_validation(Run.new(data['result_set_data']), other_data[:plan_id])
+      end
+      self.case_detected(result_set.name, run)
+      run.add_result_set(result_set)
     end
-    [run.add_result_set(result_set), other_data]
+    [result_sets, other_data]
+  end
+
+  def self.case_detected(result_set_name, run)
+    suite = Suite.find_or_create(product_id: Plan[id: run.plan_id].product_id, name: run.name) {|suite|
+      suite.name = run.name
+    }
+    if suite.cases_dataset[name: result_set_name].nil?
+      _case = Case.create(name: result_set_name)
+      suite.add_case(_case)
+    end
   end
 
   def self.edit(data)
@@ -49,9 +66,9 @@ class ResultSet < Sequel::Model
       result_set = ResultSet[:id => data['result_set_data']['id']]
       result_set.update(:name => data['result_set_data']['result_set_name'], :updated_at => Time.now)
       result_set.valid?
-      {'result_set_data': result_set.values, 'errors': result_set.errors}
+      {'result_set_data' => result_set.values, 'errors' => result_set.errors}
     rescue StandardError
-      {'result_set_data': ResultSet.new.values, 'errors': [params: 'Run data is incorrect FIXME!!']} # FIXME: add validate
+      {'result_set_data' => ResultSet.new.values, 'errors' => [params: 'Run data is incorrect FIXME!!']} # FIXME: add validate
     end
   end
 

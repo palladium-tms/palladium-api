@@ -3,9 +3,18 @@ class Run < Sequel::Model
   one_to_many :result_sets
   plugin :validation_helpers
   plugin :association_dependencies
-  self.add_association_dependencies :result_sets => :destroy
   self.raise_on_save_failure = false
   self.plugin :timestamps
+
+  def before_destroy
+    super
+    self.result_sets
+    ResultSet.where(run_id: self.id).each do |result_set|
+      result_set.remove_all_results
+      Plan[result_set.plan_id].remove_result_set(result_set)
+      result_set.destroy
+    end
+  end
 
   def validate
     super
@@ -53,7 +62,17 @@ class Run < Sequel::Model
     rescue StandardError
       return self.plan_id_validation(Plan.new(data['plan_data']), other_data[:plan_id])
     end
+    other_data = suite_detected(plan, run, other_data)
     [plan.add_run(run), other_data]
+  end
+
+  def self.suite_detected(plan, run, other_data)
+    if Suite.find(product_id: plan.product_id, name: run.name).nil?
+      suite = Suite.create(name: run.name)
+      Product[id: plan.product_id].add_suite(suite)
+      other_data[:suite_id] = suite.id
+    end
+    other_data
   end
 
   def self.edit(data)
@@ -61,9 +80,9 @@ class Run < Sequel::Model
       run = Run[:id => data['run_data']['id']]
       run.update(:name => data['run_data']['run_name'], :updated_at => Time.now)
       run.valid?
-      {'run_data': run.values, 'errors': run.errors}
+      {'run_data' => run.values, 'errors' => run.errors}
     rescue StandardError
-      {'run_data': Run.new.values, 'errors': [params: 'Run data is incorrect FIXME!!']} # FIXME: add validate
+      {'run_data' => Run.new.values, 'errors' => {params: 'Run data is incorrect FIXME!!'}} # FIXME: add validate
     end
   end
 

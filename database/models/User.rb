@@ -16,8 +16,8 @@ class User < Sequel::Model
   end
 
   def self.user_token?(email, token)
-    !User[email: email].tokens.find {|current_token|
+    !User[email: email].tokens.find do |current_token|
       current_token.token == token
-    }.nil?
+    end.nil?
   end
 end

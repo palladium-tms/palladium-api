@@ -42,8 +42,8 @@ end
 DB.create_table? :result_sets do
   primary_key :id
   foreign_key :run_id, :runs
+  foreign_key :plan_id, :plans
   String :name
-  Integer :plan_id
   Integer :status, default: 0
   DateTime :created_at
   DateTime :updated_at
@@ -67,4 +67,20 @@ DB.create_table? :result_sets_results do
   primary_key :id
   foreign_key :result_id, :results
   foreign_key :result_set_id, :result_sets
+end
+
+DB.create_table? :suites do
+  primary_key :id
+  foreign_key :product_id, :products
+  String :name
+  DateTime :created_at
+  DateTime :updated_at
+end
+
+DB.create_table? :cases do
+  primary_key :id
+  foreign_key :suite_id, :suites
+  String :name
+  DateTime :created_at
+  DateTime :updated_at
 end
