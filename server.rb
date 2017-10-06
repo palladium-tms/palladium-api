@@ -42,9 +42,7 @@ class Api < Sinatra::Base
     process_request request, 'product_delete' do |_req, _username|
       errors = Product.product_id_validation(params['product_data']['id'])
       if errors.empty?
-        product = Product[id: params['product_data']['id']]
-        product.remove_all_suites
-        product.destroy
+        Product[id: params['product_data']['id']].destroy
       end
       content_type :json
       status 200
