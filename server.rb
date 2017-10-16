@@ -394,7 +394,7 @@ class Public < Sinatra::Base
   # header = type + algorithm
   def payload(email = nil)
     {
-      exp: Time.now.to_i + 60 * 600,
+      exp: Time.now.to_i + 30 * 86400,
       iat: Time.now.to_i,
       iss: ENV['JWT_ISSUER'],
       scopes: %w[products product product_new product_delete product_edit
