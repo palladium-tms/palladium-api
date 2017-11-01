@@ -152,6 +152,12 @@ class Api < Sinatra::Base
     end
   end
 
+  post '/result' do
+    process_request request, 'result' do |_req, _username|
+      { result: Result[id: params['result_data']['id']].values }.to_json
+    end
+  end
+
   post '/result_set_delete' do
     process_request request, 'result_set_delete' do |_req, _username|
       errors = []
@@ -403,7 +409,7 @@ class Public < Sinatra::Base
                  result_set_new result_sets result_set result_set_delete
                  result_new results
                  status_new statuses status_edit not_blocked_statuses token_new tokens
-                 token_delete suites suite_edit suite_delete cases case_delete case_edit],
+                 token_delete suites suite_edit suite_delete cases case_delete case_edit result],
       user: {
         email: email
       }

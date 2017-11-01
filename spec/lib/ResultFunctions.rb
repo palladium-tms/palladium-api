@@ -29,4 +29,8 @@ class ResultFunctions
   def self.get_results(http ,options = {})
     http.post_request('/api/results', {"result_data[result_set_id]": options[:id]})
   end
+
+  def self.get_result(http , id)
+    http.post_request('/api/result', {"result_data[id]": id})
+  end
 end
