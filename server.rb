@@ -240,7 +240,7 @@ class Api < Sinatra::Base
   # region suites
   post '/suites' do
     process_request request, 'suites' do |_req, _username|
-      suites = Suite.where(product_id: params['suite_data']['product_id'])
+      suites = Suite.where(product_id: params['s-uite_data']['product_id'])
       suites = Product.add_case_counts(suites)
       { suites: suites }.to_json
     end
@@ -288,6 +288,18 @@ class Api < Sinatra::Base
     process_request request, 'case_delete' do |_req, _username|
       this_case = Case[params['case_data']['id']].destroy
       { case: this_case.values }.to_json
+    end
+  end
+  # endregion
+
+  # region history
+  post '/case_history' do
+    process_request request, 'case_history' do |_req, _username|
+      p params
+      this_case = Case[params['case_data']['id']]
+      suite = Case[params['case_data']['id']].suite
+      prouct = Case[params['case_data']['id']].suite.product
+      prouct.plans.take(20)
     end
   end
   # endregion
@@ -409,7 +421,7 @@ class Public < Sinatra::Base
                  result_set_new result_sets result_set result_set_delete
                  result_new results
                  status_new statuses status_edit not_blocked_statuses token_new tokens
-                 token_delete suites suite_edit suite_delete cases case_delete case_edit result],
+                 token_delete suites suite_edit suite_delete cases case_delete case_edit result case_history],
       user: {
         email: email
       }
