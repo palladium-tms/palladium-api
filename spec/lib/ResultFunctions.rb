@@ -25,6 +25,9 @@ class ResultFunctions
     params.merge!('result_data[result_set_id][]': param[:result_set_id]) if param[:result_set_id]
     params
   end
+  def self.create_new_result_and_parse(http, options = {})
+    JSON.parse(ResultFunctions.create_new_result(http, options).body)
+  end
 
   def self.get_results(http ,options = {})
     http.post_request('/api/results', {"result_data[result_set_id]": options[:id]})

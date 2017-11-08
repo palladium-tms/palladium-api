@@ -41,9 +41,7 @@ class Api < Sinatra::Base
   post '/product_delete' do
     process_request request, 'product_delete' do |_req, _username|
       errors = Product.product_id_validation(params['product_data']['id'])
-      if errors.empty?
-        Product[id: params['product_data']['id']].destroy
-      end
+      Product[id: params['product_data']['id']].destroy if errors.empty?
       content_type :json
       status 200
       { product: params['product_data']['id'], errors: errors }.to_json
@@ -240,7 +238,7 @@ class Api < Sinatra::Base
   # region suites
   post '/suites' do
     process_request request, 'suites' do |_req, _username|
-      suites = Suite.where(product_id: params['s-uite_data']['product_id'])
+      suites = Suite.where(product_id: params['suite_data']['product_id'])
       suites = Product.add_case_counts(suites)
       { suites: suites }.to_json
     end
@@ -294,12 +292,34 @@ class Api < Sinatra::Base
 
   # region history
   post '/case_history' do
+    # Need to get data:
+    # {
+    #     plan_id:{
+    #         plan_name: string,
+    #         statistic: {status1: count1, status2: count2, {...}},
+    #         result_set: {id: id, status: status}
+    #     results: {result_id: {result_id: status, result_id: status}}
+    # }
+    # }
     process_request request, 'case_history' do |_req, _username|
-      p params
-      this_case = Case[params['case_data']['id']]
+      start = Time.now
+      $stdout.puts 'stdout'
+      records_limit = 30
+      offset = params['offset']
+      offset = 0 if params['offset'].nil?
       suite = Case[params['case_data']['id']].suite
-      prouct = Case[params['case_data']['id']].suite.product
-      prouct.plans.take(20)
+      plans = Plan.dataset.where(product_id: suite.product.id).select(:id, :name).limit(records_limit, offset).all
+      plan_ids = plans.map(&:id)
+      run_ids = Run.dataset.where(plan_id: plan_ids, name: suite.name).map(&:id)
+      result_sets = ResultSet.dataset.where(plan_id: plan_ids, run_id: run_ids)
+      results = Result.dataset.where(result_sets: result_sets).all.group_by do |e|
+        (e.result_sets || result_sets.all).first.id
+      end
+      results.transform_values! do |results|
+        { statistic: results.group_by(&:status_id).transform_values!(&:size), results: Hash[results.map { |result| [result.id, result.status_id] }] }
+      end
+      $stdout.puts "##case_history# time: #{Time.now - start}"
+      { history_data: results }.to_json
     end
   end
   # endregion
@@ -412,7 +432,7 @@ class Public < Sinatra::Base
   # header = type + algorithm
   def payload(email = nil)
     {
-      exp: Time.now.to_i + 30 * 86400,
+      exp: Time.now.to_i + 30 * 86_400,
       iat: Time.now.to_i,
       iss: ENV['JWT_ISSUER'],
       scopes: %w[products product product_new product_delete product_edit
