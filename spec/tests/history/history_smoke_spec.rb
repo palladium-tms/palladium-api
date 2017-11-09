@@ -4,7 +4,7 @@ describe 'Result Smoke' do
   before :all do
     http = Http.new(token: AuthFunctions.create_user_and_get_token)
   end
-
+  # Fixme: add more checks for history
   describe 'Get history from case id' do
     it '1. Check creating new result with all other elements' do
       product_name, plan_name, message, result_set_name, run_name = Array.new(5).map {http.random_name}
@@ -20,14 +20,14 @@ describe 'Result Smoke' do
                                           message: 'MessageFor_' + i.to_s,
                                           status: 'Passed')
       end
-      response, run_name = RunFunctions.create_new_run_and_parse(http, plan_name: plan_name + '2',
+      response_second, run_name = RunFunctions.create_new_run_and_parse(http, plan_name: plan_name + '2',
                                                                  product_name: product_name, run_name: run_name)
-      second_result_set = ResultFunctions.create_new_result_and_parse(http, run_id: response_first['run']['id'],
+      second_result_set = ResultFunctions.create_new_result_and_parse(http, run_id: response_second['run']['id'],
                                                            result_set_name: result_set_name,
                                                            message: 'MessageFor_1',
                                                            status: 'Passed')
       2.times do |i|
-        ResultFunctions.create_new_result(http, run_id: response['run']['id'],
+        ResultFunctions.create_new_result(http, run_id: response_second['run']['id'],
                                           result_set_name: result_set_name,
                                           message: 'MessageFor_' + i.to_s,
                                           status: 'Passed')
@@ -36,8 +36,10 @@ describe 'Result Smoke' do
 
       responce = JSON.parse(HistoryFunctions.case_history(http, responce['cases'].first['id']).body)
       expect(responce['history_data'].size).to eq(2)
-      expect(responce['history_data'].keys).to eq(first_result_set['other_data']['result_set_id'] + second_result_set['other_data']['result_set_id'])
-      expect(responce['cases'].first['name']).to eq(result_set_name)
+      expect(responce['history_data'][0]['plan_id']).to eq(response_first['other_data']['plan_id'])
+      expect(responce['history_data'][0]['run']['run_id']).to eq(response_first['run']['id'])
+      expect(responce['history_data'][1]['run']['run_id']).to eq(response_second['run']['id'])
+      expect(responce['history_data'][1]['plan_id']).to eq(response_second['other_data']['plan_id'])
     end
   end
 end

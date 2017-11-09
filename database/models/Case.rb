@@ -49,4 +49,39 @@ class Case < Sequel::Model
       this_case.update(name: case_data['name'])
     end
   end
+
+  def self.get_history(params)
+    records_limit = 30
+    offset = params['offset']
+    offset = 0 if params['offset'].nil?
+    suite = Case[params['case_data']['id']].suite
+    plans = Plan.dataset.where(product_id: suite.product.id).select(:id, :name, ).limit(records_limit, offset).all
+    plan_ids = plans.map(&:id)
+    result = plans.map! {|e| {plan_id: e.values[:id], plan_name: e.values[:name]}}
+    runs = Run.dataset.where(plan_id: plan_ids, name: suite.name)
+    grouped_runs = runs.all.group_by do |e|
+      (e.plan || plans).id
+    end
+    result.each {|e| e[:run] = {run_id: grouped_runs[e[:plan_id]].first.values[:id]}}
+    result_sets = ResultSet.dataset.where(plan_id: plan_ids, run_id: runs.map(&:id))
+    grouped_result_set = result_sets.all.group_by do |e|
+      (e.run || runs.all).id
+    end
+    result.each {|e|
+      e[:run][:result_set] = {
+          result_set_id: grouped_result_set[e[:run][:run_id]].first.values[:id],
+          result_set_updated_at: grouped_result_set[e[:run][:run_id]].first.values[:updated_at],
+          status: grouped_result_set[e[:run][:run_id]].first.values[:status]}
+    }
+    results = Result.dataset.where(result_sets: result_sets).all.group_by do |e|
+      (e.result_sets || result_sets.all).first.id
+    end
+    results.transform_values! do |results|
+      {statistic: results.group_by(&:status_id).transform_values!(&:size), results: Hash[results.map {|result| [result.id, result.status_id]}]}
+    end
+    result.each {|e|
+      e[:run][:result_set].merge!(results[e[:run][:result_set][:result_set_id]])
+    }
+    result
+  end
 end
