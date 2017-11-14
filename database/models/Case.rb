@@ -7,7 +7,8 @@ class Case < Sequel::Model
 
   def before_destroy
     plan_ids = self.suite.product.plans.map(&:id)
-    ResultSet.where(name: name, plan_id: plan_ids).each do |current_result_set|
+    runs_id = Run.where(name: self.suite.name, plan_id: plan_ids).map(&:id)
+    ResultSet.where(name: name, plan_id: plan_ids, run_id: runs_id).each do |current_result_set|
       current_result_set.remove_all_results
       current_result_set.destroy
     end
@@ -55,23 +56,33 @@ class Case < Sequel::Model
     offset = params['offset']
     offset = 0 if params['offset'].nil?
     suite = Case[params['case_data']['id']].suite
-    plans = Plan.dataset.where(product_id: suite.product.id).select(:id, :name, ).limit(records_limit, offset).all
+    plans = self.get_plans(suite.product.id, records_limit, offset)
     plan_ids = plans.map(&:id)
-    result = plans.map! {|e| {plan_id: e.values[:id], plan_name: e.values[:name]}}
+    result = plans.map! {|e| {plan_id: e.values[:id], plan_name: e.values[:name], updated_at: e.values[:created_at]}}
     runs = Run.dataset.where(plan_id: plan_ids, name: suite.name)
     grouped_runs = runs.all.group_by do |e|
       (e.plan || plans).id
     end
-    result.each {|e| e[:run] = {run_id: grouped_runs[e[:plan_id]].first.values[:id]}}
-    result_sets = ResultSet.dataset.where(plan_id: plan_ids, run_id: runs.map(&:id))
+    result.each { |e|
+      if grouped_runs[e[:plan_id]]
+        e[:run_id] = grouped_runs[e[:plan_id]].first.values[:id]
+      else
+        e.merge!({suite_id: suite.id})
+      end
+      e.merge!({status: 0})
+    }
+    result_sets = ResultSet.dataset.where(plan_id: plan_ids, run_id: runs.map(&:id), name: Case[params['case_data']['id']].name)
     grouped_result_set = result_sets.all.group_by do |e|
       (e.run || runs.all).id
     end
-    result.each {|e|
-      e[:run][:result_set] = {
-          result_set_id: grouped_result_set[e[:run][:run_id]].first.values[:id],
-          result_set_updated_at: grouped_result_set[e[:run][:run_id]].first.values[:updated_at],
-          status: grouped_result_set[e[:run][:run_id]].first.values[:status]}
+    result.each { |e|
+      unless e[:suite_id]
+        if grouped_result_set[e[:run_id]]
+          e.merge!({result_set_id: grouped_result_set[e[:run_id]].first.values[:id]})
+          e.merge!({updated_at: grouped_result_set[e[:run_id]].first.values[:updated_at]})
+          e.merge!({ status: grouped_result_set[e[:run_id]].first.values[:status]})
+        end
+      end
     }
     results = Result.dataset.where(result_sets: result_sets).all.group_by do |e|
       (e.result_sets || result_sets.all).first.id
@@ -80,8 +91,16 @@ class Case < Sequel::Model
       {statistic: results.group_by(&:status_id).transform_values!(&:size), results: Hash[results.map {|result| [result.id, result.status_id]}]}
     end
     result.each {|e|
-      e[:run][:result_set].merge!(results[e[:run][:result_set][:result_set_id]])
+      unless e[:suite_id]
+        if e[:result_set_id]
+          e.merge!(results[e[:result_set_id]])
+        end
+      end
     }
     result
+  end
+
+  def self.get_plans(product_id, records_limit, offset)
+    Plan.dataset.where(product_id: product_id).select(:id, :name, :created_at).limit(records_limit, offset).all
   end
 end

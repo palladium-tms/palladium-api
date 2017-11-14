@@ -51,6 +51,7 @@ class Run < Sequel::Model
     plan = if data['run_data']['plan_id'].nil?
              Plan.create_new(data)
            else
+             data['run_data']['name'] = get_name_by_suite_if_exist(data['result_set_data']) unless data['run_data']['name']
              Plan[id: data['run_data']['plan_id']]
            end
     other_data[:plan_id] = plan.id
@@ -64,6 +65,12 @@ class Run < Sequel::Model
     end
     other_data = suite_detected(plan, run, other_data)
     [plan.add_run(run), other_data]
+  end
+
+  def self.get_name_by_suite_if_exist(result_set_data)
+    if result_set_data['case_id']
+      return Case[result_set_data['case_id']].suite.name
+    end
   end
 
   def self.suite_detected(plan, run, other_data)

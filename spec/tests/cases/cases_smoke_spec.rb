@@ -129,5 +129,28 @@ describe 'Cases Smoke' do
       expect(cases_after_deletind).to be_empty
       expect(result_sets_after_deleting).to be_empty
     end
+
+    it 'delete case if case with this name is exist in other suite' do
+      product_name, plan_name, run_name, result_set_name, run_name2 = Array.new(5).map {http.random_name}
+      first_result_set = ResultSetFunctions.create_new_result_set_and_parse(http, plan_name: plan_name,
+                                                                               run_name: run_name,
+                                                                               product_name: product_name,
+                                                                               result_set_name: result_set_name)[0]
+      second_result_set = ResultSetFunctions.create_new_result_set_and_parse(http, plan_id: first_result_set['other_data']['plan_id'],
+                                                                             run_name: run_name2,
+                                                                             result_set_name: result_set_name)[0]
+      id = JSON.parse(CaseFunctions.get_cases(http, id: first_result_set['other_data']['suite_id']).body)['cases'].first['id']
+       ResultFunctions.create_new_result(http,result_set_id: first_result_set['result_set'][0]['id'],
+                                                   message: 'message',
+                                                   status: 'Passed')
+       ResultFunctions.create_new_result(http,result_set_id: second_result_set['result_set'][0]['id'],
+                                                   message: 'message',
+                                                   status: 'Passed')
+      CaseFunctions.delete_case(http, id: id)
+      responce_first = ResultSetFunctions.get_result_set(http, id: first_result_set['result_set'][0]['id'])
+      responce_second = ResultSetFunctions.get_result_set(http, id: second_result_set['result_set'][0]['id'])
+      expect(responce_first.code).to eq('500')
+      expect(responce_second.code).to eq('200')
+    end
   end
 end

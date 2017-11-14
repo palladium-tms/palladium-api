@@ -117,6 +117,29 @@ describe 'Result Smoke' do
       expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
       expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
     end
+
+    it '8. Create result by case and plan_id' do
+      product_id = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']['id']
+      plan_name, run_name, result_set_name, message, new_plan = Array.new(6).map { Array.new(30) { StaticData::ALPHABET.sample }.join }
+      response = ResultFunctions.create_new_result(http, plan_name: plan_name,
+                                                   run_name: run_name,
+                                                   product_id: product_id,
+                                                   result_set_name: result_set_name,
+                                                   message: message,
+                                                   status: 'Passed')
+      plan_id = JSON.parse(PlanFunctions.create_new_plan(http, {plan_name: new_plan, product_id: product_id})[0].body)['plan']['id']
+
+      case_id = JSON.parse(CaseFunctions.get_cases(http, {id: JSON.parse(response.body)['other_data']['suite_id']}).body)['cases'][0]['id']
+
+
+      result_responce = ResultFunctions.create_new_result(http, plan_id: plan_id,
+                                                   case_id: case_id,
+                                                   message: message,
+                                                   status: 'Passed')
+      expect(result_responce.code).to eq('200')
+      expect(JSON.parse(result_responce.body)['errors'].nil?).to be_truthy
+      expect(JSON.parse(result_responce.body)['result']['id'].nil?).to be_falsey
+    end
   end
 
   describe 'Get results' do
