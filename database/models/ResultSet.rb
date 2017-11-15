@@ -34,8 +34,8 @@ class ResultSet < Sequel::Model
           end
     other_data[:run_id] = run.id
     other_data[:plan_id] = run.plan_id
-    data['result_set_data']['name'] = [data['result_set_data']['name']] unless data['result_set_data']['name'].is_a?(Array)
-    result_sets = data['result_set_data']['name'].map do |name|
+    data['result_set_data']['name'] = Case[data['result_set_data']['case_id']].name if data['result_set_data']['case_id']
+    result_sets = [*data['result_set_data']['name']].map do |name|
       begin
         result_set = ResultSet.find_or_create(name: name, run_id: other_data[:run_id]) do |result_set|
           result_set.name = name

@@ -4,13 +4,14 @@ class ResultFunctions
   # @param [Hash] args must has 'result_data[result_set_id_id]' with result_set id, and can has result_data[message] with hash of messages (or will be generate
   # random message). example: {"result_data[result_set_id_id]" => int, "result_data[message]" => hash }
   def self.create_new_result(http, options = {})
-    http.post_request('/api/result_new', get_params(options).merge("result_data[status]": options[:status]))
+   http.post_request('/api/result_new', get_params(options).merge("result_data[status]": options[:status]))
   end
 
   def self.get_params(param)
     params = {}
     params.merge!('result_set_data[name][]': param[:result_set_name]) if param[:result_set_name]
     params.merge!('result_set_data[run_id]': param[:run_id]) if param[:run_id]
+    params.merge!('result_set_data[case_id][]': param[:case_id]) if param[:case_id]
 
     params.merge!('run_data[name]': param[:run_name]) if param[:run_name]
     params.merge!('run_data[plan_id]': param[:plan_id]) if param[:plan_id]
@@ -24,6 +25,9 @@ class ResultFunctions
 
     params.merge!('result_data[result_set_id][]': param[:result_set_id]) if param[:result_set_id]
     params
+  end
+  def self.create_new_result_and_parse(http, options = {})
+    JSON.parse(ResultFunctions.create_new_result(http, options).body)
   end
 
   def self.get_results(http ,options = {})
