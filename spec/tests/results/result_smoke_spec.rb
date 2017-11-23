@@ -84,25 +84,25 @@ describe 'Result Smoke' do
     end
 
     # You can send array of result_sets for create this result for every this result_sets
-    it '6. Create result from multiple creator' do
-      result_set_name, message, plan_name, product_name = Array.new(4).map { http.random_name }
-      run_id = JSON.parse(RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)[0].body)['run']['id']
-      result_set_array = (1..3).to_a.map do |iterator|
-        JSON.parse(ResultSetFunctions.create_new_result_set(http,
-                                                            run_id: run_id,
-                                                            result_set_name: result_set_name + iterator.to_s)[0].body)['result_set'][0]['id']
-      end
-
-      response = ResultFunctions.create_new_result(http,
-                                                   result_set_id: result_set_array,
-                                                   message: message,
-                                                   status: 'Passed')
-      expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
-      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
-      expect(JSON.parse(response.body)['other_data']['result_set_id'].size).to eq(3)
-    end
-
+    # it '6. Create result from multiple creator' do
+    #   result_set_name, message, plan_name, product_name = Array.new(4).map { http.random_name }
+    #   run_id = JSON.parse(RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)[0].body)['run']['id']
+    #   result_set_array = (1..3).to_a.map do |iterator|
+    #     JSON.parse(ResultSetFunctions.create_new_result_set(http,
+    #                                                         run_id: run_id,
+    #                                                         result_set_name: result_set_name + iterator.to_s)[0].body)['result_set'][0]['id']
+    #   end
+    #
+    #   response = ResultFunctions.create_new_result(http,
+    #                                                result_set_id: result_set_array,
+    #                                                message: message,
+    #                                                status: 'Passed')
+    #   expect(response.code).to eq('200')
+    #   expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
+    #   expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
+    #   expect(JSON.parse(response.body)['other_data']['result_set_id'].size).to eq(3)
+    # end
+    #
     it '7. Create result and result_sets from name array and run id' do
       result_set_name1, result_set_name2, result_set_name3, message = Array.new(4).map { http.random_name }
       run_id = JSON.parse(RunFunctions.create_new_run(http, plan_name: http.random_name,
