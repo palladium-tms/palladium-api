@@ -18,9 +18,6 @@ describe 'Status Smoke' do
     it "chech_history" do
       cases.each do |case_id|
         p case_id
-        if case_id == 39
-          p
-        end
         responce = HistoryFunctions.case_history(http, case_id)
         expect(responce.code).to eq('200')
       end

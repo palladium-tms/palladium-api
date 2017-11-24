@@ -84,19 +84,21 @@ class Case < Sequel::Model
         end
       end
     }
-    results = Result.dataset.where(result_sets: result_sets).all.group_by do |e|
-      (e.result_sets || result_sets.all).first.id
+    results = {}
+    result_sets.all.each do |result_set|
+      results.merge!({result_set.id => result_set.results})
     end
     results.transform_values! do |results|
-      {statistic: results.group_by(&:status_id).transform_values!(&:size), results: Hash[results.map {|result| [result.id, result.status_id]}]}
+      { statistic: results.group_by(&:status_id).transform_values!(&:size),
+        results: Hash[results.map { |result| [result.id, result.status_id] } ] }
     end
-    result.each {|e|
+    result.each do |e|
       unless e[:suite_id]
         if e[:result_set_id] && !results.empty?
           e.merge!(results[e[:result_set_id]])
         end
       end
-    }
+    end
     result
   end
 

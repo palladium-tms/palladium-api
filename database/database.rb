@@ -1,18 +1,26 @@
 require_relative '../management'
 require 'yaml'
-sleep 10 # FIXME: need to add wait for database available
+# sleep 10 # FIXME: need to add wait for database available
 DB = Sequel.connect(YAML.load_file('config/sequel.yml')[Sinatra::Application.environment])
 
 DB.create_table? :users do
   primary_key :id
   String :email
-  String :password
+  String :password_hash
 end
 
 DB.create_table? :tokens do
   primary_key :id
   String :name
   String :token
+  foreign_key :user_id, :users
+end
+
+DB.create_table? :invites do
+  primary_key :id
+  String :token
+  DateTime :created_at
+  DateTime :expiration_data
   foreign_key :user_id, :users
 end
 

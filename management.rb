@@ -15,6 +15,7 @@ require_relative 'database/models/ResultSet'
 require_relative 'database/models/Result'
 require_relative 'database/models/Status'
 require_relative 'database/models/Token'
+require_relative 'database/models/Invite'
 require_relative 'database/models/Suite'
 require_relative 'database/models/Case'
 
@@ -22,5 +23,3 @@ require_relative 'database/models/Case'
 require_relative 'core/authorization/auth'
 require_relative 'core/authorization/jwt_auth'
 
-# utilits
-require_relative 'utilits/encrypt'

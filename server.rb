@@ -42,7 +42,6 @@ class Api < Sinatra::Base
     process_request request, 'product_delete' do |_req, _username|
       errors = Product.product_id_validation(params['product_data']['id'])
       Product[id: params['product_data']['id']].destroy if errors.empty?
-      content_type :json
       status 200
       {product: params['product_data']['id'], errors: errors}.to_json
     end
@@ -271,7 +270,7 @@ class Api < Sinatra::Base
   post '/cases' do
     process_request request, 'cases' do |_req, _username|
       cases = Case.get_cases(params['case_data'])
-      { cases: cases.map(&:values) }.to_json
+      {cases: cases.map(&:values)}.to_json
     end
   end
 
@@ -297,7 +296,34 @@ class Api < Sinatra::Base
       $stdout.puts 'stdout'
       results = Case.get_history(params)
       $stdout.puts "##case_history# time: #{Time.now - start}"
-      { history_data: results }.to_json
+      {history_data: results}.to_json
+    end
+  end
+  # endregion
+
+  # region invite_token
+  # {"api_token_data" => {"name": string} }
+  post '/create_invite_token' do
+    process_request request, 'get_invite_token' do |_req, _username|
+      invite = Invite.create_new(_username)
+      {invite_data: invite.values}.to_json
+    end
+  end
+
+  post '/get_invite_token' do
+    process_request request, 'get_invite_token' do |_req, _username|
+      if User[email: _username].invite.nil?
+        {invite_data: nil}.to_json
+      else
+        {invite_data: User[email: _username].invite.values}.to_json
+      end
+    end
+  end
+
+  post '/check_link_validation' do
+    process_request request, 'check_link_validation' do |_req, _username|
+      valid_status, error = Invite.check_link_validation(params['token'])
+      {validation: valid_status, errors: error}.to_json
     end
   end
   # endregion
@@ -352,16 +378,18 @@ class Api < Sinatra::Base
 end
 
 class Public < Sinatra::Base
-  include Auth
   register Sinatra::CrossOrigin
 
   post '/login' do
     cross_origin
-    if auth_success?(user_data)
-      content_type :json
-      {token: token(user_data['email'])}.to_json
-    else
-      halt 401
+    current_user = User.find(email: user_data[:email])
+    case
+      when current_user.nil?
+        halt 401, 'User or password not correct'
+      when current_user.password != user_data[:password]
+        halt 401, 'User or password not correct'
+      else
+        {token: token(user_data['email'])}.to_json
     end
   end
 
@@ -374,7 +402,8 @@ class Public < Sinatra::Base
   end
 
   get '/registration' do
-    erb :registration
+    valid_status = Invite.check_link_validation(params['invite'])
+    {token: params['invite'], validation: valid_status}.to_json
   end
 
   # region auth
@@ -385,15 +414,17 @@ class Public < Sinatra::Base
 
   post '/registration' do
     cross_origin
-    new_user = User.create_new(user_data)
-    begin
-      new_user.save
-    rescue
+    valid_status = Invite.check_link_validation(params['invite'])
+    if User.all.empty? || (ENV['RACK_ENV'] != 'production' && params['invite'].nil?)
+      valid_status[0] = true
+      valid_status[1] = []
     end
-    content_type :json
-    status 200
-    status 401 unless new_user.errors.empty?
-    {email: user_data['email'], errors: new_user.errors}.to_json
+    if valid_status.first
+      new_user = User.create_new(user_data)
+      {email: user_data['email'], errors: new_user.errors}.to_json
+    else
+      {email: user_data['email'], errors: valid_status[1]}.to_json
+    end
   end
 
   def user_data
@@ -414,12 +445,14 @@ class Public < Sinatra::Base
         iat: Time.now.to_i,
         iss: ENV['JWT_ISSUER'],
         scopes: %w[products product product_new product_delete product_edit
-                 plan_new plans plan plan_edit plan_delete
-                 run_new runs run run_delete
-                 result_set_new result_sets result_set result_set_delete
-                 result_new results
-                 status_new statuses status_edit not_blocked_statuses token_new tokens
-                 token_delete suites suite_edit suite_delete cases case_delete case_edit result case_history],
+                plan_new plans plan plan_edit plan_delete
+                run_new runs run run_delete
+                result_set_new result_sets result_set result_set_delete
+                result_new results
+                status_new statuses status_edit not_blocked_statuses
+                token_new tokens token_delete suites suite_edit
+                suite_delete cases case_delete case_edit result
+                case_history get_invite_token check_link_validation],
         user: {
             email: email
         }
