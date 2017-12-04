@@ -6,7 +6,7 @@ describe 'Auth Smoke' do
   end
 
   describe 'registration' do
-    it 'create new user' do
+    it 'create new without token' do
       response = http.request(AuthFunctions.create_new_account[0])
       expect(response.code).to eq('200')
     end
@@ -28,7 +28,7 @@ describe 'Auth Smoke' do
     it 'try login with uncorrect user_data' do
       response = http.request(AuthFunctions.login(email: 'asdasd', password: 'asdaslidjas'))
       expect(response.code).to eq('401')
-      expect(response.body).to eq('')
+      expect(response.body).to eq('User or password not correct')
     end
 
     it 'create user and get token' do

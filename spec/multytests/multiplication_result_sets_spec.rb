@@ -6,7 +6,7 @@ palladium = Palladium.new(host: '0.0.0.0',
                           token: token,
                           product: "Spread",
                           port: StaticData::PORT,
-                          plan: "v.1",
+                          plan: "v.2",
                           run: 'Paragraphs')
 3.times do |c|
   describe 'Tests' do

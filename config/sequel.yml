@@ -1,4 +1,16 @@
+  :production:
+    adapter: postgres
+    database: postgres
+    username: postgres
+    host: db
+
   :development:
+    adapter: postgres
+    database: postgres
+    username: postgres
+    host: localhost
+
+  :test:
     adapter: postgres
     database: postgres
     username: postgres
