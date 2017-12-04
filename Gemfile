@@ -8,6 +8,7 @@ gem 'sinatra' # main web framework
 gem 'sinatra-cross_origin'
 gem 'palladium', git: 'https://github.com/flaminestone/palladium.git'
 gem 'rspec'
+gem 'bcrypt'
 
 group :test, :development do
   gem 'palladium', git: 'https://github.com/flaminestone/palladium.git'
