@@ -1,8 +1,19 @@
-require_relative '../../utilits/encrypt'
+require 'bcrypt'
 class User < Sequel::Model
-  include Encrypt
+  include BCrypt
   one_to_many :tokens
+  one_to_one :invite
   plugin :validation_helpers
+
+  def password
+    @password ||= Password.new(password_hash)
+  end
+
+  def password=(new_password)
+    @password = Password.create(new_password)
+    self.password_hash = @password
+  end
+
 
   def validate
     validates_unique :email, message: 'Email is already taken.'
@@ -10,9 +21,15 @@ class User < Sequel::Model
   end
 
   def self.create_new(data)
-    user = new(email: data['email'], password: Encrypt.encrypt(data['password']))
-    user.errors.add(:password, 'password is uncorrent') if /^[a-zA-Z0-9]{6,20}$/.match(data[:password]).nil?
-    user
+    @user = User.new(email: data['email'])
+    if /^[a-zA-Z0-9]{6,20}$/.match(data[:password]).nil?
+      @user.errors.add(:password, 'password is uncorrent')
+      return @user
+    else
+      @user.password = data['password']
+      @user.password.salt
+      @user.save
+    end
   end
 
   def self.user_token?(email, token)
