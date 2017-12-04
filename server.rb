@@ -403,7 +403,7 @@ class Public < Sinatra::Base
 
   get '/registration' do
     valid_status = Invite.check_link_validation(params['invite'])
-    {token: params['invite'], validation: valid_status}.to_json
+    { token: params['invite'], validation: valid_status }.to_json
   end
 
   # region auth
