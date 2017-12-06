@@ -15,7 +15,7 @@ class Api < Sinatra::Base
   # region products
   post '/products' do
     process_request request, 'products' do |_req, _username|
-      {products: Product.all.map(&:values)}.to_json
+      { products: Product.all.map(&:values) }.to_json
     end
   end
 
@@ -323,7 +323,7 @@ class Api < Sinatra::Base
   post '/check_link_validation' do
     process_request request, 'check_link_validation' do |_req, _username|
       valid_status, error = Invite.check_link_validation(params['token'])
-      {validation: valid_status, errors: error}.to_json
+      { validation: valid_status, errors: error }.to_json
     end
   end
   # endregion
@@ -415,16 +415,21 @@ class Public < Sinatra::Base
   post '/registration' do
     cross_origin
     valid_status = Invite.check_link_validation(params['invite'])
-    if User.all.empty? || (ENV['RACK_ENV'] != 'production' && params['invite'].nil?)
+    if User.all.empty? || (ENV['RACK_ENV'] == 'test' && params['invite'].nil?)
       valid_status[0] = true
       valid_status[1] = []
     end
     if valid_status.first
       new_user = User.create_new(user_data)
-      {email: user_data['email'], errors: new_user.errors}.to_json
+      { email: user_data['email'], errors: new_user.errors.values }.to_json
     else
-      {email: user_data['email'], errors: valid_status[1]}.to_json
+      { email: user_data['email'], errors: valid_status[1] }.to_json
     end
+  end
+
+  post '/no_users' do
+    cross_origin
+    { no_users: User.empty? }.to_json
   end
 
   def user_data
