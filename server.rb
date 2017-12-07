@@ -414,7 +414,7 @@ class Public < Sinatra::Base
 
   post '/registration' do
     cross_origin
-    valid_status = Invite.check_link_validation(params['invite'])
+    valid_status = Invite.check_link_validation(user_data['invite'])
     if User.all.empty? || (ENV['RACK_ENV'] == 'test' && params['invite'].nil?)
       valid_status[0] = true
       valid_status[1] = []
