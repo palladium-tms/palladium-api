@@ -95,8 +95,10 @@ class Api < Sinatra::Base
   post '/run_new' do
     process_request request, 'run_new' do |_req, _username|
       run, other_data = Run.create_new(params)
-      status 422 unless run.errors.empty?
-      {'run' => run.values, 'errors' => run.errors, other_data: other_data}.to_json
+      errors = run.errors
+      status 422 unless errors.empty?
+      run = Plan.add_statictic(run).first
+      {'run' => run, 'errors' => errors, other_data: other_data}.to_json
     end
   end
 
