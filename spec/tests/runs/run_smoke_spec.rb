@@ -50,6 +50,7 @@ describe 'Run Smoke' do
     it 'Get one run | show method' do
       run = JSON.parse(RunFunctions.create_new_run(http, plan_id: plan['id'])[0].body)['run']
       result = JSON.parse(RunFunctions.get_run(http, id: run['id']).body)
+      result['run'].merge!('statistic' => [])
       expect(result['run']).to eq(run)
     end
   end

@@ -85,6 +85,7 @@ class Plan < Sequel::Model
   end
 
   def self.add_statictic(runs)
+    runs = [runs] unless runs.is_a?(Array)
     statistic = get_statistic(runs)
     runs.map(&:values).map do |run|
       run.merge!(statistic: statistic[run[:id]] || [])
