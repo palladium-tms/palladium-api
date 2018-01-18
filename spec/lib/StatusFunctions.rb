@@ -20,11 +20,11 @@ class StatusFunctions
   end
 
   def self.params(param)
-    params = {}
-    params.merge!({'status_data[id]': param[:id]}) if param[:id]
-    params.merge!({'status_data[name]': param[:name]}) if param[:name]
-    params.merge!({'status_data[color]': param[:color]}) if param[:color]
-    params.merge!({'status_data[block]': param[:block]}) unless param[:block].nil?
+    params = { status_data: {} }
+    params[:status_data][:id] = param[:id] if param[:id]
+    params[:status_data][:name] = param[:name] if param[:name]
+    params[:status_data][:color] = param[:color] if param[:color]
+    params[:status_data][:block] = param[:block] unless param[:block].nil?
     params
   end
 end

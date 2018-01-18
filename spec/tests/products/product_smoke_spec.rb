@@ -28,7 +28,7 @@ describe 'Product Smoke' do
       product_id_for_deleting = JSON.parse(res_new_product.body)['product']['id']
       responce = ProductFunctions.delete_product(http, product_id_for_deleting)
       expect(responce.code).to eq('200')
-      expect(JSON.parse(responce.body)['product']).to eq(product_id_for_deleting.to_s)
+      expect(JSON.parse(responce.body)['product']).to eq(product_id_for_deleting)
       expect(JSON.parse(responce.body)['errors'].empty?).to be_truthy
     end
 
@@ -41,7 +41,7 @@ describe 'Product Smoke' do
       products_after_deleting = JSON.parse(ProductFunctions.get_all_products(http).body)['products']
       show_plan = PlanFunctions.show_plan(http, id: JSON.parse(plan_response.body)['plan']['id'])
       expect(product_response.code).to eq('200')
-      expect(JSON.parse(product_response.body)['product']).to eq(product_id_for_deleting.to_s)
+      expect(JSON.parse(product_response.body)['product']).to eq(product_id_for_deleting)
       expect(products_before_deleting - products_after_deleting).to eq([JSON.parse(res_new_product.body)['product']])
       expect(JSON.parse(product_response.body)['errors'].empty?).to be_truthy
       expect(JSON.parse(show_plan.body)['plan']).to be_nil

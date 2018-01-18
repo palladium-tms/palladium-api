@@ -37,8 +37,6 @@ class Run < Sequel::Model
     case
       when run_id.nil?
         return {'run_id' => ["run_id can't be nil"]}
-      when run_id.empty?
-        return {'run_id' => ["run_id can't be empty"]}
       when Run[id: run_id].nil?
         return {'run_id' => ["run_id is not belongs to any plans"]}
       else

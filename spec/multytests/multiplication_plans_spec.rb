@@ -2,7 +2,7 @@ require 'palladium'
 require_relative '../tests/test_management'
 
 token = AuthFunctions.create_user_and_get_token
-1.times do |c|
+5.times do |c|
   describe 'Tests' do
     it "Paragraphs" do
       palladium = Palladium.new(host: '0.0.0.0',

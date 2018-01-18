@@ -21,15 +21,15 @@ class Status < Sequel::Model
     end
   end
 
-  def self.edit(*args)
-    status = Status[id: args.first['id']]
+  def self.edit(options)
+    status = Status[id: options['id']]
     if status.nil?
       [Status.new, 'Status data is invalid'] # FIXME: need validation
     else
       params = {}
-      params[:name] = args.first['name'] if args.first['name']
-      params[:color] = args.first['color'] if args.first['color']
-      params[:block] = args.first['block'] if args.first['block']
+      params[:name] = options['name'] if options['name']
+      params[:color] = options['color'] if options['color']
+      params[:block] = options['block'] unless options['block'].nil?
       status.update(params)
       status
     end

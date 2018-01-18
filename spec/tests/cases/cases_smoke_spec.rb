@@ -11,7 +11,7 @@ describe 'Cases Smoke' do
       responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, plan_name: plan_name,
                                                                      run_name: run_name,
                                                                      product_name: product_name,
-                                                                     result_set_name: result_set_name)[0].body)
+                                                                     name: result_set_name)[0].body)
       responce = JSON.parse(CaseFunctions.get_cases(http, id: responce['other_data']['suite_id']).body)
       expect(responce['cases'].size).to eq(1)
       expect(responce['cases'].first['name']).to eq(result_set_name)
@@ -24,7 +24,7 @@ describe 'Cases Smoke' do
       result_set_responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, plan_name: plan_name,
                                                                                 run_name: run_name,
                                                                                 product_name: product_name,
-                                                                                result_set_name: result_set_name)[0].body)
+                                                                                name: result_set_name)[0].body)
 
       responce = JSON.parse(CaseFunctions.get_cases(http, product_id: result_set_responce['other_data']['product_id'],
                                                     run_id: result_set_responce['other_data']['run_id']).body)
@@ -72,7 +72,7 @@ describe 'Cases Smoke' do
       responce_second = ResultSetFunctions.create_new_result_set_and_parse(http, plan_name: plan_name,
                                                                           run_name: run_name_second,
                                                                           product_name: product_name,
-                                                                          result_set_name: result_set_name)[0]
+                                                                          name: result_set_name)[0]
       cases = JSON.parse(CaseFunctions.get_cases(http, id: responce_first['other_data']['suite_id']).body)['cases']
       case_id_for_edit = cases.first['id']
       responce_update = CaseFunctions.update_case(http, id: case_id_for_edit, name: new_case_name)

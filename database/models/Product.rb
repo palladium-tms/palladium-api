@@ -19,8 +19,6 @@ class Product < Sequel::Model
   def self.product_id_validation(product_id)
     if product_id.nil?
       return { 'product_id' => ["product_id can't be nil"] }
-    elsif product_id.empty?
-      return { 'product_id' => ["product_id can't be empty"] }
     elsif Product[id: product_id].nil?
       return { 'product_id' => ['product_id is not belongs to any product'] }
     end

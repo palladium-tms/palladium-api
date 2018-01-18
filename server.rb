@@ -2,7 +2,7 @@ require_relative 'management'
 class Api < Sinatra::Base
   register Sinatra::CrossOrigin
   use JwtAuth
-
+  attr_accessor :params
   def initialize
     super
   end
@@ -10,6 +10,8 @@ class Api < Sinatra::Base
   before do
     content_type :json
     cross_origin
+    body = request.body.read
+    @params = JSON.parse(body) unless body == ''
   end
 
   # region products
@@ -21,14 +23,14 @@ class Api < Sinatra::Base
 
   post '/product' do
     process_request request, 'product' do |_req, _username|
-      {product: Product[id: params['product_data']['id']].values}.to_json
+      { product: Product[id: params['product_data']['id']].values }.to_json
     end
   end
 
   post '/product_new' do
     process_request request, 'product_new' do |_req, _username|
       product = Product.create_new(params)
-      {product: product.values, errors: product.errors}.to_json
+      { product: product.values, errors: product.errors }.to_json
     end
   end
 
@@ -43,7 +45,7 @@ class Api < Sinatra::Base
       errors = Product.product_id_validation(params['product_data']['id'])
       Product[id: params['product_data']['id']].destroy if errors.empty?
       status 200
-      {product: params['product_data']['id'], errors: errors}.to_json
+      { product: params['product_data']['id'], errors: errors }.to_json
     end
   end
   # endregion products
@@ -53,7 +55,7 @@ class Api < Sinatra::Base
     process_request request, 'plan_new' do |_req, _username|
       plan = Plan.create_new(params)
       status 422 unless plan.errors.empty?
-      {plan: plan.values, errors: plan.errors}.to_json
+      { plan: plan.values, errors: plan.errors }.to_json
     end
   end
 
@@ -62,7 +64,7 @@ class Api < Sinatra::Base
       plans, errors = Product.get_plans(params['plan_data'])
       plans = Product.add_statictic(plans)
       status 422 unless errors
-      {plans: plans, errors: errors}.to_json
+      { plans: plans, errors: errors }.to_json
     end
   end
 
@@ -70,7 +72,7 @@ class Api < Sinatra::Base
     process_request request, 'plan' do |_req, _username|
       plan = Plan[id: params['plan_data']['id']]
       plan = plan.values unless plan.nil?
-      {plan: plan}.to_json
+      { plan: plan }.to_json
     end
   end
 
@@ -86,7 +88,7 @@ class Api < Sinatra::Base
     process_request request, 'plan_delete' do |_req, _username|
       errors = Plan.plan_id_validation(params['plan_data']['id'])
       Plan[id: params['plan_data']['id']].destroy if errors.empty?
-      {plan: params['plan_data']['id'], errors: errors}.to_json
+      { plan: params['plan_data']['id'], errors: errors }.to_json
     end
   end
   # endregion plans
@@ -98,7 +100,7 @@ class Api < Sinatra::Base
       errors = run.errors
       status 422 unless errors.empty?
       run = Plan.add_statictic(run).first
-      {'run' => run, 'errors' => errors, other_data: other_data}.to_json
+      { 'run' => run, 'errors' => errors, other_data: other_data }.to_json
     end
   end
 
@@ -107,13 +109,13 @@ class Api < Sinatra::Base
       runs, errors = Plan.get_runs(params['run_data'])
       runs = Plan.add_statictic(runs)
       status 422 unless errors
-      {runs: runs, errors: errors}.to_json
+      { runs: runs, errors: errors }.to_json
     end
   end
 
   post '/run' do
     process_request request, 'run' do |_req, _username|
-      {run: Run[id: params['run_data']['id']].values}.to_json
+      { run: Run[id: params['run_data']['id']].values }.to_json
     end
   end
 
@@ -121,7 +123,7 @@ class Api < Sinatra::Base
     process_request request, 'run_delete' do |_req, _username|
       errors = Run.run_id_validation(params['run_data']['id'])
       Run[id: params['run_data']['id']].destroy if errors.empty?
-      {run: params['run_data']['id'], errors: errors}.to_json
+      { run: params['run_data']['id'], errors: errors }.to_json
     end
   end
   # endregion runs
@@ -132,8 +134,8 @@ class Api < Sinatra::Base
       result_set, other = ResultSet.create_new(params)
       errors = result_set.map(&:errors)
       status 422 unless errors.empty?
-      {result_set: result_set.map(&:values),
-       errors: errors, other_data: other}.to_json
+      { result_set: result_set.map(&:values),
+        errors: errors, other_data: other }.to_json
     end
   end
 
@@ -141,19 +143,19 @@ class Api < Sinatra::Base
     process_request request, 'result_sets' do |_req, _username|
       result_sets, errors = Run.get_result_sets(params['result_set_data'])
       status 422 unless errors
-      {result_sets: result_sets.map(&:values), errors: errors}.to_json
+      { result_sets: result_sets.map(&:values), errors: errors }.to_json
     end
   end
 
   post '/result_set' do
     process_request request, 'result_set' do |_req, _username|
-      {result_set: ResultSet[id: params['result_set_data']['id']].values}.to_json
+      { result_set: ResultSet[id: params['result_set_data']['id']].values }.to_json
     end
   end
 
   post '/result' do
     process_request request, 'result' do |_req, _username|
-      {result: Result[id: params['result_data']['id']].values}.to_json
+      { result: Result[id: params['result_data']['id']].values }.to_json
     end
   end
 
@@ -167,7 +169,7 @@ class Api < Sinatra::Base
       rescue StandardError => e
         errors = e
       end
-      {result_set: params['result_set_data'], errors: errors}.to_json
+      { result_set: params['result_set_data'], errors: errors }.to_json
     end
   end
   #
@@ -185,10 +187,10 @@ class Api < Sinatra::Base
     process_request request, 'result_new' do |_req, _username|
       responce, other = Result.create_new(params)
       if responce[:errors].nil?
-        {result: responce.values, other_data: other}.to_json
+        { result: responce.values, other_data: other }.to_json
       else
         status 422
-        {errors: responce.errors.values, other_data: other}.to_json
+        { errors: responce.errors.values, other_data: other }.to_json
       end
     end
   end
@@ -197,7 +199,7 @@ class Api < Sinatra::Base
     process_request request, 'results' do |_req, _username|
       results, errors = ResultSet.get_results(params['result_data'])
       status 422 unless errors
-      {results: results.map(&:values), errors: errors}.to_json
+      { results: results.map(&:values), errors: errors }.to_json
     end
   end
   # endregion
@@ -207,7 +209,7 @@ class Api < Sinatra::Base
     process_request request, 'status_new' do |_req, _username|
       status = Status.create_new(params['status_data'])
       status 422 unless status.errors.empty?
-      {status: status.values, errors: status.errors}.to_json
+      { status: status.values, errors: status.errors }.to_json
     end
   end
 
@@ -215,7 +217,7 @@ class Api < Sinatra::Base
     process_request request, 'status_edit' do |_req, _username|
       status = Status.edit(params['status_data'])
       status 422 unless status.errors.empty?
-      {status: status.values, errors: status.errors}.to_json
+      { status: status.values, errors: status.errors }.to_json
     end
   end
 
@@ -223,7 +225,7 @@ class Api < Sinatra::Base
     process_request request, 'statuses' do |_req, _username|
       statuses = Status.all
       statuses_ids = statuses.map(&:id)
-      {statuses: Hash[statuses_ids.zip statuses.map(&:values)]}.to_json
+      { statuses: Hash[statuses_ids.zip statuses.map(&:values)] }.to_json
     end
   end
 
@@ -231,7 +233,7 @@ class Api < Sinatra::Base
     process_request request, 'not_blocked_statuses' do |_req, _username|
       statuses = Status.where(block: false)
       statuses_ids = statuses.map(&:id)
-      {statuses: Hash[statuses_ids.zip statuses.map(&:values)]}.to_json
+      { statuses: Hash[statuses_ids.zip statuses.map(&:values)] }.to_json
     end
   end
   # endregion
@@ -241,7 +243,7 @@ class Api < Sinatra::Base
     process_request request, 'suites' do |_req, _username|
       suites = Suite.where(product_id: params['suite_data']['product_id'])
       suites = Product.add_case_counts(suites)
-      {suites: suites}.to_json
+      { suites: suites }.to_json
     end
   end
 
@@ -252,7 +254,7 @@ class Api < Sinatra::Base
       rescue StandardError => e
         errors = e
       end
-      {suite: suite.values.merge(statistic: [{'suite_id' => suite.id, 'status' => 0, 'count' => 0}]), errors: errors}.to_json
+      { suite: suite.values.merge(statistic: [{ 'suite_id' => suite.id, 'status' => 0, 'count' => 0 }]), errors: errors }.to_json
     end
   end
 
@@ -263,7 +265,7 @@ class Api < Sinatra::Base
       rescue StandardError => e
         errors = e
       end
-      {suite: suite.values.merge(statistic: [{'suite_id' => 0, 'status' => 0, 'count' => 0}]), errors: errors}.to_json
+      { suite: suite.values.merge(statistic: [{ 'suite_id' => 0, 'status' => 0, 'count' => 0 }]), errors: errors }.to_json
     end
   end
   # endregion
@@ -272,21 +274,21 @@ class Api < Sinatra::Base
   post '/cases' do
     process_request request, 'cases' do |_req, _username|
       cases = Case.get_cases(params['case_data'])
-      {cases: cases.map(&:values)}.to_json
+      { cases: cases.map(&:values) }.to_json
     end
   end
 
   post '/case_edit' do
     process_request request, 'case_edit' do |_req, _username|
       this_case = Case.edit(params['case_data'])
-      {case: this_case.values}.to_json
+      { case: this_case.values }.to_json
     end
   end
 
   post '/case_delete' do
     process_request request, 'case_delete' do |_req, _username|
       this_case = Case[params['case_data']['id']].destroy
-      {case: this_case.values}.to_json
+      { case: this_case.values }.to_json
     end
   end
   # endregion
@@ -298,7 +300,7 @@ class Api < Sinatra::Base
       $stdout.puts 'stdout'
       results = Case.get_history(params)
       $stdout.puts "##case_history# time: #{Time.now - start}"
-      {history_data: results}.to_json
+      { history_data: results }.to_json
     end
   end
   # endregion
@@ -308,16 +310,16 @@ class Api < Sinatra::Base
   post '/create_invite_token' do
     process_request request, 'get_invite_token' do |_req, _username|
       invite = Invite.create_new(_username)
-      {invite_data: invite.values}.to_json
+      { invite_data: invite.values }.to_json
     end
   end
 
   post '/get_invite_token' do
     process_request request, 'get_invite_token' do |_req, _username|
       if User[email: _username].invite.nil?
-        {invite_data: nil}.to_json
+        { invite_data: nil }.to_json
       else
-        {invite_data: User[email: _username].invite.values}.to_json
+        { invite_data: User[email: _username].invite.values }.to_json
       end
     end
   end
@@ -335,21 +337,21 @@ class Api < Sinatra::Base
   post '/token_new' do
     process_request request, 'token_new' do |_req, _username|
       result_token = Token.create_new(params['token_data'], JWT.encode(payload(_username), ENV['JWT_SECRET'], 'HS256'), _username)
-      {token_data: result_token.values, errors: result_token.errors}.to_json
+      { token_data: result_token.values, errors: result_token.errors }.to_json
     end
   end
 
   post '/tokens' do
     process_request request, 'tokens' do |_req, _username|
       result_token = User[email: _username].tokens
-      {tokens: result_token.map(&:values)}.to_json
+      { tokens: result_token.map(&:values) }.to_json
     end
   end
 
   post '/token_delete' do
     process_request request, 'token_delete' do |_req, _username|
       Token[id: params['token_data']['id']].destroy
-      {token: params['token_data']['id']}.to_json
+      { token: params['token_data']['id'] }.to_json
     end
   end
   # endregion
@@ -368,13 +370,13 @@ class Api < Sinatra::Base
 
   def payload(email)
     {
-        exp: Time.new(2050, 1, 1).to_i,
-        iat: Time.now.to_i,
-        iss: 'API',
-        scopes: %w[result_new],
-        user: {
-            email: email
-        }
+      exp: Time.new(2050, 1, 1).to_i,
+      iat: Time.now.to_i,
+      iss: 'API',
+      scopes: %w[result_new],
+      user: {
+        email: email
+      }
     }
   end
 end
@@ -385,13 +387,12 @@ class Public < Sinatra::Base
   post '/login' do
     cross_origin
     current_user = User.find(email: user_data[:email])
-    case
-      when current_user.nil?
-        halt 401, 'User or password not correct'
-      when current_user.password != user_data[:password]
-        halt 401, 'User or password not correct'
-      else
-        {token: token(user_data['email'])}.to_json
+    if current_user.nil?
+      halt 401, 'User or password not correct'
+    elsif current_user.password != user_data[:password]
+      halt 401, 'User or password not correct'
+    else
+      { token: token(user_data['email']) }.to_json
     end
   end
 
@@ -448,21 +449,21 @@ class Public < Sinatra::Base
   # header = type + algorithm
   def payload(email = nil)
     {
-        exp: Time.now.to_i + 30 * 86_400,
-        iat: Time.now.to_i,
-        iss: ENV['JWT_ISSUER'],
-        scopes: %w[products product product_new product_delete product_edit
-                plan_new plans plan plan_edit plan_delete
-                run_new runs run run_delete
-                result_set_new result_sets result_set result_set_delete
-                result_new results
-                status_new statuses status_edit not_blocked_statuses
-                token_new tokens token_delete suites suite_edit
-                suite_delete cases case_delete case_edit result
-                case_history get_invite_token check_link_validation],
-        user: {
-            email: email
-        }
+      exp: Time.now.to_i + 30 * 86_400,
+      iat: Time.now.to_i,
+      iss: ENV['JWT_ISSUER'],
+      scopes: %w[products product product_new product_delete product_edit
+                 plan_new plans plan plan_edit plan_delete
+                 run_new runs run run_delete
+                 result_set_new result_sets result_set result_set_delete
+                 result_new results
+                 status_new statuses status_edit not_blocked_statuses
+                 token_new tokens token_delete suites suite_edit
+                 suite_delete cases case_delete case_edit result
+                 case_history get_invite_token check_link_validation],
+      user: {
+        email: email
+      }
     }
   end
 end
