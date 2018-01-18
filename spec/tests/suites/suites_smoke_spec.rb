@@ -56,9 +56,11 @@ describe 'Suites Smoke' do
     it 'check update suite and runs only in one product' do
       product_name, product_name1, plan_name, new_suite_name = Array.new(4).map { http.random_name }
       run_responce, run_name = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)
-      anternate, run_name = RunFunctions.create_new_run(http, run_name: run_name, plan_name: plan_name, product_name: product_name1)
+      anternate, run_name = RunFunctions.create_new_run(http, name: run_name, plan_name: plan_name, product_name: product_name1)
       responce = JSON.parse(SuiteFunctions.get_suites(http, id: JSON.parse(run_responce.body)['other_data']['product_id']).body)
-      created_suite = responce['suites'].find {|suite| suite['name'] == run_name}
+      created_suite = responce['suites'].find do |suite|
+        suite['name'] == run_name
+      end
       new_suite = SuiteFunctions.update_suite(http, id: created_suite['id'], name: new_suite_name)
       runs_in_other_product_after_update = JSON.parse(RunFunctions.get_runs(http, id: JSON.parse(anternate.body)['other_data']['plan_id']).body)['runs']
       expect(new_suite.code).to eq('200')

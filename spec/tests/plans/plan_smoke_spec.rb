@@ -13,7 +13,7 @@ describe 'Plan Smoke' do
   describe 'Create new plan' do
     it 'check creating new plan with product_id' do
       correct_plan_name = http.random_name
-      response = PlanFunctions.create_new_plan(http, plan_name: correct_plan_name,
+      response = PlanFunctions.create_new_plan(http, name: correct_plan_name,
                                                      product_id: product['id'])[0]
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
@@ -81,7 +81,7 @@ describe 'Plan Smoke' do
       response = JSON.parse(PlanFunctions.delete_plan(http, id: plan['id']).body)
       plans = JSON.parse(PlanFunctions.get_plans(http, product_id: plan['product_id']).body)
       expect(response['errors'].empty?).to be_truthy
-      expect(response['plan']).to eq(plan['id'].to_s)
+      expect(response['plan']).to eq(plan['id'])
       expect(plans['plans']).to be_empty
     end
 
@@ -90,7 +90,7 @@ describe 'Plan Smoke' do
       response = JSON.parse(PlanFunctions.delete_plan(http, id: plan['id']).body)
       plans = JSON.parse(PlanFunctions.get_plans(http, product_id: plan['product_id']).body)
       expect(response['errors'].empty?).to be_truthy
-      expect(response['plan']).to eq(plan['id'].to_s)
+      expect(response['plan']).to eq(plan['id'])
       expect(plans['plans']).to be_empty
     end
   end

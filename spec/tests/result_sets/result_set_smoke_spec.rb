@@ -11,7 +11,7 @@ describe 'Result Set Smoke' do
       responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, plan_name: plan_name,
                                                                            run_name: run_name,
                                                                            product_name: product_name,
-                                                                           result_set_name: result_set_name)[0].body)
+                                                                           name: result_set_name)[0].body)
       expect(responce['errors']).to eq([{}])
       expect(responce['result_set'][0]['name']).to eq(result_set_name)
     end
@@ -22,7 +22,7 @@ describe 'Result Set Smoke' do
       responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, plan_name: plan_name,
                                                                            run_name: run_name,
                                                                            product_id: product['id'],
-                                                                           result_set_name: result_set_name)[0].body)
+                                                                           name: result_set_name)[0].body)
       expect(responce['errors']).to eq([{}])
       expect(responce['result_set'][0]['name']).to eq(result_set_name)
     end
@@ -33,7 +33,7 @@ describe 'Result Set Smoke' do
       run_name, result_set_name = Array.new(4).map { http.random_name }
       responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, plan_id: plan['id'],
                                                                            run_name: run_name,
-                                                                           result_set_name: result_set_name)[0].body)
+                                                                           name: result_set_name)[0].body)
       expect(responce['errors']).to eq([{}])
       expect(responce['result_set'][0]['name']).to eq(result_set_name)
     end
@@ -44,7 +44,7 @@ describe 'Result Set Smoke' do
       run = JSON.parse(RunFunctions.create_new_run(http, plan_id: plan['id'])[0].body)['run']
       result_set_name = http.random_name
       responce = JSON.parse(ResultSetFunctions.create_new_result_set(http,run_id: run['id'],
-                                                                           result_set_name: result_set_name)[0].body)
+                                                                           name: result_set_name)[0].body)
       expect(responce['errors']).to eq([{}])
       expect(responce['result_set'][0]['name']).to eq(result_set_name)
     end
@@ -80,10 +80,10 @@ describe 'Result Set Smoke' do
       responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, plan_name: plan_name,
                                                                            run_name: run_name,
                                                                            product_name: product_name,
-                                                                           result_set_name: result_set_name)[0].body)['result_set'][0]
+                                                                           name: result_set_name)[0].body)['result_set'][0]
       delete_responce = JSON.parse(ResultSetFunctions.delete_result_set(http, id: responce['id']).body)
       result_ser_after_deleting = ResultSetFunctions.get_result_set(http, id: responce['id'])
-      expect(delete_responce['result_set']['id']).to eq(responce['id'].to_s)
+      expect(delete_responce['result_set']['id']).to eq(responce['id'])
       expect(result_ser_after_deleting.code).to eq('500')
     end
   end

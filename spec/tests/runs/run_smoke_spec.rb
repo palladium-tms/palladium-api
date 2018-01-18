@@ -60,7 +60,7 @@ describe 'Run Smoke' do
       run = JSON.parse(RunFunctions.create_new_run(http, plan_id: plan['id'])[0].body)['run']
       result = JSON.parse(RunFunctions.delete_run(http, id: run['id']).body)
       run_after_deleting = RunFunctions.get_run(http, id: run['id'])
-      expect(result['run']).to eq(run['id'].to_s)
+      expect(result['run']).to eq(run['id'])
       expect(run_after_deleting.code).to eq('500')
     end
 
@@ -72,7 +72,7 @@ describe 'Run Smoke' do
       result = JSON.parse(RunFunctions.delete_run(http, id: run['id']).body)
       run_after_deleting = RunFunctions.get_run(http, id: run['id'])
       result_set = JSON.parse(ResultSetFunctions.get_result_sets(http, id: run['id']).body)['result_set']
-      expect(result['run']).to eq(run['id'].to_s)
+      expect(result['run']).to eq(run['id'])
       expect(run_after_deleting.code).to eq('500')
       expect(result_set).to be_nil
     end

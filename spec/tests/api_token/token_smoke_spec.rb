@@ -67,7 +67,7 @@ describe 'Auth Smoke' do
       token_id = JSON.parse(TokenFunctions.create_new_api_token(http).body)['token_data']['id']
       result = TokenFunctions.delete_token(http, token_id)
       tokens = TokenFunctions.get_tokens(http)
-      expect(JSON.parse(result.body)['token']).to eq(token_id.to_s)
+      expect(JSON.parse(result.body)['token']).to eq(token_id)
       expect(JSON.parse(tokens.body)['tokens']).to be_empty
     end
   end

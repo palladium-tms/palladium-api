@@ -16,7 +16,7 @@ class Case < Sequel::Model
 
   def self.get_cases(case_data = {})
     if case_data['suite_id']
-      Case.where(suite_id: case_data['suite_id'])
+      Suite[case_data['suite_id']].cases
     elsif case_data['run_id']
       run = Run[case_data['run_id']]
       if Suite[name: run.name, product_id: run.plan.product.id]

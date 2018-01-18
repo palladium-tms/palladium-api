@@ -7,7 +7,7 @@ class TokenFunctions
   # return array with request and product name [request, product_name]
   def self.create_new_api_token(http, name = nil)
     name ||= http.random_name
-    http.post_request('/api/token_new', {'token_data[name]': name})
+    http.post_request('/api/token_new', {token_data: {name: name}})
   end
 
   def self.get_tokens(http)
@@ -15,6 +15,6 @@ class TokenFunctions
   end
 
   def self.delete_token(http, id)
-    http.post_request('/api/token_delete', {'token_data[id]': id})
+    http.post_request('/api/token_delete', {token_data: {id: id}})
   end
 end
