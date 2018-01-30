@@ -28,7 +28,6 @@ class Product < Sequel::Model
   # @param [Hash] data must be like {:product_data => {name: 'product_name'}}
   # @return [ProductObject]
   def self.create_new(data)
-    err_product = nil
     product_name = data['product_data']['name']
     if product_name.nil? || product_name == ''
       Product.new(name: product_name)
@@ -40,10 +39,14 @@ class Product < Sequel::Model
   end
 
   def self.edit(product_id, product_name)
-    product = Product[id: product_id]
-    product.update(name: product_name, updated_at: Time.now)
-    product.valid?
-    { 'product_data' => product.values, 'errors' => product.errors }.to_json
+    product = Product.new(name: product_name, updated_at: Time.now)
+    if product.valid?
+      product = Product[id: product_id]
+      product.update(name: product_name, updated_at: Time.now)
+      { product_data: product.values, errors: product.errors }
+    else
+      { product_data: Product[id: product_id].values, errors: product.errors }
+    end
   end
 
   def self.get_plans(*args)

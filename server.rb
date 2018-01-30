@@ -36,7 +36,9 @@ class Api < Sinatra::Base
 
   post '/product_edit' do
     process_request request, 'product_edit' do |_req, _username|
-      Product.edit(params['product_data']['id'], params['product_data']['name'])
+      result = Product.edit(params['product_data']['id'], params['product_data']['name'])
+      status 422 unless result[:errors]
+      result.to_json
     end
   end
 
@@ -465,5 +467,9 @@ class Public < Sinatra::Base
         email: email
       }
     }
+  end
+
+  post '/version' do
+    { version: '0.0.1' }.to_json
   end
 end
