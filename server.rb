@@ -102,7 +102,7 @@ class Api < Sinatra::Base
       errors = run.errors
       status 422 unless errors.empty?
       run = Plan.add_statictic(run).first
-      { 'run' => run, 'errors' => errors, other_data: other_data }.to_json
+      { run:  run, errors: errors, other_data: other_data }.to_json
     end
   end
 
@@ -251,12 +251,13 @@ class Api < Sinatra::Base
 
   post '/suite_edit' do
     process_request request, 'suite_edit' do |_req, _username|
-      begin
-        suite = Suite.edit(params['suite_data'])
-      rescue StandardError => e
-        errors = e
+      suite = Suite.edit(params['suite_data'])
+      if suite.errors.empty?
+        { suite: suite.values.merge(statistic: [{ status: 0,
+                                                  count: 0 }])}.to_json
+      else
+        { errors: suite.errors }.to_json
       end
-      { suite: suite.values.merge(statistic: [{ 'suite_id' => suite.id, 'status' => 0, 'count' => 0 }]), errors: errors }.to_json
     end
   end
 

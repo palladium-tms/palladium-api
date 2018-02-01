@@ -17,11 +17,20 @@ class Suite < Sequel::Model
     time_for_update = Time.now
     if suite_data['run_id'].nil?
       suite = Suite[id: suite_data['id']]
-      plan_ids = Product[id: suite.product_id].plans.map(&:id)
+      product = Product[id: suite.product_id]
     else
       product = Run[suite_data['run_id']].plan.product
       suite = Suite[name: Run[suite_data['run_id']].name, product_id: product.id]
-      plan_ids = product.plans.map(&:id)
+    end
+    plan_ids = product.plans.map(&:id)
+    edited_suite = Suite[name: suite_data['name'], product_id: product.id]
+    if suite.name == suite_data['name']
+      edited_suite.errors.add('name', "can't change name to self")
+      return edited_suite
+    end
+    unless edited_suite.nil? # Fixme: need optimize
+      edited_suite.errors.add('name', 'name must be unique')
+      return edited_suite
     end
     Run.where(name: suite.name, plan_id: plan_ids).each do |current_run|
       current_run.update(name: suite_data['name'], updated_at: time_for_update)
