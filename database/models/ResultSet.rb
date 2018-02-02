@@ -4,7 +4,7 @@ class ResultSet < Sequel::Model
   many_to_many :results
   plugin :validation_helpers
   self.raise_on_save_failure = false
-  self.plugin :timestamps
+  plugin :timestamps
 
   def validate
     super
@@ -12,68 +12,85 @@ class ResultSet < Sequel::Model
   end
 
   def self.run_id_validation(result_set, run_id)
-    case
-      when run_id.nil?
-        result_set.errors.add('run_id', "run_id can't be nil")
-        return result_set
-      when Run[id: run_id].nil?
-        result_set.errors.add('run_id', "run_id is not belongs to any plans")
-        return result_set
+    if run_id.nil?
+      result_set.errors.add('run_id', "run_id can't be nil")
+      return result_set
+    elsif Run[id: run_id].nil?
+      result_set.errors.add('run_id', 'run_id is not belongs to any plans')
+      return result_set
     end
     result_set
   end
 
+  def self.find_or_new(name, run_id)
+    ResultSet.find(name: name, run_id: run_id) || ResultSet.new(name: name)
+  end
+
+  # ['result_set_data']['name'] can be array (if you set result by some result sets by manualy)
   def self.create_new(data)
-    other_data = {}
-    run = if data['result_set_data']['run_id'].nil?
-            run, other_run_data = Run.create_new(data)
-            other_data.merge!(other_run_data)
-            run
+    return { result_sets: ResultSet.wheare(id: data['result_data']['result_set_id']) } if result_set_id_exist?(data)
+    objects = Run.create_new(data)
+    if objects[:product_errors] || objects[:plan_errors] || objects[:run_errors]
+      { result_sets_errors: 'product, plan or run creating error' }.merge(objects)
+    else
+      name = get_result_set_name(data)
+      errors_stack = []
+      [*name].map do |name|
+        new_result_set = ResultSet.find_or_new(name, objects[:run].id)
+        if new_result_set.valid?
+          new_result_set.save
+          if objects[:plan]
+            objects[:plan].add_result_set(new_result_set)
           else
-            Run[data['result_set_data']['run_id']]
+            objects[:run].plan.add_result_set(new_result_set)
           end
-    other_data[:run_id] = run.id
-    other_data[:plan_id] = run.plan_id
-    data['result_set_data']['name'] = Case[data['result_set_data']['case_id']].name if data['result_set_data']['case_id']
-    result_sets = [*data['result_set_data']['name']].map do |name|
-      begin
-        result_set = ResultSet.find_or_create(name: name, run_id: other_data[:run_id]) do |result_set|
-          result_set.name = name
-          result_set.plan_id = other_data[:plan_id]
+          objects[:run].add_result_set(new_result_set)
+          case_detected(new_result_set.name, objects[:run])
+          objects[:result_sets] = []
+          objects[:result_sets] << new_result_set
+        else
+          errors_stack << new_result_set.errors.full_messages
         end
-        Plan[id: other_data[:plan_id]].add_result_set(result_set)
-      rescue StandardError
-        return self.run_id_validation(Run.new(data['result_set_data']), other_data[:plan_id])
       end
-      self.case_detected(result_set.name, run)
-      run.add_result_set(result_set)
+      objects[:result_sets_errors] = errors_stack unless errors_stack.empty?
+      objects
     end
-    [result_sets, other_data]
+  end
+
+  def self.result_set_id_exist?(data)
+    return !data['result_data']['result_set_id'].nil? if data['result_data']
+    false
   end
 
   def self.case_detected(result_set_name, run)
-    suite = Suite.find_or_create(product_id: Plan[id: run.plan_id].product_id, name: run.name) {|suite|
+    suite = Suite.find_or_create(product_id: Plan[id: run.plan_id].product_id, name: run.name) do |suite|
       suite.name = run.name
-    }
+    end
     if suite.cases_dataset[name: result_set_name].nil?
       _case = Case.create(name: result_set_name)
       suite.add_case(_case)
     end
   end
 
-  def self.edit(data)
-    begin
-      result_set = ResultSet[:id => data['result_set_data']['id']]
-      result_set.update(:name => data['result_set_data']['result_set_name'], :updated_at => Time.now)
-      result_set.valid?
-      {'result_set_data' => result_set.values, 'errors' => result_set.errors}
-    rescue StandardError
-      {'result_set_data' => ResultSet.new.values, 'errors' => [params: 'Run data is incorrect FIXME!!']} # FIXME: add validate
+  def self.get_result_set_name(data)
+    if data['result_set_data']['case_id']
+      Case[data['result_set_data']['case_id']].name
+    elsif data['result_set_data']['name']
+      data['result_set_data']['name']
     end
   end
 
+  def self.edit(data)
+    result_set = ResultSet[id: data['result_set_data']['id']]
+    result_set.update(name: data['result_set_data']['result_set_name'], updated_at: Time.now)
+    result_set.valid?
+    { 'result_set_data' => result_set.values, 'errors' => result_set.errors }
+  rescue StandardError
+    { 'result_set_data' => ResultSet.new.values, 'errors' => [params: 'Run data is incorrect FIXME!!'] } # FIXME: add validate
+  end
+
   def self.get_results(*args)
-    result_set = ResultSet[:id => args.first['result_set_id']]
+    result_set = ResultSet[id: args.first['result_set_id']]
     begin
       [result_set.results, []]
     rescue StandardError

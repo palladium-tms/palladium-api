@@ -16,12 +16,13 @@ describe 'Result Smoke' do
                                                          status: 'Passed')
       expect(response.code).to eq('200')
       body = JSON.parse(response.body)
-      expect(body['errors'].nil?).to be_truthy
-      expect(body['result']['id'].nil?).to be_falsey
-      expect(body['other_data']['product_id'].nil?).to be_falsey
-      expect(body['other_data']['plan_id'].nil?).to be_falsey
-      expect(body['other_data']['run_id'].nil?).to be_falsey
-      expect(body['other_data']['result_set_id'].nil?).to be_falsey
+      expect(body.keys.size).to eq(6)
+      expect(body['result_sets'][0]['name']).to eq(result_set_name)
+      expect(body['product']['name']).to eq(product_name)
+      expect(body['plan']['name']).to eq(plan_name)
+      expect(body['run']['name']).to eq(run_name)
+      expect(body['result']['message']).to eq(message)
+      expect(body['status']['name']).to eq('Passed')
     end
 
     it '2. Check creating new result | only product has created before' do
@@ -34,8 +35,14 @@ describe 'Result Smoke' do
                                                          message: message,
                                                          status: 'Passed')
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
-      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
+      body = JSON.parse(response.body)
+      expect(body.keys.size).to eq(6)
+      expect(body['result_sets'][0]['name']).to eq(result_set_name)
+      expect(body['product']['id']).to eq(product_id)
+      expect(body['plan']['name']).to eq(plan_name)
+      expect(body['run']['name']).to eq(run_name)
+      expect(body['result']['message']).to eq(message)
+      expect(body['status']['name']).to eq('Passed')
     end
 
     it '3. Check creating new result | only product and plan has created before' do
@@ -49,8 +56,13 @@ describe 'Result Smoke' do
                                                    message: message,
                                                    status: 'Passed')
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
-      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
+      body = JSON.parse(response.body)
+      expect(body.keys.size).to eq(5)
+      expect(body['result_sets'][0]['name']).to eq(result_set_name)
+      expect(body['plan']['id']).to eq(plan_id)
+      expect(body['run']['name']).to eq(run_name)
+      expect(body['result']['message']).to eq(message)
+      expect(body['status']['name']).to eq('Passed')
     end
 
     it '4. Check creating new result | only product, plan and run has created before' do
@@ -62,25 +74,31 @@ describe 'Result Smoke' do
                                                          message: message,
                                                          status: 'Passed')
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
-      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
+      body = JSON.parse(response.body)
+      expect(body.keys.size).to eq(4)
+      expect(body['result_sets'][0]['name']).to eq(result_set_name)
+      expect(body['run']['id']).to eq(run_id)
+      expect(body['result']['message']).to eq(message)
+      expect(body['status']['name']).to eq('Passed')
     end
 
     it '5. Check creating new result | only product, plan, run and result set has created before' do
-      result_set_name, message = Array.new(5).map { Array.new(30) { http.random_name }.join }
+      result_set_name, message = Array.new(2).map { http.random_name }
       run_id = JSON.parse(RunFunctions.create_new_run(http, plan_name: http.random_name,
                                                             product_name: http.random_name)[0].body)['run']['id']
       result_set_id = ResultSetFunctions.create_new_result_set_and_parse(http,
                                                                          run_id: run_id,
-                                                                         result_set_name: result_set_name)[0]['result_set'][0]['id']
+                                                                         name: result_set_name)[0]['result_sets'][0]['id']
       response = ResultFunctions.create_new_result(http,
                                                    result_set_id: result_set_id,
                                                    message: message,
                                                    status: 'Passed')
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
-      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
-      expect(JSON.parse(response.body)['other_data']['result_set_id']).to eq([result_set_id])
+      body = JSON.parse(response.body)
+      expect(body.keys.size).to eq(3)
+      expect(body['result_sets'][0]['name']).to eq(result_set_name)
+      expect(body['result']['message']).to eq(message)
+      expect(body['status']['name']).to eq('Passed')
     end
 
     # You can send array of result_sets for create this result for every this result_sets
@@ -90,7 +108,7 @@ describe 'Result Smoke' do
       result_set_array = (1..3).to_a.map do |iterator|
         JSON.parse(ResultSetFunctions.create_new_result_set(http,
                                                             run_id: run_id,
-                                                            result_set_name: result_set_name + iterator.to_s)[0].body)['result_set'][0]['id']
+                                                            result_set_name: result_set_name + iterator.to_s)[0].body)['result_sets'][0]['id']
       end
 
       response = ResultFunctions.create_new_result(http,
@@ -98,9 +116,11 @@ describe 'Result Smoke' do
                                                    message: message,
                                                    status: 'Passed')
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
-      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
-      expect(JSON.parse(response.body)['other_data']['result_set_id'].size).to eq(3)
+      body = JSON.parse(response.body)
+      expect(body.keys.size).to eq(3)
+      expect(body['result_sets'][0]['name']).to eq(result_set_name)
+      expect(body['result']['message']).to eq(message)
+      expect(body['status']['name']).to eq('Passed')
     end
 
     it '7. Create result and result_sets from name array and run id' do

@@ -9,15 +9,19 @@ class Status < Sequel::Model
     validates_format /^.{1,40}$/, :name
   end
 
+  # @param [Hash] data can contains only :color and :name
   def self.create_new(data)
-    if Status[name: data['name']].nil?
-      params = { name: data['name'] }
-      params[:color] = data['color'] unless data['color'].nil?
-      status = new(params)
-      status.save if status.valid?
-      status # TODO: it needed?
+    name = data['name'] || data[:name]
+    if Status[name: name]
+      Status[name: name].unblock!
+      return Status[name: name]
+    end
+    color = data['color'] unless data['color'].nil?
+    status = new(name: name, color: color)
+    if status.valid?
+      status.save
     else
-      Status[name: data['name']].unblock!
+      { status_errors: status.errors.full_messages }
     end
   end
 
@@ -33,6 +37,13 @@ class Status < Sequel::Model
       status.update(params)
       status
     end
+  end
+
+  def self.status_exist?(data)
+    if data['result_data']
+      return !Status.find(name: data['result_data']['status']).nil? unless data['result_data']['status'].nil?
+    end
+    false
   end
 
   def unblock!
