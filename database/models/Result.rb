@@ -7,7 +7,7 @@ class Result < Sequel::Model
   def self.create_new(data)
     objects = ResultSet.create_new(data)
     if objects[:result_sets_errors]
-      { errors: 'asdasd' }
+      { result_errors: 'product, plan, run or result_set creating error' }.merge(objects)
     elsif data['result_data']
       result = Result.create(message: data['result_data']['message'])
       status = Status.create_new(name: data['result_data']['status'])

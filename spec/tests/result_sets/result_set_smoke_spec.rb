@@ -12,7 +12,7 @@ describe 'Result Set Smoke' do
                                                                            run_name: run_name,
                                                                            product_name: product_name,
                                                                            name: result_set_name)[0].body)
-      expect(responce.keys.size).to eq(4)
+      expect(responce.keys.size).to eq(5)
       expect(responce['product']['name']).to eq(product_name)
       expect(responce['plan']['name']).to eq(plan_name)
       expect(responce['run']['name']).to eq(run_name)
@@ -26,7 +26,7 @@ describe 'Result Set Smoke' do
                                                                            run_name: run_name,
                                                                            product_id: product['id'],
                                                                            name: result_set_name)[0].body)
-      expect(responce.keys.size).to eq(4)
+      expect(responce.keys.size).to eq(5)
       expect(responce['product']['id']).to eq(product['id'])
       expect(responce['plan']['name']).to eq(plan_name)
       expect(responce['run']['name']).to eq(run_name)
@@ -40,7 +40,7 @@ describe 'Result Set Smoke' do
       responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, plan_id: plan['id'],
                                                                            run_name: run_name,
                                                                            name: result_set_name)[0].body)
-      expect(responce.keys.size).to eq(3)
+      expect(responce.keys.size).to eq(4)
       expect(responce['plan']['id']).to eq(plan['id'])
       expect(responce['run']['name']).to eq(run_name)
       expect(responce['result_sets'][0]['name']).to eq(result_set_name)

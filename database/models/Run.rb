@@ -52,12 +52,13 @@ class Run < Sequel::Model
     if objects[:product_errors] || objects[:plan_errors]
       { run_errors: 'product or plan creating error' }.merge(objects)
     else
-      run = Run.find_or_new(data['run_data']['name'], objects[:plan].id)
+      run_name = get_run_name(data)
+      run = Run.find_or_new(run_name, objects[:plan].id)
       if run.valid?
         run.save
-        suite_detected(objects[:plan], run)
+        suite = suite_detected(objects[:plan], run)
         objects[:plan].add_run(run)
-        { run: run }.merge(objects)
+        { run: run, suite: suite }.merge(objects)
       else
         { run_errors: run.errors.full_messages }
       end
@@ -69,25 +70,42 @@ class Run < Sequel::Model
     false
   end
 
+  def self.case_id_exist?(data)
+    return !data['result_set_data']['case_id'].nil? unless data['result_set_data'].nil?
+    false
+  end
+
+  def self.get_run_name(data)
+    if data['run_data']
+      return data['run_data']['name'] if data['run_data']['name']
+    end
+    if data['result_set_data']
+      return  Case[id: data['result_set_data']['case_id']].suite.name if data['result_set_data']['case_id']
+    end
+  end
+
   def self.get_name_by_suite_if_exist(result_set_data)
     return Case[result_set_data['case_id']].suite.name if result_set_data['case_id']
   end
 
-  def self.suite_detected(plan, run)
-    if Suite.find(product_id: plan.product_id, name: run.name).nil?
+  def self.suite_detected(plan, run) # FIXME: need optimize
+    suite = Suite.find(product_id: plan.product_id, name: run.name)
+    if suite.nil?
       suite = Suite.create(name: run.name)
       Product[id: plan.product_id].add_suite(suite)
+    else
+      suite
     end
   end
 
-  def self.edit(data)
-    run = Run[id: data['run_data']['id']]
-    run.update(name: data['run_data']['run_name'], updated_at: Time.now)
-    run.valid?
-    { 'run_data' => run.values, 'errors' => run.errors }
-  rescue StandardError
-    { 'run_data' => Run.new.values, 'errors' => { params: 'Run data is incorrect FIXME!!' } } # FIXME: add validate
-  end
+  # def self.edit(data)
+  #   run = Run[id: data['run_data']['id']]
+  #   run.update(name: data['run_data']['run_name'], updated_at: Time.now)
+  #   run.valid?
+  #   { 'run_data' => run.values, 'errors' => run.errors }
+  # rescue StandardError
+  #   { 'run_data' => Run.new.values, 'errors' => { params: 'Run data is incorrect FIXME!!' } } # FIXME: add validate
+  # end
 
   def self.get_result_sets(*args)
     run = Run[id: args.first['run_id']]

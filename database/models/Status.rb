@@ -11,13 +11,15 @@ class Status < Sequel::Model
 
   # @param [Hash] data can contains only :color and :name
   def self.create_new(data)
-    name = data['name'] || data[:name]
-    if Status[name: name]
-      Status[name: name].unblock!
-      return Status[name: name]
+    params = {}
+    params[:name] = data['name'] || data[:name]
+    status = Status.find(name: params[:name])
+    unless status.nil?
+      status.unblock!
+      return status
     end
-    color = data['color'] unless data['color'].nil?
-    status = new(name: name, color: color)
+    params[:color] = data['color'] unless data['color'].nil?
+    status = new(params)
     if status.valid?
       status.save
     else

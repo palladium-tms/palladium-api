@@ -98,7 +98,12 @@ class Api < Sinatra::Base
 
   post '/plan_edit' do
     process_request request, 'plan_edit' do |_req, _username|
-      Plan.edit(params).to_json
+      plan = Plan.edit(params)
+      if plan[:plan_errors].nil?
+        { plan: Product.add_statictic([*plan])[0] }
+      else
+        plan
+      end.to_json
     end
   end
 
@@ -116,10 +121,11 @@ class Api < Sinatra::Base
     process_request request, 'run_new' do |_req, _username|
       objects = Run.create_new(params)
       if objects[:product_errors].nil? && objects[:plan_errors].nil? && objects[:run_errors].nil?
-        run = Plan.add_statictic(objects[:run]).first
+        run = Plan.add_statictic([*objects[:run]]).first
         result = { run: run }
         result[:product] = objects[:product].values unless objects[:product].nil?
         result[:plan] = objects[:plan].values unless objects[:plan].nil?
+        result[:suite] = objects[:suite].values unless objects[:suite].nil?
         result.to_json
       else
         status 422
@@ -164,6 +170,7 @@ class Api < Sinatra::Base
         result[:product] = objects[:product].values unless objects[:product].nil?
         result[:plan] = objects[:plan].values unless objects[:plan].nil?
         result[:run] = objects[:run].values unless objects[:run].nil?
+        result[:suite] = objects[:suite].values unless objects[:suite].nil?
         result.to_json
       else
         status 422
@@ -215,18 +222,20 @@ class Api < Sinatra::Base
     process_request request, 'result_new' do |_req, _username|
       objects = Result.create_new(params)
       if objects[:product_errors].nil? && objects[:plan_errors].nil? &&
-          objects[:run_errors].nil? && objects[:result_sets_errors].nil? &&
-          objects[:status_errors].nil?
-        result = { result_sets: objects[:result_sets].map(&:values) }
+         objects[:run_errors].nil? && objects[:result_sets_errors].nil? &&
+         objects[:status_errors].nil? && objects[:result_errors].nil?
+        result = {}
+        result[:result_sets] = objects[:result_sets].map(&:values) unless objects[:result_sets].nil?
         result[:product] = objects[:product].values unless objects[:product].nil?
         result[:plan] = objects[:plan].values unless objects[:plan].nil?
         result[:run] = objects[:run].values unless objects[:run].nil?
-        result[:result_sets] = objects[:result_sets].map(&:values) unless objects[:result_sets].nil?
         result[:result] = objects[:result].values unless objects[:result].nil?
         result[:status] = objects[:status].values unless objects[:status].nil?
+        result[:suite] = objects[:suite].values unless objects[:suite].nil?
         result.to_json
       else
         status 422
+        objects.to_json
       end
     end
   end
@@ -455,7 +464,7 @@ class Public < Sinatra::Base
   post '/registration' do
     cross_origin
     valid_status = Invite.check_link_validation(user_data['invite'])
-    if User.all.empty? || (ENV['RACK_ENV'] == 'development' && params['invite'].nil?)
+    if User.all.empty? || (ENV['RACK_ENV'] == 'test' && params['invite'].nil?)
       valid_status[0] = true
       valid_status[1] = []
     end
@@ -505,6 +514,6 @@ class Public < Sinatra::Base
   end
 
   post '/version' do
-    { version: '0.0.1' }.to_json
+    { version: '0.1.0' }.to_json
   end
 end

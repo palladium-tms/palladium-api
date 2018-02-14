@@ -28,7 +28,7 @@ class ResultSet < Sequel::Model
 
   # ['result_set_data']['name'] can be array (if you set result by some result sets by manualy)
   def self.create_new(data)
-    return { result_sets: ResultSet.wheare(id: data['result_data']['result_set_id']) } if result_set_id_exist?(data)
+    return { result_sets: ResultSet.where(id: data['result_data']['result_set_id']).map { |elem| elem } } if result_set_id_exist?(data)
     objects = Run.create_new(data)
     if objects[:product_errors] || objects[:plan_errors] || objects[:run_errors]
       { result_sets_errors: 'product, plan or run creating error' }.merge(objects)

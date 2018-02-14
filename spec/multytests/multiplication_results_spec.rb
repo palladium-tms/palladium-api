@@ -1,11 +1,11 @@
 require 'palladium'
 require_relative '../tests/test_management'
-
+token = AuthFunctions.create_user_and_get_token
 palladium = Palladium.new(host: StaticData::ADDRESS,
-                          token: 'eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjI1MjQ1OTcyMDAsImlhdCI6MTUxNjIwMDQ3MSwiaXNzIjoiQVBJIiwic2NvcGVzIjpbInJlc3VsdF9uZXciXSwidXNlciI6eyJlbWFpbCI6InFnZHdoaXV4bm1AZy5jb20ifX0.g4oBgOnXbRy5N2zXPuvvgFeAVjpd7tflOU6QlvSrE0A',
+                          token: token,
                           product: "Spread",
                           port: StaticData::PORT,
-                          plan: "v.2",
+                          plan: "v.1",
                           run: 'Paragraphs0')
 20.times do |c|
   describe 'Tests' do

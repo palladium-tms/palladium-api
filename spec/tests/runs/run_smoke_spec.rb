@@ -41,6 +41,14 @@ describe 'Run Smoke' do
       expect(response['run']['name']).to eq(run_name)
       expect(response['plan']['id']).to eq(plan['id'])
     end
+
+    it 'check creating new run by plan_id and run_name' do
+      response, run_name = RunFunctions.create_new_run(http, plan_id: plan['id'])
+      expect(response.code).to eq('200')
+      response = JSON.parse(response.body)
+      expect(response['run']['name']).to eq(run_name)
+      expect(response['plan']['id']).to eq(plan['id'])
+    end
   end
 
   describe 'Show runs' do

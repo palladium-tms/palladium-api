@@ -95,7 +95,7 @@ class Plan < Sequel::Model
     if plan.set(name: data['plan_data']['plan_name']).valid?
       if Plan[name: data['plan_data']['plan_name'], product_id: plan.product_id].nil?
         plan.update(name: data['plan_data']['plan_name'], updated_at: Time.now)
-        { plan: plan.values }
+        plan
       else
         { plan_errors: ['plan name already used'] }
       end
@@ -120,7 +120,6 @@ class Plan < Sequel::Model
   end
 
   def self.add_statictic(runs)
-    runs = [runs] unless runs.is_a?(Array)
     statistic = get_statistic(runs)
     runs.map(&:values).map do |run|
       run.merge!(statistic: statistic[run[:id]] || [])

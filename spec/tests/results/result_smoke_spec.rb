@@ -16,7 +16,7 @@ describe 'Result Smoke' do
                                                          status: 'Passed')
       expect(response.code).to eq('200')
       body = JSON.parse(response.body)
-      expect(body.keys.size).to eq(6)
+      expect(body.keys.size).to eq(7)
       expect(body['result_sets'][0]['name']).to eq(result_set_name)
       expect(body['product']['name']).to eq(product_name)
       expect(body['plan']['name']).to eq(plan_name)
@@ -36,7 +36,7 @@ describe 'Result Smoke' do
                                                          status: 'Passed')
       expect(response.code).to eq('200')
       body = JSON.parse(response.body)
-      expect(body.keys.size).to eq(6)
+      expect(body.keys.size).to eq(7)
       expect(body['result_sets'][0]['name']).to eq(result_set_name)
       expect(body['product']['id']).to eq(product_id)
       expect(body['plan']['name']).to eq(plan_name)
@@ -57,7 +57,7 @@ describe 'Result Smoke' do
                                                    status: 'Passed')
       expect(response.code).to eq('200')
       body = JSON.parse(response.body)
-      expect(body.keys.size).to eq(5)
+      expect(body.keys.size).to eq(6)
       expect(body['result_sets'][0]['name']).to eq(result_set_name)
       expect(body['plan']['id']).to eq(plan_id)
       expect(body['run']['name']).to eq(run_name)
@@ -108,7 +108,7 @@ describe 'Result Smoke' do
       result_set_array = (1..3).to_a.map do |iterator|
         JSON.parse(ResultSetFunctions.create_new_result_set(http,
                                                             run_id: run_id,
-                                                            result_set_name: result_set_name + iterator.to_s)[0].body)['result_sets'][0]['id']
+                                                            name: result_set_name + iterator.to_s)[0].body)['result_sets'][0]['id']
       end
 
       response = ResultFunctions.create_new_result(http,
@@ -118,56 +118,47 @@ describe 'Result Smoke' do
       expect(response.code).to eq('200')
       body = JSON.parse(response.body)
       expect(body.keys.size).to eq(3)
-      expect(body['result_sets'][0]['name']).to eq(result_set_name)
+      expect = [result_set_name + '1', result_set_name + '2', result_set_name + '3']
+      body['result_sets'].each do |_result_set|
+        expect.delete(_result_set['name'])
+      end
+      expect(expect).to be_empty
       expect(body['result']['message']).to eq(message)
       expect(body['status']['name']).to eq('Passed')
     end
 
-    it '7. Create result and result_sets from name array and run id' do
-      result_set_name1, result_set_name2, result_set_name3, message = Array.new(4).map { http.random_name }
-      run_id = JSON.parse(RunFunctions.create_new_run(http, plan_name: http.random_name,
-                                                            product_name: http.random_name)[0].body)['run']['id']
-      response = ResultFunctions.create_new_result(http, run_id: run_id,
-                                                         result_set_name: [result_set_name1,
-                                                                           result_set_name2,
-                                                                           result_set_name3],
+    it '8. Create result by case id and plan id' do
+      product_id = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']['id']
+      plan_name, run_name, result_set_name, message, new_plan = Array.new(6).map { http.random_name }
+      response = ResultFunctions.create_new_result(http, plan_name: plan_name,
+                                                         run_name: run_name,
+                                                         product_id: product_id,
+                                                         result_set_name: result_set_name,
                                                          message: message,
                                                          status: 'Passed')
-      expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
-      expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
-    end
+      plan_id = JSON.parse(PlanFunctions.create_new_plan(http, name: new_plan, product_id: product_id)[0].body)['plan']['id']
+      a = CaseFunctions.get_cases(http, id: JSON.parse(response.body)['suite']['id']).body
 
-    it '8. Create result by case and plan_id' do
-      product_id = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']['id']
-      plan_name, run_name, result_set_name, message, new_plan = Array.new(6).map { Array.new(30) { StaticData::ALPHABET.sample }.join }
-      response = ResultFunctions.create_new_result(http, plan_name: plan_name,
-                                                   run_name: run_name,
-                                                   product_id: product_id,
-                                                   result_set_name: result_set_name,
-                                                   message: message,
-                                                   status: 'Passed')
-      plan_id = JSON.parse(PlanFunctions.create_new_plan(http, {plan_name: new_plan, product_id: product_id})[0].body)['plan']['id']
-      a = CaseFunctions.get_cases(http, {id: JSON.parse(response.body)['other_data']['suite_id']}).body
-
-      case_id = JSON.parse(CaseFunctions.get_cases(http, {id: JSON.parse(response.body)['other_data']['suite_id']}).body)['cases'][0]['id']
+      case_id = JSON.parse(CaseFunctions.get_cases(http, id: JSON.parse(response.body)['suite']['id']).body)['cases'][0]['id']
 
       result_responce = ResultFunctions.create_new_result(http, plan_id: plan_id,
-                                                   case_id: case_id,
-                                                   message: message,
-                                                   status: 'Passed')
+                                                                case_id: case_id,
+                                                                message: message,
+                                                                status: 'Passed')
       expect(result_responce.code).to eq('200')
       expect(JSON.parse(result_responce.body)['errors'].nil?).to be_truthy
       expect(JSON.parse(result_responce.body)['result']['id'].nil?).to be_falsey
+      expect(JSON.parse(result_responce.body)['suite']['name']).to eq(run_name)
+      expect(JSON.parse(result_responce.body)['plan']['id']).to eq(plan_id)
     end
 
     it '9. Check creating new result with + in name' do
       result_set_name, message = Array.new(5).map { Array.new(30) { http.random_name }.join }
       run_id = JSON.parse(RunFunctions.create_new_run(http, plan_name: http.random_name,
-                                                      product_name: http.random_name)[0].body)['run']['id']
+                                                            product_name: http.random_name)[0].body)['run']['id']
       result_set_id = ResultSetFunctions.create_new_result_set_and_parse(http,
                                                                          run_id: run_id,
-                                                                         result_set_name: '123123 + 123123')[0]['result_set'][0]['id']
+                                                                         result_set_name: '123123 + 123123')[0]['result_sets'][0]['id']
       response = ResultFunctions.create_new_result(http,
                                                    result_set_id: result_set_id,
                                                    message: message,
@@ -175,7 +166,7 @@ describe 'Result Smoke' do
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['errors'].nil?).to be_truthy
       expect(JSON.parse(response.body)['result']['id'].nil?).to be_falsey
-      expect(JSON.parse(response.body)['other_data']['result_set_id']).to eq([result_set_id])
+      expect(JSON.parse(response.body)['result_sets'][0]['id']).to eq(result_set_id)
     end
   end
 
@@ -184,7 +175,7 @@ describe 'Result Smoke' do
       result_set_name, message, product_name, plan_name = Array.new(5).map { http.random_name }
       run_id = JSON.parse(RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)[0].body)['run']['id']
       result_set_id = ResultSetFunctions.create_new_result_set_and_parse(http, run_id: run_id,
-                                                                               result_set_name: result_set_name)[0]['result_set'][0]['id']
+                                                                               result_set_name: result_set_name)[0]['result_sets'][0]['id']
       response = ResultFunctions.create_new_result(http,
                                                    result_set_id: result_set_id,
                                                    message: message,
@@ -201,7 +192,7 @@ describe 'Result Smoke' do
       result_set_name, message, product_name, plan_name = Array.new(5).map { http.random_name }
       run_id = JSON.parse(RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)[0].body)['run']['id']
       result_set_id = ResultSetFunctions.create_new_result_set_and_parse(http, run_id: run_id,
-                                                                         result_set_name: result_set_name)[0]['result_set'][0]['id']
+                                                                               result_set_name: result_set_name)[0]['result_sets'][0]['id']
       response = ResultFunctions.create_new_result(http,
                                                    result_set_id: result_set_id,
                                                    message: message,
