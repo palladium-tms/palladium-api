@@ -36,14 +36,14 @@ describe 'Result Smoke' do
                                           message: 'MessageFor_' + i.to_s,
                                           status: 'Passed')
       end
-      responce = JSON.parse(CaseFunctions.get_cases(http, id: response_first['other_data']['suite_id']).body)
+      responce = JSON.parse(CaseFunctions.get_cases(http, id: response_first['suite']['id']).body)
 
       responce = JSON.parse(HistoryFunctions.case_history(http, responce['cases'].first['id']).body)
       expect(responce['history_data'].size).to eq(2)
-      expect(responce['history_data'][0]['plan_id']).to eq(response_first['other_data']['plan_id'])
+      expect(responce['history_data'][0]['plan_id']).to eq(response_first['plan']['id'])
       expect(responce['history_data'][0]['run_id']).to eq(response_first['run']['id'])
       expect(responce['history_data'][1]['run_id']).to eq(response_second['run']['id'])
-      expect(responce['history_data'][1]['plan_id']).to eq(response_second['other_data']['plan_id'])
+      expect(responce['history_data'][1]['plan_id']).to eq(response_second['plan']['id'])
     end
   end
 end

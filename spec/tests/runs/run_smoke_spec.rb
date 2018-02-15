@@ -1,5 +1,5 @@
 require_relative '../../tests/test_management'
-http, plan = nil
+http, plan, product = nil
 describe 'Run Smoke' do
   before :all do
     http = Http.new(token: AuthFunctions.create_user_and_get_token)
@@ -16,9 +16,11 @@ describe 'Run Smoke' do
       plan_name, product_name, = Array.new(2).map { http.random_name }
       response, run_name = RunFunctions.create_new_run(http, plan_name: plan_name,
                                                              product_name: product_name)
+      result = JSON.parse(response.body)
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
-      expect(JSON.parse(response.body)['run']['name']).to eq(run_name)
+      expect(result['product']['name']).to eq(product_name)
+      expect(result['plan']['name']).to eq(plan_name)
+      expect(result['run']['name']).to eq(run_name)
     end
 
     it 'check creating new run and plan by plan_name, run_name and product_id' do
@@ -26,15 +28,26 @@ describe 'Run Smoke' do
       response, run_name = RunFunctions.create_new_run(http, plan_name: plan_name,
                                                              product_id: plan['product_id'])
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
-      expect(JSON.parse(response.body)['run']['name']).to eq(run_name)
+      response = JSON.parse(response.body)
+      expect(response['product']['id']).to eq(plan['product_id'])
+      expect(response['plan']['name']).to eq(plan_name)
+      expect(response['run']['name']).to eq(run_name)
     end
 
     it 'check creating new run by plan_id and run_name' do
       response, run_name = RunFunctions.create_new_run(http, plan_id: plan['id'])
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
-      expect(JSON.parse(response.body)['run']['name']).to eq(run_name)
+      response = JSON.parse(response.body)
+      expect(response['run']['name']).to eq(run_name)
+      expect(response['plan']['id']).to eq(plan['id'])
+    end
+
+    it 'check creating new run by plan_id and run_name' do
+      response, run_name = RunFunctions.create_new_run(http, plan_id: plan['id'])
+      expect(response.code).to eq('200')
+      response = JSON.parse(response.body)
+      expect(response['run']['name']).to eq(run_name)
+      expect(response['plan']['id']).to eq(plan['id'])
     end
   end
 

@@ -7,7 +7,14 @@ describe 'Product Smoke' do
   describe 'Create new product' do
     it 'check creating new product with correct user_data and correct product_data' do
       res_new_product, new_product_name = ProductFunctions.create_new_product(http)
-      expect(JSON.parse(res_new_product.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(res_new_product.body)['errors'].nil?).to be_truthy
+      expect(JSON.parse(res_new_product.body)['product']['id'].nil?).to be_falsey
+      expect(JSON.parse(res_new_product.body)['product']['name']).to eq(new_product_name)
+    end
+
+    it 'check creating new product with correct user_data and correct product_data' do
+      res_new_product, new_product_name = ProductFunctions.create_new_product(http)
+      expect(JSON.parse(res_new_product.body)['errors'].nil?).to be_truthy
       expect(JSON.parse(res_new_product.body)['product']['id'].nil?).to be_falsey
       expect(JSON.parse(res_new_product.body)['product']['name']).to eq(new_product_name)
     end
@@ -16,7 +23,7 @@ describe 'Product Smoke' do
       new_product_name = ProductFunctions.create_new_product(http)[1]
       res_new_product, new_product_name = ProductFunctions.create_new_product(http, new_product_name)
       expect(res_new_product.code).to eq('200')
-      expect(JSON.parse(res_new_product.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(res_new_product.body)['errors'].nil?).to be_truthy
       expect(JSON.parse(res_new_product.body)['product']['id']).to be_truthy
       expect(JSON.parse(res_new_product.body)['product']['name']).to eq(new_product_name)
     end

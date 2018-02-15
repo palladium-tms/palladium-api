@@ -16,7 +16,7 @@ describe 'Plan Smoke' do
       response = PlanFunctions.create_new_plan(http, name: correct_plan_name,
                                                      product_id: product['id'])[0]
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['errors']).to be_nil
       expect(JSON.parse(response.body)['plan']['id'].nil?).to be_falsey
       expect(JSON.parse(response.body)['plan']['name']).to eq(correct_plan_name)
       expect(JSON.parse(response.body)['plan']['product_id']).to eq(product['id'])
@@ -25,7 +25,7 @@ describe 'Plan Smoke' do
     it 'check creating new plan with product_name(it product is exists)' do
       response, plan_name = PlanFunctions.create_new_plan(http, product_name: product['name'])
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['errors']).to be_nil
       expect(JSON.parse(response.body)['plan']['id'].nil?).to be_falsey
       expect(JSON.parse(response.body)['plan']['name']).to eq(plan_name)
       expect(JSON.parse(response.body)['plan']['product_id']).to eq(product['id'])
@@ -35,7 +35,7 @@ describe 'Plan Smoke' do
       product_name = http.random_name
       response, plan_name = PlanFunctions.create_new_plan(http, product_name: product_name)
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['errors']).to be_nil
       expect(JSON.parse(response.body)['plan']['id'].nil?).to be_falsey
       expect(JSON.parse(response.body)['plan']['name']).to eq(plan_name)
     end
@@ -101,9 +101,8 @@ describe 'Plan Smoke' do
       plan_name_for_updating = http.random_name
       plan_id = JSON.parse(responce.body)['plan']['id']
       plan_new = JSON.parse(PlanFunctions.update_plan(http, id: plan_id, plan_name: plan_name_for_updating).body)
-      expect(plan_new['errors'].empty?).to be_truthy
-      expect(plan_new['plan_data']['id']).to eq(plan_id)
-      expect(plan_new['plan_data']['name']).to eq(plan_name_for_updating)
+      expect(plan_new['plan']['id']).to eq(plan_id)
+      expect(plan_new['plan']['name']).to eq(plan_name_for_updating)
     end
   end
 end

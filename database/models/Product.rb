@@ -12,40 +12,49 @@ class Product < Sequel::Model
 
   def validate
     super
-    validates_unique :name
-    validates_presence :name
+    if name.nil?
+      errors.add(:name, 'cannot be nil') if name.nil?
+    else
+      validates_unique :name
+      errors.add(:name, 'cannot be empty') if name.empty?
+      errors.add(:name, 'cannot contains only spaces') if name.strip.empty? & !name.empty?
+    end
   end
 
   def self.product_id_validation(product_id)
     if product_id.nil?
-      return { 'product_id' => ["product_id can't be nil"] }
+      return { product_id: ["product_id can't be empty"] }
     elsif Product[id: product_id].nil?
-      return { 'product_id' => ['product_id is not belongs to any product'] }
+      return { product_id: ['product_id is not belongs to any product'] }
     end
     {}
+  end
+
+  # try to find element by name of id(str or number), of create new product by str=name
+  def self.find_or_new(data)
+    return Product[id: data] if data.is_a?(Numeric)
+    Product.find(name: data) || Product.new(name: data)
   end
 
   # @param [Hash] data must be like {:product_data => {name: 'product_name'}}
   # @return [ProductObject]
   def self.create_new(data)
-    product_name = data['product_data']['name']
-    if product_name.nil? || product_name == ''
-      Product.new(name: product_name)
+    product = Product.find_or_new(data)
+    if product.valid?
+      product.save
+      { product: product }
     else
-      Product.find_or_create(name: product_name) do |product|
-        product.name = data['product_data']['name']
-      end
+      { product_errors: product.errors.full_messages }
     end
   end
 
   def self.edit(product_id, product_name)
-    product = Product.new(name: product_name, updated_at: Time.now)
-    if product.valid?
-      product = Product[id: product_id]
+    product = Product[id: product_id]
+    if product.set(name: product_name).valid?
       product.update(name: product_name, updated_at: Time.now)
-      { product_data: product.values, errors: product.errors }
+      { product_data: product.values }.to_json
     else
-      { product_data: Product[id: product_id].values, errors: product.errors }
+      { product_errors: product.errors }.to_json
     end
   end
 

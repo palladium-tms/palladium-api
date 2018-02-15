@@ -29,16 +29,28 @@ class Api < Sinatra::Base
 
   post '/product_new' do
     process_request request, 'product_new' do |_req, _username|
-      product = Product.create_new(params)
-      { product: product.values, errors: product.errors }.to_json
+      if params['product_data'].nil?
+        { product_errors: ['product_data not found'] }.to_json
+      elsif params['product_data']['name'].nil?
+        { product_errors: ['name of product_data not found'] }.to_json
+      else
+        product = Product.create_new(params['product_data']['name'])
+        if product[:product_errors]
+          { product_errors: product[:product_errors] }.to_json
+        else
+          { product: product[:product].values }.to_json
+        end
+      end
     end
   end
 
   post '/product_edit' do
     process_request request, 'product_edit' do |_req, _username|
-      result = Product.edit(params['product_data']['id'], params['product_data']['name'])
-      status 422 unless result[:errors]
-      result.to_json
+      if params['product_data']
+        Product.edit(params['product_data']['id'], params['product_data']['name'])
+      else
+        { product_errors: { product: ['product_data not found'] } }.to_json
+      end
     end
   end
 
@@ -55,9 +67,15 @@ class Api < Sinatra::Base
   # region plans
   post '/plan_new' do
     process_request request, 'plan_new' do |_req, _username|
-      plan = Plan.create_new(params)
-      status 422 unless plan.errors.empty?
-      { plan: plan.values, errors: plan.errors }.to_json
+      objects = Plan.create_new(params)
+      if objects[:plan_errors].nil? && objects[:product_errors].nil?
+        { plan: objects[:plan].values, product: objects[:product].values }.to_json
+      else
+        status 422
+        errors = { plan_errors: objects[:plan_errors] }
+        errors[:product_errors] = objects[:product_errors] unless objects[:product_errors].nil?
+        errors.to_json
+      end
     end
   end
 
@@ -81,8 +99,11 @@ class Api < Sinatra::Base
   post '/plan_edit' do
     process_request request, 'plan_edit' do |_req, _username|
       plan = Plan.edit(params)
-      status 422 unless plan['errors'].empty?
-      plan.to_json
+      if plan[:plan_errors].nil?
+        { plan: Product.add_statictic([*plan])[0] }
+      else
+        plan
+      end.to_json
     end
   end
 
@@ -98,11 +119,21 @@ class Api < Sinatra::Base
   # region runs
   post '/run_new' do
     process_request request, 'run_new' do |_req, _username|
-      run, other_data = Run.create_new(params)
-      errors = run.errors
-      status 422 unless errors.empty?
-      run = Plan.add_statictic(run).first
-      { 'run' => run, 'errors' => errors, other_data: other_data }.to_json
+      objects = Run.create_new(params)
+      if objects[:product_errors].nil? && objects[:plan_errors].nil? && objects[:run_errors].nil?
+        run = Plan.add_statictic([*objects[:run]]).first
+        result = { run: run }
+        result[:product] = objects[:product].values unless objects[:product].nil?
+        result[:plan] = objects[:plan].values unless objects[:plan].nil?
+        result[:suite] = objects[:suite].values unless objects[:suite].nil?
+        result.to_json
+      else
+        status 422
+        errors = { run_errors: objects[:run_errors] }
+        errors[:product_errors] = objects[:product_errors] unless objects[:product_errors].nil?
+        errors[:plan_errors] = objects[:plan_errors] unless objects[:plan_errors].nil?
+        errors.to_json
+      end
     end
   end
 
@@ -133,11 +164,22 @@ class Api < Sinatra::Base
   # region result_set
   post '/result_set_new' do
     process_request request, 'result_set_new' do |_req, _username|
-      result_set, other = ResultSet.create_new(params)
-      errors = result_set.map(&:errors)
-      status 422 unless errors.empty?
-      { result_set: result_set.map(&:values),
-        errors: errors, other_data: other }.to_json
+      objects = ResultSet.create_new(params)
+      if objects[:product_errors].nil? && objects[:plan_errors].nil? && objects[:run_errors].nil? && objects[:result_sets_errors].nil?
+        result = { result_sets: objects[:result_sets].map(&:values) }
+        result[:product] = objects[:product].values unless objects[:product].nil?
+        result[:plan] = objects[:plan].values unless objects[:plan].nil?
+        result[:run] = objects[:run].values unless objects[:run].nil?
+        result[:suite] = objects[:suite].values unless objects[:suite].nil?
+        result.to_json
+      else
+        status 422
+        errors = { result_sets_errors: objects[:result_sets_errors] }
+        errors[:run_errors] = objects[:run_errors] unless objects[:run_errors].nil?
+        errors[:product_errors] = objects[:product_errors] unless objects[:product_errors].nil?
+        errors[:plan_errors] = objects[:plan_errors] unless objects[:plan_errors].nil?
+        errors.to_json
+      end
     end
   end
 
@@ -174,25 +216,26 @@ class Api < Sinatra::Base
       { result_set: params['result_set_data'], errors: errors }.to_json
     end
   end
-  #
-  # post '/result_set_edit' do
-  #   process_request request, 'result_set_edit' do |_req, _username|
-  #     result_set = ResultSet.edit(params)
-  #     status 422 unless result_set['errors'].empty?
-  #     result_set.to_json
-  #   end
-  # end
-  # endregion
 
   # region result
   post '/result_new' do
     process_request request, 'result_new' do |_req, _username|
-      responce, other = Result.create_new(params)
-      if responce[:errors].nil?
-        { result: responce.values, other_data: other }.to_json
+      objects = Result.create_new(params)
+      if objects[:product_errors].nil? && objects[:plan_errors].nil? &&
+         objects[:run_errors].nil? && objects[:result_sets_errors].nil? &&
+         objects[:status_errors].nil? && objects[:result_errors].nil?
+        result = {}
+        result[:result_sets] = objects[:result_sets].map(&:values) unless objects[:result_sets].nil?
+        result[:product] = objects[:product].values unless objects[:product].nil?
+        result[:plan] = objects[:plan].values unless objects[:plan].nil?
+        result[:run] = objects[:run].values unless objects[:run].nil?
+        result[:result] = objects[:result].values unless objects[:result].nil?
+        result[:status] = objects[:status].values unless objects[:status].nil?
+        result[:suite] = objects[:suite].values unless objects[:suite].nil?
+        result.to_json
       else
         status 422
-        { errors: responce.errors.values, other_data: other }.to_json
+        objects.to_json
       end
     end
   end
@@ -251,12 +294,13 @@ class Api < Sinatra::Base
 
   post '/suite_edit' do
     process_request request, 'suite_edit' do |_req, _username|
-      begin
-        suite = Suite.edit(params['suite_data'])
-      rescue StandardError => e
-        errors = e
+      suite = Suite.edit(params['suite_data'])
+      if suite.errors.empty?
+        { suite: suite.values.merge(statistic: [{ status: 0,
+                                                  count: 0 }]) }.to_json
+      else
+        { errors: suite.errors }.to_json
       end
-      { suite: suite.values.merge(statistic: [{ 'suite_id' => suite.id, 'status' => 0, 'count' => 0 }]), errors: errors }.to_json
     end
   end
 
@@ -470,6 +514,6 @@ class Public < Sinatra::Base
   end
 
   post '/version' do
-    { version: '0.0.1' }.to_json
+    { version: '0.1.0' }.to_json
   end
 end

@@ -12,8 +12,11 @@ describe 'Result Set Smoke' do
                                                                            run_name: run_name,
                                                                            product_name: product_name,
                                                                            name: result_set_name)[0].body)
-      expect(responce['errors']).to eq([{}])
-      expect(responce['result_set'][0]['name']).to eq(result_set_name)
+      expect(responce.keys.size).to eq(5)
+      expect(responce['product']['name']).to eq(product_name)
+      expect(responce['plan']['name']).to eq(plan_name)
+      expect(responce['run']['name']).to eq(run_name)
+      expect(responce['result_sets'][0]['name']).to eq(result_set_name)
     end
 
     it '2. Create plan, run and result set in one time' do
@@ -23,8 +26,11 @@ describe 'Result Set Smoke' do
                                                                            run_name: run_name,
                                                                            product_id: product['id'],
                                                                            name: result_set_name)[0].body)
-      expect(responce['errors']).to eq([{}])
-      expect(responce['result_set'][0]['name']).to eq(result_set_name)
+      expect(responce.keys.size).to eq(5)
+      expect(responce['product']['id']).to eq(product['id'])
+      expect(responce['plan']['name']).to eq(plan_name)
+      expect(responce['run']['name']).to eq(run_name)
+      expect(responce['result_sets'][0]['name']).to eq(result_set_name)
     end
 
     it '3. Create run and result set in one time' do
@@ -34,8 +40,10 @@ describe 'Result Set Smoke' do
       responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, plan_id: plan['id'],
                                                                            run_name: run_name,
                                                                            name: result_set_name)[0].body)
-      expect(responce['errors']).to eq([{}])
-      expect(responce['result_set'][0]['name']).to eq(result_set_name)
+      expect(responce.keys.size).to eq(4)
+      expect(responce['plan']['id']).to eq(plan['id'])
+      expect(responce['run']['name']).to eq(run_name)
+      expect(responce['result_sets'][0]['name']).to eq(result_set_name)
     end
 
     it '4. Create result set in one time' do
@@ -43,10 +51,11 @@ describe 'Result Set Smoke' do
       plan = JSON.parse(PlanFunctions.create_new_plan(http, product_name: product['name'])[0].body)['plan']
       run = JSON.parse(RunFunctions.create_new_run(http, plan_id: plan['id'])[0].body)['run']
       result_set_name = http.random_name
-      responce = JSON.parse(ResultSetFunctions.create_new_result_set(http,run_id: run['id'],
+      responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, run_id: run['id'],
                                                                            name: result_set_name)[0].body)
-      expect(responce['errors']).to eq([{}])
-      expect(responce['result_set'][0]['name']).to eq(result_set_name)
+      expect(responce.keys.size).to eq(2)
+      expect(responce['run']['id']).to eq(run['id'])
+      expect(responce['result_sets'][0]['name']).to eq(result_set_name)
     end
   end
 
@@ -56,7 +65,7 @@ describe 'Result Set Smoke' do
       plan = JSON.parse(PlanFunctions.create_new_plan(http, product_name: product['name'])[0].body)['plan']
       run = JSON.parse(RunFunctions.create_new_run(http, plan_id: plan['id'])[0].body)['run']
       result_set = JSON.parse(ResultSetFunctions.create_new_result_set(http, plan_id: plan['id'],
-                                                                             run_id: run['id'])[0].body)['result_set'][0]
+                                                                             run_id: run['id'])[0].body)['result_sets'][0]
       responce = JSON.parse(ResultSetFunctions.get_result_sets(http, id: run['id']).body)
       expect(responce['errors']).to eq([])
       expect(responce['result_sets'].first['id']).to eq(result_set['id'])
@@ -68,7 +77,7 @@ describe 'Result Set Smoke' do
       plan = JSON.parse(PlanFunctions.create_new_plan(http, product_name: product['name'])[0].body)['plan']
       run = JSON.parse(RunFunctions.create_new_run(http, plan_id: plan['id'])[0].body)['run']
       result_set = JSON.parse(ResultSetFunctions.create_new_result_set(http, plan_id: plan['id'],
-                                                                             run_id: run['id'])[0].body)['result_set'][0]
+                                                                             run_id: run['id'])[0].body)['result_sets'][0]
       responce = JSON.parse(ResultSetFunctions.get_result_set(http, id: result_set['id']).body)['result_set']
       expect(responce).to eq(result_set)
     end
@@ -80,7 +89,7 @@ describe 'Result Set Smoke' do
       responce = JSON.parse(ResultSetFunctions.create_new_result_set(http, plan_name: plan_name,
                                                                            run_name: run_name,
                                                                            product_name: product_name,
-                                                                           name: result_set_name)[0].body)['result_set'][0]
+                                                                           name: result_set_name)[0].body)['result_sets'][0]
       delete_responce = JSON.parse(ResultSetFunctions.delete_result_set(http, id: responce['id']).body)
       result_ser_after_deleting = ResultSetFunctions.get_result_set(http, id: responce['id'])
       expect(delete_responce['result_set']['id']).to eq(responce['id'])

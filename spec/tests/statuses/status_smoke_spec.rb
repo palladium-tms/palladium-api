@@ -26,12 +26,11 @@ describe 'Status Smoke' do
     it 'check creating new status if it has created later' do
       status_name = http.random_name
       status_color = '#aaccbb'
-      StatusFunctions.create_new_status(http, name: status_name, color: status_color)
-      response = StatusFunctions.create_new_status(http, name: status_name, color: status_color)
-      expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
-      expect(JSON.parse(response.body)['status']['name']).to eq(status_name)
-      expect(JSON.parse(response.body)['status']['color']).to eq(status_color)
+      first_status = StatusFunctions.create_new_status(http, name: status_name, color: status_color)
+      second_status = StatusFunctions.create_new_status(http, name: status_name, color: status_color)
+      expect(first_status.code).to eq('200')
+      expect(second_status.code).to eq('200')
+      expect(first_status.body).to eq(second_status.body)
     end
 
     it 'check block new status' do
