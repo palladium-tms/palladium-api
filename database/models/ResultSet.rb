@@ -35,6 +35,7 @@ class ResultSet < Sequel::Model
     else
       name = get_result_set_name(data)
       errors_stack = []
+      objects[:result_sets] = []
       [*name].map do |name|
         new_result_set = ResultSet.find_or_new(name, objects[:run].id)
         if new_result_set.valid?
@@ -46,7 +47,6 @@ class ResultSet < Sequel::Model
           end
           objects[:run].add_result_set(new_result_set)
           case_detected(new_result_set.name, objects[:run])
-          objects[:result_sets] = []
           objects[:result_sets] << new_result_set
         else
           errors_stack << new_result_set.errors.full_messages
@@ -74,7 +74,8 @@ class ResultSet < Sequel::Model
 
   def self.get_result_set_name(data)
     if data['result_set_data']['case_id']
-      Case[data['result_set_data']['case_id']].name
+      # data['result_set_data']['case_id'] can be array!
+      Case.where(id: data['result_set_data']['case_id']).map(&:name)
     elsif data['result_set_data']['name']
       data['result_set_data']['name']
     end
