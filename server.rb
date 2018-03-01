@@ -216,6 +216,7 @@ class Api < Sinatra::Base
       { result_set: params['result_set_data'], errors: errors }.to_json
     end
   end
+  # endregion result_set
 
   # region result
   post '/result_new' do
@@ -402,6 +403,19 @@ class Api < Sinatra::Base
   end
   # endregion
 
+  # region product_position
+  post '/set_product_position' do
+    process_request request, 'set_product_position' do |_req, _username|
+      if params['product_position'].is_a?(Array)
+        user = User[email: _username].update(product_position: Sequel.pg_array(params['product_position']))
+        {user: {email: user.email, product_position: user.product_position}}.to_json
+      else
+        { product_position_errors: 'product position must be array' }.to_json
+      end
+    end
+  end
+  # endregion product_position
+
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
     username = user['email']
@@ -506,7 +520,7 @@ class Public < Sinatra::Base
                  status_new statuses status_edit not_blocked_statuses
                  token_new tokens token_delete suites suite_edit
                  suite_delete cases case_delete case_edit result
-                 case_history get_invite_token check_link_validation],
+                 case_history get_invite_token check_link_validation set_product_position],
       user: {
         email: email
       }

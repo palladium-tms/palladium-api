@@ -1,5 +1,8 @@
 require_relative '../management'
+
 require 'yaml'
+Sequel.extension :migration, :pg_array
+
 sleep 10 # FIXME: need to add wait for database available
 DB = Sequel.connect(YAML.load_file('config/sequel.yml')[Sinatra::Application.environment])
 
@@ -92,3 +95,4 @@ DB.create_table? :cases do
   DateTime :created_at
   DateTime :updated_at
 end
+Sequel::Migrator.run(DB, "database/migrate")
