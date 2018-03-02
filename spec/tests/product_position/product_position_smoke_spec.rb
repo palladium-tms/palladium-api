@@ -10,7 +10,7 @@ describe 'Product Position Smoke' do
     http = Http.new(token: token)
   end
 
-  describe 'Set product position' do
+  describe 'Set product position with phantom data' do
     it 'setting product position with correct data' do
       responce = ProductPosition.set_product_position(http, product_position: [1, 2, 3, 4, 5])
       response = JSON.parse(responce.body)
@@ -30,6 +30,15 @@ describe 'Product Position Smoke' do
       response = JSON.parse(responce.body)
       expect(response['user'].nil?).to be_truthy
       expect(response['product_position_errors']).to eq('product position must be array')
+    end
+
+    it 'Set product position after product create' do
+      5.times {  ProductFunctions.create_new_product_and_parse(http)['product']['id'] }
+      products = JSON.parse(ProductFunctions.get_all_products(http).body)['products'].map{ |elem| elem['id'] }
+      shuffled_products = products.sample(products.size)
+      responce = ProductPosition.set_product_position(http, product_position: shuffled_products)
+      new_products_list = JSON.parse(ProductFunctions.get_all_products(http).body)['products'].map{ |elem| elem['id'] }
+      expect(new_products_list).to eq(shuffled_products)
     end
   end
 end

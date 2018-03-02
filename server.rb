@@ -17,7 +17,18 @@ class Api < Sinatra::Base
   # region products
   post '/products' do
     process_request request, 'products' do |_req, _username|
-      { products: Product.all.map(&:values) }.to_json
+      positions = User[email: _username].product_position
+      defarr = Array.new(positions.size)
+      products = Product.all.map(&:values)
+      products.delete_if do |element|
+        index = positions.index(element[:id])
+        if index
+          defarr[index] = element
+        else
+          false
+        end
+      end
+      { products: defarr + products}.to_json
     end
   end
 
@@ -408,7 +419,7 @@ class Api < Sinatra::Base
     process_request request, 'set_product_position' do |_req, _username|
       if params['product_position'].is_a?(Array)
         user = User[email: _username].update(product_position: Sequel.pg_array(params['product_position']))
-        {user: {email: user.email, product_position: user.product_position}}.to_json
+        { user: { email: user.email, product_position: user.product_position } }.to_json
       else
         { product_position_errors: 'product position must be array' }.to_json
       end
@@ -528,6 +539,6 @@ class Public < Sinatra::Base
   end
 
   post '/version' do
-    { version: '0.1.0' }.to_json
+    { version: '0.1.1' }.to_json
   end
 end
