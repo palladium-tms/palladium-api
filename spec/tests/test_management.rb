@@ -14,6 +14,7 @@ require_relative '../lib/AuthFunctions'
 require_relative '../lib/TokenFunctions'
 require_relative '../lib/InviteTokenFunctions'
 require_relative '../lib/SuiteFunctions'
+require_relative '../lib/ProductPositionFunctions.rb'
 require_relative '../lib/CaseFunctions'
 require_relative '../../spec/lib/ObjectWrap/http'
 class TestManagement

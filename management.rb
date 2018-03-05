@@ -5,6 +5,7 @@ require 'jwt'
 require 'pg'
 require 'sinatra/cross_origin'
 require_relative 'database/database'
+require_relative 'database/migrate/001_create_product_positions.rb'
 
 # models
 require_relative 'database/models/User'
@@ -18,6 +19,8 @@ require_relative 'database/models/Token'
 require_relative 'database/models/Invite'
 require_relative 'database/models/Suite'
 require_relative 'database/models/Case'
+
+# migrations
 
 # core modules
 require_relative 'core/authorization/auth'

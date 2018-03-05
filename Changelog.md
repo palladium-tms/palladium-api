@@ -1,5 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.1.1] - 2018-03-2
+### Added 
+    - Oppotrunity to save product position in list
 ## [0.1.0] - 2018-02-15
 ### Added
     - Add errors after creating product without name

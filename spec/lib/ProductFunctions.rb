@@ -10,6 +10,13 @@ class ProductFunctions
     [response, product_name]
   end
 
+  def self.create_new_product_and_parse(http, product_name = nil)
+    product_name ||= http.random_name
+    response = http.post_request('/api/product_new',
+                                 product_data: { name: product_name })
+    JSON.parse(response.body)
+  end
+
   # return hash which keys - id of product, values - is a hash {'name': 'product_name'}
   def self.get_all_products(http)
     http.post_request('/api/products')
