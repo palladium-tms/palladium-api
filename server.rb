@@ -418,7 +418,8 @@ class Api < Sinatra::Base
   post '/set_product_position' do
     process_request request, 'set_product_position' do |_req, _username|
       if params['product_position'].is_a?(Array)
-        user = User[email: _username].update(product_position: Sequel.pg_array(params['product_position']))
+        user = User[email: _username]
+        user.update(product_position: Sequel.pg_array(params['product_position']))
         { user: { email: user.email, product_position: user.product_position } }.to_json
       else
         { product_position_errors: 'product position must be array' }.to_json
@@ -539,6 +540,6 @@ class Public < Sinatra::Base
   end
 
   post '/version' do
-    { version: '0.2.0' }.to_json
+    { version: '0.2.1' }.to_json
   end
 end
