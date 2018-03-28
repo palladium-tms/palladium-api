@@ -1,7 +1,7 @@
 require 'sinatra'
 require_relative 'server.rb'
 
-run Rack::URLMap.new('/' => Public,
+run Rack::URLMap.new('/public' => Public,
                      '/api' => Api)
 
 configure do
