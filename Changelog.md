@@ -1,5 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.2.1] - 2018-03-28
+### Fixed
+    - Error after change product positions
 ## [0.2.0] - 2018-03-28
 ### Changed
     - All '/' methods is in 'public' namespace now
