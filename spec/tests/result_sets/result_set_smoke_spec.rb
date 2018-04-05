@@ -1,5 +1,5 @@
 require_relative '../../tests/test_management'
-http, run_id, result_set, result_set_id, token = nil
+http, product_name, plan_name, run_name, result_set_name, message = nil
 describe 'Result Set Smoke' do
   before :each do
     http = Http.new(token: AuthFunctions.create_user_and_get_token)
@@ -94,6 +94,166 @@ describe 'Result Set Smoke' do
       result_ser_after_deleting = ResultSetFunctions.get_result_set(http, id: responce['id'])
       expect(delete_responce['result_set']['id']).to eq(responce['id'])
       expect(result_ser_after_deleting.code).to eq('500')
+    end
+  end
+
+  describe 'Get result sets by status' do
+    it 'get result_sets by status' do
+      product_name, plan_name, run_name, result_set_name, message = Array.new(5).map { http.random_name }
+      status = 'Passed'
+      result_first = ResultFunctions.create_new_result(http, plan_name: plan_name,
+                                                             run_name: run_name,
+                                                             product_name: product_name,
+                                                             result_set_name: result_set_name + '1',
+                                                             message: message,
+                                                             status: status)
+      ResultFunctions.create_new_result(http, plan_name: plan_name,
+                                              run_name: run_name,
+                                              product_name: product_name,
+                                              result_set_name: result_set_name + '2',
+                                              message: message,
+                                              status: 'Failed')
+      result_second = ResultFunctions.create_new_result(http, plan_name: plan_name,
+                                                              run_name: run_name,
+                                                              product_name: product_name,
+                                                              result_set_name: result_set_name,
+                                                              message: message,
+                                                              status: status)
+      result_sets = ResultSetFunctions.get_result_sets_by_status(http, plan_name: plan_name,
+                                                                       run_name: run_name,
+                                                                       product_name: product_name,
+                                                                       status: status)
+      body = JSON.parse(result_sets.body)
+      expect(body['product']['name']).to eq(product_name)
+      expect(body['plan']['name']).to eq(plan_name)
+      expect(body['run']['name']).to eq(run_name)
+      expect(body['status']['name']).to eq(status)
+      expect(body['result_sets'].count).to eq(2)
+      expect(body['result_sets'][0]).to eq(JSON.parse(result_first.body)['result_sets'][0])
+      expect(body['result_sets'][1]).to eq(JSON.parse(result_second.body)['result_sets'][0])
+    end
+
+    it 'get result_sets by status if it not found' do
+      product_name, plan_name, run_name, result_set_name, message = Array.new(5).map { http.random_name }
+      status = 'Passed'
+      ResultFunctions.create_new_result(http, plan_name: plan_name,
+                                              run_name: run_name,
+                                              product_name: product_name,
+                                              result_set_name: result_set_name,
+                                              message: message,
+                                              status: 'Failed')
+      result_sets = ResultSetFunctions.get_result_sets_by_status(http, plan_name: plan_name,
+                                                                       run_name: run_name,
+                                                                       product_name: product_name,
+                                                                       result_set_name: result_set_name,
+                                                                       status: status)
+      body = JSON.parse(result_sets.body)
+      expect(body['product']['name']).to eq(product_name)
+      expect(body['plan']['name']).to eq(plan_name)
+      expect(body['run']['name']).to eq(run_name)
+      expect(body['status']['name']).to eq(status)
+      expect(body['result_sets']).to eq([])
+    end
+
+    describe 'Incorrect data' do
+
+      before :each do
+        product_name, plan_name, run_name, result_set_name, message = Array.new(5).map { http.random_name }
+        ResultFunctions.create_new_result(http, plan_name: plan_name,
+                                                run_name: run_name,
+                                                product_name: product_name,
+                                                result_set_name: result_set_name + '1',
+                                                message: message,
+                                                status: 'Passed')
+        ResultFunctions.create_new_result(http, plan_name: plan_name,
+                                                run_name: run_name,
+                                                product_name: product_name,
+                                                result_set_name: result_set_name + '2',
+                                                message: message,
+                                                status: 'Failed')
+      end
+
+      it 'getting result_set_by_status with incorrect product name' do
+        result_sets = ResultSetFunctions.get_result_sets_by_status(http, product_name: 'incorrect_product_name',
+                                                                         plan_name: plan_name,
+                                                                         run_name: run_name,
+                                                                         result_set_name: result_set_name,
+                                                                         status: 'Passed')
+        body = JSON.parse(result_sets.body)
+        expect(body['product']).to be_nil
+        expect(body['product_errors']).to eq('product not found')
+      end
+
+      it 'getting result_set_by_status with incorrect plan name' do
+        result_sets = ResultSetFunctions.get_result_sets_by_status(http, product_name: product_name,
+                                                                         plan_name: 'incorrect_plan_name',
+                                                                         run_name: run_name,
+                                                                         status: 'Passed')
+        body = JSON.parse(result_sets.body)
+        expect(body['product']['name']).to eq(product_name)
+        expect(body['plan']).to be_nil
+        expect(body['plan_errors']).to eq('plan not found')
+      end
+
+      it 'getting result_set_by_status with incorrect run name' do
+        result_sets = ResultSetFunctions.get_result_sets_by_status(http, product_name: product_name,
+                                                                         plan_name: plan_name,
+                                                                         run_name: 'incorrect_run_name',
+                                                                         status: 'Passed')
+        body = JSON.parse(result_sets.body)
+        expect(body['product']['name']).to eq(product_name)
+        expect(body['plan']['name']).to eq(plan_name)
+        expect(body['run']).to be_nil
+        expect(body['run_errors']).to eq('run not found')
+      end
+
+      it 'getting result_set_by_status with incorrect status name' do
+        result_sets = ResultSetFunctions.get_result_sets_by_status(http, product_name: product_name,
+                                                                         plan_name: plan_name,
+                                                                         run_name: run_name,
+                                                                         status: 'incorrect_status')
+        body = JSON.parse(result_sets.body)
+        expect(body['product']['name']).to eq(product_name)
+        expect(body['plan']['name']).to eq(plan_name)
+        expect(body['run']['name']).to eq(run_name)
+        expect(body['status']).to be_nil
+        expect(body['status_errors']).to eq('status not found')
+      end
+    end
+
+    it 'get result_sets by status' do
+      product_name, plan_name, run_name, result_set_name, message = Array.new(5).map { http.random_name }
+      status = 'Passed'
+      result_first = ResultFunctions.create_new_result(http, plan_name: plan_name,
+                                                             run_name: run_name,
+                                                             product_name: product_name,
+                                                             result_set_name: result_set_name + '1',
+                                                             message: message,
+                                                             status: status)
+      ResultFunctions.create_new_result(http, plan_name: plan_name,
+                                              run_name: run_name,
+                                              product_name: product_name,
+                                              result_set_name: result_set_name + '2',
+                                              message: message,
+                                              status: 'Failed')
+      result_second = ResultFunctions.create_new_result(http, plan_name: plan_name,
+                                                              run_name: run_name,
+                                                              product_name: product_name,
+                                                              result_set_name: result_set_name,
+                                                              message: message,
+                                                              status: status)
+      result_sets = ResultSetFunctions.get_result_sets_by_status(http, plan_name: plan_name,
+                                                                       run_name: run_name,
+                                                                       product_name: product_name,
+                                                                       status: status)
+      body = JSON.parse(result_sets.body)
+      expect(body['product']['name']).to eq(product_name)
+      expect(body['plan']['name']).to eq(plan_name)
+      expect(body['run']['name']).to eq(run_name)
+      expect(body['status']['name']).to eq(status)
+      expect(body['result_sets'].count).to eq(2)
+      expect(body['result_sets'][0]).to eq(JSON.parse(result_first.body)['result_sets'][0])
+      expect(body['result_sets'][1]).to eq(JSON.parse(result_second.body)['result_sets'][0])
     end
   end
 end

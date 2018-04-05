@@ -227,6 +227,27 @@ class Api < Sinatra::Base
       { result_set: params['result_set_data'], errors: errors }.to_json
     end
   end
+
+  post '/result_sets_by_status' do
+    process_request request, 'result_sets' do |_req, _username|
+      objects = ResultSet.get_result_sets_by_status(params)
+      if objects[:product_errors].nil? && objects[:plan_errors].nil? &&
+         objects[:run_errors].nil? && objects[:result_sets_errors].nil? &&
+         objects[:status_errors].nil?
+        result = {}
+        result[:result_sets] = objects[:result_sets].map(&:values)
+        result[:product] = objects[:product]
+        result[:plan] = objects[:plan]
+        result[:run] = objects[:run]
+        result[:status] = objects[:status]
+        result.to_json
+      else
+        status 422
+        objects.to_json
+      end
+    end
+  end
+
   # endregion result_set
 
   # region result
@@ -432,7 +453,7 @@ class Api < Sinatra::Base
     scopes, user = req.env.values_at :scopes, :user
     username = user['email']
     user_token = true
-    user_token = User.user_token?(username, req.env['HTTP_AUTHORIZATION']) if scopes == ['result_new']
+    user_token = User.user_token?(username, req.env['HTTP_AUTHORIZATION']) if scopes == %w(result_new result_sets_by_status)
     if scopes.include?(scope) && User[email: username].exists? && user_token
       yield req, username
     else
@@ -445,7 +466,7 @@ class Api < Sinatra::Base
       exp: Time.new(2050, 1, 1).to_i,
       iat: Time.now.to_i,
       iss: 'API',
-      scopes: %w[result_new],
+      scopes: %w[result_new result_sets_by_status],
       user: {
         email: email
       }
@@ -540,6 +561,6 @@ class Public < Sinatra::Base
   end
 
   post '/version' do
-    { version: '0.2.1' }.to_json
+    { version: '0.3.0' }.to_json
   end
 end

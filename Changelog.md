@@ -1,5 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.3.0] - 2018-04-05
+### Added
+    - New method to api: gettind result_sets by status and etc. data
 ## [0.2.1] - 2018-03-28
 ### Changed
     - Min password size

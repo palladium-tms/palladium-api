@@ -98,4 +98,34 @@ class ResultSet < Sequel::Model
       [[], 'Result data is incorrect']
     end
   end
+
+  def self.get_result_sets_by_status(data)
+    result = {}
+    result[:product] = Product.first(name: data['product_name'])
+    if result[:product].nil?
+      result[:product_errors] = 'product not found'
+      return result
+    end
+    result[:product] = result[:product].values
+    result[:plan] = Plan.first(product_id: result[:product][:id], name: data['plan_name'])
+    if result[:plan].nil?
+      result[:plan_errors] = 'plan not found'
+      return result
+    end
+    result[:plan] = result[:plan].values
+    result[:run] = Run.first(plan_id: result[:plan][:id], name: data['run_name'])
+    if result[:run].nil?
+      result[:run_errors] = 'run not found'
+      return result
+    end
+    result[:run] = result[:run].values
+    result[:status] = Status.first(name: data['status'])
+    if result[:status].nil?
+      result[:status_errors] = 'status not found'
+      return result
+    end
+    result[:status] = result[:status].values
+    result[:result_sets] = ResultSet.where(run_id: result[:run][:id], status: result[:status][:id]).all
+    result
+  end
 end
