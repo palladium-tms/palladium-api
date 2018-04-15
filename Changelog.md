@@ -1,8 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 ## [0.2.1] - 2018-03-28
+### Changed
+    - Min password size
 ### Fixed
     - Error after change product positions
+    - Send error it registration email is already taken
 ## [0.2.0] - 2018-03-28
 ### Changed
     - All '/' methods is in 'public' namespace now
