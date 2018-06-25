@@ -3,6 +3,10 @@ http, product_name, plan_name, run_name, result_set_name, message = nil
 describe 'Result Set Smoke' do
   before :each do
     http = Http.new(token: AuthFunctions.create_user_and_get_token)
+    product_name = 'Product_' + http.random_name
+    plan_name = 'Plan_' + http.random_name
+    run_name = 'Run_' + http.random_name
+    result_set_name = 'Result_set_' + http.random_name
   end
 
   describe 'Create new result_sets' do
@@ -99,7 +103,6 @@ describe 'Result Set Smoke' do
 
   describe 'Get result sets by status' do
     it 'get result_sets by status' do
-      product_name, plan_name, run_name, result_set_name, message = Array.new(5).map { http.random_name }
       status = 'Passed'
       result_first = ResultFunctions.create_new_result(http, plan_name: plan_name,
                                                              run_name: run_name,
@@ -127,14 +130,13 @@ describe 'Result Set Smoke' do
       expect(body['product']['name']).to eq(product_name)
       expect(body['plan']['name']).to eq(plan_name)
       expect(body['run']['name']).to eq(run_name)
-      expect(body['status']['name']).to eq(status)
+      expect(body['status'][0]['name']).to eq(status)
       expect(body['result_sets'].count).to eq(2)
       expect(body['result_sets'][0]).to eq(JSON.parse(result_first.body)['result_sets'][0])
       expect(body['result_sets'][1]).to eq(JSON.parse(result_second.body)['result_sets'][0])
     end
 
     it 'get result_sets by status if it not found' do
-      product_name, plan_name, run_name, result_set_name, message = Array.new(5).map { http.random_name }
       status = 'Passed'
       ResultFunctions.create_new_result(http, plan_name: plan_name,
                                               run_name: run_name,
@@ -151,14 +153,13 @@ describe 'Result Set Smoke' do
       expect(body['product']['name']).to eq(product_name)
       expect(body['plan']['name']).to eq(plan_name)
       expect(body['run']['name']).to eq(run_name)
-      expect(body['status']['name']).to eq(status)
+      expect(body['status'][0]['name']).to eq(status)
       expect(body['result_sets']).to eq([])
     end
 
     describe 'Incorrect data' do
 
       before :each do
-        product_name, plan_name, run_name, result_set_name, message = Array.new(5).map { http.random_name }
         ResultFunctions.create_new_result(http, plan_name: plan_name,
                                                 run_name: run_name,
                                                 product_name: product_name,
@@ -221,36 +222,43 @@ describe 'Result Set Smoke' do
       end
     end
 
-    it 'get result_sets by status' do
-      product_name, plan_name, run_name, result_set_name, message = Array.new(5).map { http.random_name }
-      status = 'Passed'
+    it 'get result_sets by statuses(multiple)' do
+      statuses = %w[Passed Failed]
       result_first = ResultFunctions.create_new_result(http, plan_name: plan_name,
                                                              run_name: run_name,
                                                              product_name: product_name,
-                                                             result_set_name: result_set_name + '1',
+                                                             result_set_name: result_set_name + 'important_1',
                                                              message: message,
-                                                             status: status)
-      ResultFunctions.create_new_result(http, plan_name: plan_name,
-                                              run_name: run_name,
-                                              product_name: product_name,
-                                              result_set_name: result_set_name + '2',
-                                              message: message,
-                                              status: 'Failed')
+                                                             status: 'Passed')
       result_second = ResultFunctions.create_new_result(http, plan_name: plan_name,
                                                               run_name: run_name,
                                                               product_name: product_name,
-                                                              result_set_name: result_set_name,
+                                                              result_set_name: result_set_name + 'important_2',
                                                               message: message,
-                                                              status: status)
+                                                              status: 'Failed')
+      ResultFunctions.create_new_result(http, plan_name: plan_name,
+                                              run_name: run_name,
+                                              product_name: product_name,
+                                              result_set_name: result_set_name,
+                                              message: message,
+                                              status: 'Pending')
+      ResultFunctions.create_new_result(http, plan_name: plan_name,
+                                              run_name: run_name,
+                                              product_name: product_name,
+                                              result_set_name: result_set_name,
+                                              message: message,
+                                              status: 'Aborted')
       result_sets = ResultSetFunctions.get_result_sets_by_status(http, plan_name: plan_name,
                                                                        run_name: run_name,
                                                                        product_name: product_name,
-                                                                       status: status)
+                                                                       status: statuses)
       body = JSON.parse(result_sets.body)
       expect(body['product']['name']).to eq(product_name)
       expect(body['plan']['name']).to eq(plan_name)
       expect(body['run']['name']).to eq(run_name)
-      expect(body['status']['name']).to eq(status)
+      expect(body['status'].count).to eq(2)
+      expect(body['status'][0]['name']).to eq(statuses[1])
+      expect(body['status'][1]['name']).to eq(statuses[0])
       expect(body['result_sets'].count).to eq(2)
       expect(body['result_sets'][0]).to eq(JSON.parse(result_first.body)['result_sets'][0])
       expect(body['result_sets'][1]).to eq(JSON.parse(result_second.body)['result_sets'][0])

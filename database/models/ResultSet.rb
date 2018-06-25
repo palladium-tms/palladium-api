@@ -119,13 +119,15 @@ class ResultSet < Sequel::Model
       return result
     end
     result[:run] = result[:run].values
-    result[:status] = Status.first(name: data['status'])
-    if result[:status].nil?
+    result[:status] = Status.where(name: data['status'])
+    if result[:status].empty?
+      result[:status] = nil
       result[:status_errors] = 'status not found'
       return result
     end
-    result[:status] = result[:status].values
-    result[:result_sets] = ResultSet.where(run_id: result[:run][:id], status: result[:status][:id]).all
+    status_ids = result[:status].map(&:id)
+    result[:status] = result[:status].map(&:values)
+    result[:result_sets] = ResultSet.where(run_id: result[:run][:id], status: status_ids).all
     result
   end
 end

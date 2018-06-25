@@ -1,6 +1,6 @@
 require_relative '../../tests/test_management'
 describe 'Plan Smoke' do
-  describe 'Create new plan' do
+  describe 'Get version' do
     it 'check getting version' do
       http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
       request = Net::HTTP::Post.new('/public/version')
