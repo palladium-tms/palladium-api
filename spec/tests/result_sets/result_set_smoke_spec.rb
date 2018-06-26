@@ -257,11 +257,11 @@ describe 'Result Set Smoke' do
       expect(body['plan']['name']).to eq(plan_name)
       expect(body['run']['name']).to eq(run_name)
       expect(body['status'].count).to eq(2)
-      expect(body['status'][0]['name']).to eq(statuses[1])
-      expect(body['status'][1]['name']).to eq(statuses[0])
+      expect(body['status'].map { |obj| obj['name'] }.include?(statuses[1])).to be_truthy
+      expect(body['status'].map { |obj| obj['name'] }.include?(statuses[0])).to be_truthy
       expect(body['result_sets'].count).to eq(2)
-      expect(body['result_sets'][0]).to eq(JSON.parse(result_first.body)['result_sets'][0])
-      expect(body['result_sets'][1]).to eq(JSON.parse(result_second.body)['result_sets'][0])
+      expect(body['result_sets'].include?(JSON.parse(result_first.body)['result_sets'][0])).to be_truthy
+      expect(body['result_sets'].include?(JSON.parse(result_second.body)['result_sets'][0])).to be_truthy
     end
   end
 end
