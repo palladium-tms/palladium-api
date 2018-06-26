@@ -47,4 +47,8 @@ class ResultSetFunctions
   def self.update_result_set(http, options = {})
     http.post_request('/api/result_set_edit', result_set_data: { id: options[:id], result_set_name: options[:name] })
   end
+
+  def self.get_result_sets_by_status(http, options = {})
+    http.post_request('/api/result_sets_by_status', options)
+  end
 end
