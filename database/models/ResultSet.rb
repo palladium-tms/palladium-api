@@ -101,6 +101,7 @@ class ResultSet < Sequel::Model
 
   def self.get_result_sets_by_status(data)
     result = {}
+    result[:result_sets] = []
     result[:product] = Product.first(name: data['product_name'])
     if result[:product].nil?
       result[:product_errors] = 'product not found'
@@ -122,7 +123,6 @@ class ResultSet < Sequel::Model
     result[:status] = Status.where(name: data['status'])
     if result[:status].empty?
       result[:status] = nil
-      result[:result_sets] = []
       result[:status_errors] = 'status not found'
       return result
     end
