@@ -122,6 +122,7 @@ class ResultSet < Sequel::Model
     result[:status] = Status.where(name: data['status'])
     if result[:status].empty?
       result[:status] = nil
+      result[:result_sets] = []
       result[:status_errors] = 'status not found'
       return result
     end

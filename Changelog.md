@@ -1,5 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.3.1] - 2018-06-27
+### Fixed 
+    - Wrond request scope in result_sets_by_status
+### Changes 
+    - result_sets_by_status will return empty array of result sets and status_error is status not found
 ## [0.3.0] - 2018-04-05
 ### Added
     - New method to api: gettind result_sets by statuses and etc. data

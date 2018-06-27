@@ -229,7 +229,7 @@ class Api < Sinatra::Base
   end
 
   post '/result_sets_by_status' do
-    process_request request, 'result_sets' do |_req, _username|
+    process_request request, 'result_sets_by_status' do |_req, _username|
       objects = ResultSet.get_result_sets_by_status(params)
       if objects[:product_errors].nil? && objects[:plan_errors].nil? &&
          objects[:run_errors].nil? && objects[:result_sets_errors].nil? &&
@@ -561,6 +561,6 @@ class Public < Sinatra::Base
   end
 
   post '/version' do
-    { version: '0.3.0' }.to_json
+    { version: '0.3.1' }.to_json
   end
 end
