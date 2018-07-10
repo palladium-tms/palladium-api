@@ -18,7 +18,7 @@ class Api < Sinatra::Base
   post '/products' do
     process_request request, 'products' do |_req, _username|
       positions = User[email: _username].product_position
-      defarr = Array.new(positions.size)
+      defarr = Array.new(positions.size).compact
       products = Product.all.map(&:values)
       products.delete_if do |element|
         index = positions.index(element[:id])

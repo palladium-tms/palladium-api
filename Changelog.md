@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 ## [0.3.1] - 2018-06-27
 ### Fixed 
     - Wrond request scope in result_sets_by_status
+    - Fix creating nil objects after set product position and delete this product
 ### Changes 
     - result_sets_by_status will return empty array of result sets and status_error is status not found
 ## [0.3.0] - 2018-04-05
