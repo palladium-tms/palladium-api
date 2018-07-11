@@ -3,6 +3,8 @@ class ResultSet < Sequel::Model
   many_to_one :run
   many_to_many :results
   plugin :validation_helpers
+  plugin :association_dependencies
+  add_association_dependencies results: :nullify
   self.raise_on_save_failure = false
   plugin :timestamps
 

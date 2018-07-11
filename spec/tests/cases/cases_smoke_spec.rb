@@ -1,8 +1,9 @@
 require_relative '../../tests/test_management'
-http = nil
+product_name, plan_name, run_name, new_case_name, result_set_name, http = nil
 describe 'Cases Smoke' do
   before :each do
     http = Http.new(token: AuthFunctions.create_user_and_get_token)
+    product_name, plan_name, run_name, new_case_name, result_set_name = Array.new(5).map { http.random_name }
   end
 
   describe 'Create case' do
@@ -112,22 +113,16 @@ describe 'Cases Smoke' do
       expect(responce['cases'].size).to eq(0)
     end
 
-    it 'delete all result sets if case is deleted' do
-      # if you delete case - all result sets from this name, from this product
-      # and with suite name == runs
-      product_name, plan_name, run_name, result_set_name = Array.new(4).map { http.random_name }
+    it 'result_sets is not deleted if case is delete' do
       responce_result_set = ResultSetFunctions.create_new_result_set_and_parse(http, plan_name: plan_name,
                                                                                      run_name: run_name,
-                                                                                     product_name: product_name,
-                                                                                     result_set_name: result_set_name)[0]
-      id = JSON.parse(CaseFunctions.get_cases(http, id: responce_result_set['suite']['id']).body)['cases'].first['id']
-      CaseFunctions.delete_case(http, id: id)
+                                                                                     product_name: product_name)[0]
+      case_id = JSON.parse(CaseFunctions.get_cases(http, id: responce_result_set['suite']['id']).body)['cases'].first['id']
+      CaseFunctions.delete_case(http, id: case_id)
       cases_after_deletind = JSON.parse(CaseFunctions.get_cases(http, id: responce_result_set['suite']['id']).body)['cases']
       result_sets_after_deleting = JSON.parse(ResultSetFunctions.get_result_sets(http, id: responce_result_set['run']['id']).body)['result_sets']
-      JSON.parse(ResultSetFunctions.get_result_sets(http, id: responce_result_set['run']['id']).body)
-      JSON.parse(CaseFunctions.get_cases(http, id: responce_result_set['suite']['id']).body)
       expect(cases_after_deletind).to be_empty
-      expect(result_sets_after_deleting).to be_empty
+      expect(result_sets_after_deleting[0]['name']).to eq(responce_result_set['result_sets'][0]['name'])
     end
 
     it 'delete case if case with this name is exist in other suite' do
@@ -139,18 +134,14 @@ describe 'Cases Smoke' do
       second_result_set = ResultSetFunctions.create_new_result_set_and_parse(http, plan_id: first_result_set['plan']['id'],
                                                                                    run_name: run_name2,
                                                                                    result_set_name: result_set_name)[0]
-      id = JSON.parse(CaseFunctions.get_cases(http, id: first_result_set['suite']['id']).body)['cases'].first['id']
-      ResultFunctions.create_new_result(http, result_set_id: first_result_set['result_sets'][0]['id'],
-                                              message: 'message',
-                                              status: 'Passed')
-      ResultFunctions.create_new_result(http, result_set_id: second_result_set['result_sets'][0]['id'],
-                                              message: 'message',
-                                              status: 'Passed')
-      CaseFunctions.delete_case(http, id: id)
+      first_case_id = JSON.parse(CaseFunctions.get_cases(http, id: first_result_set['suite']['id']).body)['cases'].first['id']
+      CaseFunctions.delete_case(http, id: first_case_id)
       responce_first = ResultSetFunctions.get_result_set(http, id: first_result_set['result_sets'][0]['id'])
       responce_second = ResultSetFunctions.get_result_set(http, id: second_result_set['result_sets'][0]['id'])
-      expect(responce_first.code).to eq('500')
+      cases_after_deleting = JSON.parse(CaseFunctions.get_cases(http, id: first_result_set['suite']['id']).body)['cases']
+      expect(responce_first.code).to eq('200')
       expect(responce_second.code).to eq('200')
+      expect(cases_after_deleting.empty?).to be_truthy
     end
   end
 end

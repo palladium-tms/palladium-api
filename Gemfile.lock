@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/flaminestone/palladium.git
-  revision: 24f41fe0eff3db3847b13c6453457f36ceeb29d7
+  revision: 44fcd23b86f3317cfd89cd00c0b699d59d6e6146
   specs:
     palladium (0.3.1)
 
@@ -29,7 +29,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.1)
-    sequel (5.9.0)
+    sequel (5.10.0)
     sinatra (2.0.3)
       mustermann (~> 1.0)
       rack (~> 2.0)

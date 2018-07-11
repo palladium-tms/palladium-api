@@ -3,12 +3,8 @@ class Product < Sequel::Model
   one_to_many :suites
   plugin :validation_helpers
   plugin :timestamps, force: true, update_on_create: true, create: :created_at
-
-  def before_destroy
-    super
-    Plan.where(product_id: id).each(&:destroy)
-    Suite.where(product_id: id).each(&:destroy)
-  end
+  plugin :association_dependencies
+  add_association_dependencies plans: :destroy, suites: :destroy
 
   def validate
     super

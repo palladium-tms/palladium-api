@@ -1,7 +1,6 @@
 class Case < Sequel::Model
   many_to_one :suite
   plugin :validation_helpers
-  plugin :association_dependencies
   self.raise_on_save_failure = false
   plugin :timestamps
 
@@ -63,19 +62,21 @@ class Case < Sequel::Model
     offset = 0 if params['offset'].nil?
     suite = get_suite(params['case_data']['id'])
     plans, plan_ids = get_plans(suite.product.id, records_limit, offset)
-    result = plans.map! { |e| { plan_id: e.values[:id], plan_name: e.values[:name],
-                              updated_at: e.values[:created_at] } }
+    result = plans.map! do |e|
+    { plan_id: e.values[:id], plan_name: e.values[:name],
+      updated_at: e.values[:created_at] }
+    end
     runs, grouped_runs = get_runs(plan_ids, suite)
-    result.each { |e|
+    result.each do |e|
       if grouped_runs[e[:plan_id]]
         e[:run_id] = grouped_runs[e[:plan_id]].first.values[:id]
       else
         e.merge!({suite_id: suite.id})
       end
       e.merge!({status: 0})
-    }
+    end
     result_sets, grouped_result_set = get_result_sets(plan_ids, runs, params['case_data']['id'])
-    result.each { |e|
+    result.each do |e|
       unless e[:suite_id]
         if grouped_result_set[e[:run_id]]
           e.merge!({result_set_id: grouped_result_set[e[:run_id]].first.values[:id]})
@@ -83,7 +84,7 @@ class Case < Sequel::Model
           e.merge!({ status: grouped_result_set[e[:run_id]].first.values[:status]})
         end
       end
-    }
+    end
     results = {}
     result_sets.all.each do |result_set|
       results.merge!({result_set.id => result_set.results})

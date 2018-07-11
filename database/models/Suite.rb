@@ -7,10 +7,11 @@ class Suite < Sequel::Model
   self.raise_on_save_failure = false
   plugin :timestamps
 
+
   def before_destroy
     super
     plan_ids = Product[id: product_id].plans.map(&:id)
-    Run.where(name: name, plan_id: plan_ids).each(&:destroy)
+    Run.where(name: name, plan_id: plan_ids).destroy
   end
 
   def self.edit(suite_data)
