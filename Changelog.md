@@ -1,5 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.4.0] - 2018-07-11
+### Changed
+    - Deleting result sets after after case deleting has deprecated
+    - Deleting runs after after suite deleting has deprecated
 ## [0.3.1] - 2018-06-27
 ### Fixed 
     - Wrond request scope in result_sets_by_status
