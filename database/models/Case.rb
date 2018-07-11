@@ -1,18 +1,17 @@
 class Case < Sequel::Model
   many_to_one :suite
   plugin :validation_helpers
-  plugin :association_dependencies
   self.raise_on_save_failure = false
   plugin :timestamps
-
-  def before_destroy
-    plan_ids = self.suite.product.plans.map(&:id)
-    runs_id = Run.where(name: self.suite.name, plan_id: plan_ids).map(&:id)
-    ResultSet.where(name: name, plan_id: plan_ids, run_id: runs_id).each do |current_result_set|
-      current_result_set.remove_all_results
-      current_result_set.destroy
-    end
-  end
+  #
+  # def before_destroy
+  #   plan_ids = self.suite.product.plans.map(&:id)
+  #   runs_id = Run.where(name: self.suite.name, plan_id: plan_ids).map(&:id)
+  #   ResultSet.where(name: name, plan_id: plan_ids, run_id: runs_id).each do |current_result_set|
+  #     current_result_set.remove_all_results
+  #     current_result_set.destroy
+  #   end
+  # end
 
   def self.get_cases(case_data = {})
     if case_data['suite_id']

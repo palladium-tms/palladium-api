@@ -134,18 +134,14 @@ describe 'Cases Smoke' do
       second_result_set = ResultSetFunctions.create_new_result_set_and_parse(http, plan_id: first_result_set['plan']['id'],
                                                                                    run_name: run_name2,
                                                                                    result_set_name: result_set_name)[0]
-      id = JSON.parse(CaseFunctions.get_cases(http, id: first_result_set['suite']['id']).body)['cases'].first['id']
-      ResultFunctions.create_new_result(http, result_set_id: first_result_set['result_sets'][0]['id'],
-                                              message: 'message',
-                                              status: 'Passed')
-      ResultFunctions.create_new_result(http, result_set_id: second_result_set['result_sets'][0]['id'],
-                                              message: 'message',
-                                              status: 'Passed')
-      CaseFunctions.delete_case(http, id: id)
+      first_case_id = JSON.parse(CaseFunctions.get_cases(http, id: first_result_set['suite']['id']).body)['cases'].first['id']
+      CaseFunctions.delete_case(http, id: first_case_id)
       responce_first = ResultSetFunctions.get_result_set(http, id: first_result_set['result_sets'][0]['id'])
       responce_second = ResultSetFunctions.get_result_set(http, id: second_result_set['result_sets'][0]['id'])
-      expect(responce_first.code).to eq('500')
+      cases_after_deleting = JSON.parse(CaseFunctions.get_cases(http, id: first_result_set['suite']['id']).body)['cases']
+      expect(responce_first.code).to eq('200')
       expect(responce_second.code).to eq('200')
+      expect(cases_after_deleting.empty?).to be_truthy
     end
   end
 end
