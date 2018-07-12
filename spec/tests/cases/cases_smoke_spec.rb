@@ -122,7 +122,7 @@ describe 'Cases Smoke' do
       cases_after_deletind = JSON.parse(CaseFunctions.get_cases(http, id: responce_result_set['suite']['id']).body)['cases']
       result_sets_after_deleting = JSON.parse(ResultSetFunctions.get_result_sets(http, id: responce_result_set['run']['id']).body)['result_sets']
       expect(cases_after_deletind).to be_empty
-      expect(result_sets_after_deleting[0]['name']).to eq(responce_result_set['result_sets'][0]['name'])
+      expect(result_sets_after_deleting.empty?).to be_truthy
     end
 
     it 'delete case if case with this name is exist in other suite' do
@@ -139,7 +139,7 @@ describe 'Cases Smoke' do
       responce_first = ResultSetFunctions.get_result_set(http, id: first_result_set['result_sets'][0]['id'])
       responce_second = ResultSetFunctions.get_result_set(http, id: second_result_set['result_sets'][0]['id'])
       cases_after_deleting = JSON.parse(CaseFunctions.get_cases(http, id: first_result_set['suite']['id']).body)['cases']
-      expect(responce_first.code).to eq('200')
+      expect(responce_first.code).to eq('500')
       expect(responce_second.code).to eq('200')
       expect(cases_after_deleting.empty?).to be_truthy
     end

@@ -104,7 +104,7 @@ describe 'Suites Smoke' do
       suites = JSON.parse(SuiteFunctions.get_suites(http, id: JSON.parse(run_responce.body)['product']['product_id']).body)['suites']
       runs = JSON.parse(RunFunctions.get_runs(http, id: JSON.parse(run_responce.body)['plan']['id']).body)['runs']
       expect(suites).to be_empty
-      expect(runs).not_to be_empty
+      expect(runs).to be_empty
     end
   end
 end
