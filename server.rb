@@ -125,6 +125,14 @@ class Api < Sinatra::Base
       { plan: params['plan_data']['id'], errors: errors }.to_json
     end
   end
+
+  post '/plan_archive' do
+    process_request request, 'plan_archive' do |_req, _username|
+      errors = Plan.archive(params['plan_data']['id'])
+      Plan[id: params['plan_data']['id']].destroy if errors.empty?
+      { plan: params['plan_data']['id'], errors: errors }.to_json
+    end
+  end
   # endregion plans
 
   # region runs
@@ -546,7 +554,7 @@ class Public < Sinatra::Base
       iat: Time.now.to_i,
       iss: ENV['JWT_ISSUER'],
       scopes: %w[products product product_new product_delete product_edit
-                 plan_new plans plan plan_edit plan_delete
+                 plan_new plans plan plan_edit plan_delete plan_archive
                  run_new runs run run_delete
                  result_set_new result_sets result_set result_set_delete
                  result_new results

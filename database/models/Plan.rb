@@ -122,8 +122,10 @@ class Plan < Sequel::Model
     end
   end
 
-  # Method will created suites with name like run's, and cases with name like result_set's name
-  def self.save_all_as_suites_and_cases(plan_id)
-    Plan[id: plan_id].runs.select(:name)
+  # Getting statistic and save in database(usually, statistic is not saving)
+  def self.archive(plan_id)
+    plan = Plan.find(id: plan_id)
+    plans = Product.add_statictic([plan])
+    plans
   end
 end
