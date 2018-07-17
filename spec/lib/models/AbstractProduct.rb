@@ -4,15 +4,16 @@ class AbstractProduct
 
   def initialize(data)
     @product_errors = JSON.parse(data.body)['product_errors'] unless data.class == Hash
-    if @product_errors
-      return
-    end
-    data = JSON.parse(data.body)['product'] unless data.class == Hash
-    @id = data['id']
-    @name = data['name']
-    @created_at = data['created_at']
-    @updated_at = data['updated_at']
-    @is_archived = data['is_archived']
+    return unless @product_errors.nil?
+    parsed_product = if data.class == Hash
+                       data['product']
+                     else
+                       JSON.parse(data.body)['product']
+                     end
+    @id = parsed_product['id']
+    @name = parsed_product['name']
+    @created_at = parsed_product['created_at']
+    @updated_at = parsed_product['updated_at']
   end
 
   def like_a?(product)

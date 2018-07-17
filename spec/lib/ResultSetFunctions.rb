@@ -1,5 +1,6 @@
 require 'net/http'
 require 'json'
+require_relative '../../spec/tests/test_management'
 class ResultSetFunctions
   # @param [Hash] args must has :token and one of next hashes:
   # {result_set_name: 'str', run_id: int}  - create result_set with name = 'str' and belongs to run with id = int
@@ -10,7 +11,7 @@ class ResultSetFunctions
   def self.create_new_result_set(http, options = {})
     options[:name] ||= http.random_name
     response = http.post_request('/api/result_set_new', get_params(options))
-    [response, options[:name]]
+    [AbstractResultSet.new(response), options[:name], response.code]
   end
 
   def self.create_new_result_set_and_parse(http, options = {})
@@ -33,7 +34,8 @@ class ResultSetFunctions
   end
 
   def self.get_result_sets(http, options = {})
-    http.post_request('/api/result_sets', result_set_data: { run_id: options[:id] })
+    response = http.post_request('/api/result_sets', result_set_data: { run_id: options[:id] })
+    [AbstractResultSetPack.new(response), options[:name], response.code]
   end
 
   def self.get_result_set(http, options = {})

@@ -6,13 +6,13 @@ class AbstractProductPack
     @products = []
     products = JSON.parse(product_pack.body)['products']
     products.map do |product|
-      @products  << AbstractProduct.new(product)
+      @products << AbstractProduct.new('product' => product)
     end
   end
 
   def diff(product_pack)
-    self_ids = @products.map { |product| product.id}
-    other_ids = product_pack.products.map { |product| product.id}
+    self_ids = @products.map(&:id)
+    other_ids = product_pack.products.map(&:id)
     self_ids - other_ids | other_ids - other_ids
   end
 

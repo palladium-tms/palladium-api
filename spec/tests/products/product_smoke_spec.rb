@@ -21,24 +21,24 @@ describe 'Product Smoke' do
   describe 'Delete product' do
     it 'check deleting product after product create' do
       product, = ProductFunctions.create_new_product(http)
-      responce = ProductFunctions.delete_product(http, product.id)
-      expect(responce.code).to eq('200')
-      expect(JSON.parse(responce.body)['product']).to eq(product.id)
-      expect(JSON.parse(responce.body)['errors'].empty?).to be_truthy
+      responce, code = ProductFunctions.delete_product(http, product.id)
+      expect(code).to eq('200')
+      expect(responce['product']).to eq(product.id)
+      expect(responce['errors'].empty?).to be_truthy
     end
 
     it 'delete product with plans' do
       product, = ProductFunctions.create_new_product(http)
       plan = PlanFunctions.create_new_plan(http, product_id: product.id)[0]
       start_product_pack = ProductFunctions.get_all_products(http)
-      product_response = ProductFunctions.delete_product(http, product.id)
+      product_response, code = ProductFunctions.delete_product(http, product.id)
       end_product_pack = ProductFunctions.get_all_products(http)
-      show_plan = PlanFunctions.show_plan(http, id: plan.id)
-      expect(product_response.code).to eq('200')
-      expect(JSON.parse(product_response.body)['product']).to eq(product.id)
+      show_plan = PlanFunctions.show_plan(http, id: plan.id)[0]
+      expect(code).to eq('200')
+      expect(product_response['product']).to eq(product.id)
       expect(start_product_pack.diff(end_product_pack)).to eq([product.id])
-      expect(JSON.parse(product_response.body)['errors'].empty?).to be_truthy
-      expect(JSON.parse(show_plan.body)['plan']).to be_nil
+      expect(product_response['errors'].empty?).to be_truthy
+      expect(show_plan.is_null).to be_truthy
     end
   end
 

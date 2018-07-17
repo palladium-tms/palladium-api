@@ -166,7 +166,12 @@ class Api < Sinatra::Base
 
   post '/run' do
     process_request request, 'run' do |_req, _username|
-      { run: Run[id: params['run_data']['id']].values }.to_json
+      run = Run[id: params['run_data']['id']]
+      if run
+        { run: run.values }.to_json
+      else
+        { run: { errors: 'run not found' } }.to_json
+      end
     end
   end
 

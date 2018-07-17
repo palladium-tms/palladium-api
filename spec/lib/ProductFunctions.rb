@@ -28,7 +28,8 @@ class ProductFunctions
   # @param [Integer] id is a id of product for deleting
   # return hash which keys - id of product, values - is a hash {'name': 'product_name'}
   def self.delete_product(http, id)
-    http.post_request('/api/product_delete', product_data: { id: id })
+    response = http.post_request('/api/product_delete', product_data: { id: id })
+    [JSON.parse(response.body), response.code]
   end
 
   # @param [Hash] product_data like a {:id => product_id, :name => product_name}
