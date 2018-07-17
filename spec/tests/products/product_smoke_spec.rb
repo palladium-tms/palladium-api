@@ -6,50 +6,37 @@ describe 'Product Smoke' do
   end
   describe 'Create new product' do
     it 'check creating new product with correct user_data and correct product_data' do
-      res_new_product, new_product_name = ProductFunctions.create_new_product(http)
-      expect(JSON.parse(res_new_product.body)['errors'].nil?).to be_truthy
-      expect(JSON.parse(res_new_product.body)['product']['id'].nil?).to be_falsey
-      expect(JSON.parse(res_new_product.body)['product']['name']).to eq(new_product_name)
-    end
-
-    it 'check creating new product with correct user_data and correct product_data' do
-      res_new_product, new_product_name = ProductFunctions.create_new_product(http)
-      expect(JSON.parse(res_new_product.body)['errors'].nil?).to be_truthy
-      expect(JSON.parse(res_new_product.body)['product']['id'].nil?).to be_falsey
-      expect(JSON.parse(res_new_product.body)['product']['name']).to eq(new_product_name)
+      product, new_product_name = ProductFunctions.create_new_product(http)
+      expect(product.name).to eq(new_product_name)
     end
 
     it 'check creating new product with correct user_data and exists correct product_data' do
-      new_product_name = ProductFunctions.create_new_product(http)[1]
-      res_new_product, new_product_name = ProductFunctions.create_new_product(http, new_product_name)
-      expect(res_new_product.code).to eq('200')
-      expect(JSON.parse(res_new_product.body)['errors'].nil?).to be_truthy
-      expect(JSON.parse(res_new_product.body)['product']['id']).to be_truthy
-      expect(JSON.parse(res_new_product.body)['product']['name']).to eq(new_product_name)
+      product = ProductFunctions.create_new_product(http)[0]
+      new_product, _, code = ProductFunctions.create_new_product(http, product.name)
+      expect(code).to eq('200')
+      expect(new_product.name).to eq(product.name)
     end
   end
 
   describe 'Delete product' do
     it 'check deleting product after product create' do
-      res_new_product, = ProductFunctions.create_new_product(http)
-      product_id_for_deleting = JSON.parse(res_new_product.body)['product']['id']
-      responce = ProductFunctions.delete_product(http, product_id_for_deleting)
+      product, = ProductFunctions.create_new_product(http)
+      responce = ProductFunctions.delete_product(http, product.id)
       expect(responce.code).to eq('200')
-      expect(JSON.parse(responce.body)['product']).to eq(product_id_for_deleting)
+      expect(JSON.parse(responce.body)['product']).to eq(product.id)
       expect(JSON.parse(responce.body)['errors'].empty?).to be_truthy
     end
 
     it 'delete product with plans' do
-      res_new_product, = ProductFunctions.create_new_product(http)
-      product_id_for_deleting = JSON.parse(res_new_product.body)['product']['id']
-      plan_response = PlanFunctions.create_new_plan(http, product_id: product_id_for_deleting)[0]
-      products_before_deleting = JSON.parse(ProductFunctions.get_all_products(http).body)['products']
-      product_response = ProductFunctions.delete_product(http, product_id_for_deleting)
-      products_after_deleting = JSON.parse(ProductFunctions.get_all_products(http).body)['products']
-      show_plan = PlanFunctions.show_plan(http, id: JSON.parse(plan_response.body)['plan']['id'])
+      product, = ProductFunctions.create_new_product(http)
+      plan = PlanFunctions.create_new_plan(http, product_id: product.id)[0]
+      start_product_pack = ProductFunctions.get_all_products(http)
+      product_response = ProductFunctions.delete_product(http, product.id)
+      end_product_pack = ProductFunctions.get_all_products(http)
+      show_plan = PlanFunctions.show_plan(http, id: plan.id)
       expect(product_response.code).to eq('200')
-      expect(JSON.parse(product_response.body)['product']).to eq(product_id_for_deleting)
-      expect(products_before_deleting - products_after_deleting).to eq([JSON.parse(res_new_product.body)['product']])
+      expect(JSON.parse(product_response.body)['product']).to eq(product.id)
+      expect(start_product_pack.diff(end_product_pack)).to eq([product.id])
       expect(JSON.parse(product_response.body)['errors'].empty?).to be_truthy
       expect(JSON.parse(show_plan.body)['plan']).to be_nil
     end
@@ -59,30 +46,25 @@ describe 'Product Smoke' do
     it 'get all products after creating' do
       res_new_product, = ProductFunctions.create_new_product(http)
       response = ProductFunctions.get_all_products(http)
-      products = {}
-      JSON.parse(response.body)['products'].each do |current_product|
-        products.merge!(current_product['id'] => current_product)
-      end
-      expect(products[JSON.parse(res_new_product.body)['product']['id']]['name']).to eq(JSON.parse(res_new_product.body)['product']['name'])
+      response.get_product_by_id(res_new_product.id)
+      expect(response.get_product_by_id(res_new_product.id).name).to eq(res_new_product.name)
     end
 
     it 'get one product | show method' do
       res_new_product, = ProductFunctions.create_new_product(http)
-      product_data = JSON.parse(res_new_product.body)
-      res_product = ProductFunctions.show_product(http, product_data['product']['id'])
-      expect(res_product.code).to eq('200')
-      expect(JSON.parse(res_product.body)['product']).to eq(JSON.parse(res_new_product.body)['product'])
+      res_product = ProductFunctions.show_product(http, res_new_product.id)
+      expect(res_new_product.like_a?(res_product)).to be_truthy
     end
   end
 
   describe 'Edit product' do
     it 'edit product after creating' do
       product_name_for_updating = http.random_name
-      product_id = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']['id']
-      ProductFunctions.update_product(http, product_id, product_name_for_updating)
-      response = ProductFunctions.show_product(http, product_id)
-      expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['product']['name']).to eq(product_name_for_updating)
+      product = ProductFunctions.create_new_product(http)[0]
+      ProductFunctions.update_product(http, product.id, product_name_for_updating)
+      product_after_edit = ProductFunctions.show_product(http, product.id)
+      expect(product.like_a?(product_after_edit)).not_to be_truthy
+      expect(product_after_edit.name).to eq(product_name_for_updating)
     end
   end
 end

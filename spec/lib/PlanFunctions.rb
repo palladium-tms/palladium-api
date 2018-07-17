@@ -1,12 +1,12 @@
 require 'net/http'
 require 'json'
+require_relative '../../spec/lib/models/AbstractPlan'
 class PlanFunctions
-
   # @param [Hash] args must has :plan_data[name] with plan name and plan_data[product_id] with product id
   def self.create_new_plan(http, options = {})
     options[:name] ||= http.random_name
     plan_data = { name: options[:name] }.merge(options)
-    [http.post_request('/api/plan_new', plan_data: plan_data), options[:name] ]
+    [AbstractPlan.new(http.post_request('/api/plan_new', plan_data: plan_data)), options[:name]]
   end
 
   # @param [Hash] args must has :product_id with product_id or :product_name with product name
@@ -36,6 +36,7 @@ class PlanFunctions
   end
 
   def self.archive_plan(http, id)
-    http.post_request('/api/plan_archive', plan_data: { id: id })
+    response = http.post_request('/api/plan_archive', plan_data: { id: id })
+    [AbstractPlan.new(response), response.code]
   end
 end

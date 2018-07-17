@@ -125,7 +125,7 @@ class Plan < Sequel::Model
   # Getting statistic and save in database(usually, statistic is not saving)
   def self.archive(plan_id)
     plan = Plan.find(id: plan_id)
-    plans = Product.add_statictic([plan])
-    plans
+    Product.add_statictic([plan]).first
+    plan.update(is_archived: true).values
   end
 end

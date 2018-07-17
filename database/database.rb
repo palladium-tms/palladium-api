@@ -2,7 +2,7 @@ require_relative '../management'
 
 require 'yaml'
 Sequel.extension :migration, :core_extensions
-sleep 10 # FIXME: need to add wait for database available
+# sleep 10 # FIXME: need to add wait for database available
 DB = Sequel.connect(YAML.load_file('config/sequel.yml')[Sinatra::Application.environment])
 DB.extension :pg_array
 

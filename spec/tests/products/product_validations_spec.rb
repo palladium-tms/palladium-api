@@ -6,13 +6,13 @@ describe 'Product Validation' do
   end
   describe 'Create new product' do
     it 'Create product with empty name' do
-      res_new_product = ProductFunctions.create_new_product(http, '')[0]
-      expect(JSON.parse(res_new_product.body)['product_errors']).to eq(['name cannot be empty'])
+      product = ProductFunctions.create_new_product(http, '')[0]
+      expect(product.product_errors).to eq(['name cannot be empty'])
     end
 
     it 'Create product with spaces in name' do
-      res_new_product = ProductFunctions.create_new_product(http, '  ')[0]
-      expect(JSON.parse(res_new_product.body)['product_errors']).to eq(['name cannot contains only spaces'])
+      product = ProductFunctions.create_new_product(http, '  ')[0]
+      expect(product.product_errors).to eq(['name cannot contains only spaces'])
     end
 
     it 'Create product without name' do
@@ -28,9 +28,9 @@ describe 'Product Validation' do
 
   describe 'Change product name' do
     it 'Change product name to empty' do
-      res_new_product = ProductFunctions.create_new_product(http)[0]
-      updated_product = ProductFunctions.update_product(http, JSON.parse(res_new_product.body)['product']['id'], '')
-      expect(JSON.parse(updated_product.body)['product_errors']).to eq('name' => ['cannot be empty'])
+      product = ProductFunctions.create_new_product(http)[0]
+      product_updated = ProductFunctions.update_product(http, product.id, '')[0]
+      expect(product_updated.product_errors).to eq('name' => ['cannot be empty'])
     end
   end
 end

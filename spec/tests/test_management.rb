@@ -1,6 +1,10 @@
 require 'rspec'
 require 'net/http'
 require 'json'
+require_relative '../../spec/lib/models/AbstractPlan'
+require_relative '../../spec/lib/models/AbstractProduct'
+require_relative '../../spec/lib/models/AbstractProductPack'
+
 require_relative '../data/static_data'
 require_relative '../lib/AuthFunctions'
 require_relative '../lib/ProductFunctions'

@@ -10,16 +10,23 @@ describe 'Plan Archivation' do
       #---product creating
       product = JSON.parse(ProductFunctions.create_new_product(http)[0].body)['product']
     end
+
     it 'Create plan, not archive by default' do
       correct_plan_name = http.random_name
-      response = PlanFunctions.create_new_plan(http, name: correct_plan_name,
-                                                     product_id: product['id'])[0]
-      plan = PlanFunctions.archive_plan(http, JSON.parse(response.body)['plan']['id'])
-      expect(response.code).to eq('422')
-      expect(JSON.parse(response.body)['plan_errors']).to eq('product creating error')
-      expect(JSON.parse(response.body)['product_errors']).not_to be_empty
+      plan = PlanFunctions.create_new_plan(http, name: correct_plan_name,
+                                                 product_id: product['id'])[0]
+      plan, code = PlanFunctions.archive_plan(http, plan.id)
+      expect(code).to eq('200')
+      expect(plan.is_archived).to be_truthy
     end
 
+    # it 'Archive  plan and run' do
+    #   correct_plan_name = http.random_name
+    #   plan = PlanFunctions.create_new_plan(http, name: correct_plan_name,
+    #                                              product_id: product['id'])[0]
+    #   responce = PlanFunctions.archive_plan(http, plan.id)
+    #   expect(responce[:code]).to eq('200')
+    #   expect(responce['plan']['is_archived']).to be_truthy
+    # end
   end
-
 end

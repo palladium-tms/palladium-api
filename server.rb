@@ -128,9 +128,8 @@ class Api < Sinatra::Base
 
   post '/plan_archive' do
     process_request request, 'plan_archive' do |_req, _username|
-      errors = Plan.archive(params['plan_data']['id'])
-      Plan[id: params['plan_data']['id']].destroy if errors.empty?
-      { plan: params['plan_data']['id'], errors: errors }.to_json
+      plan = Plan.archive(params['plan_data']['id'])
+      { plan: plan }.to_json
     end
   end
   # endregion plans
@@ -519,7 +518,7 @@ class Public < Sinatra::Base
   post '/registration' do
     cross_origin
     valid_status = Invite.check_link_validation(user_data['invite'])
-    if User.all.empty? || (ENV['RACK_ENV'] == 'test' && params['invite'].nil?)
+    if User.all.empty? || (ENV['RACK_ENV'] == 'development' && params['invite'].nil?)
       valid_status[0] = true
       valid_status[1] = []
     end

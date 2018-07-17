@@ -48,7 +48,7 @@ class Product < Sequel::Model
     product = Product[id: product_id]
     if product.set(name: product_name).valid?
       product.update(name: product_name, updated_at: Time.now)
-      { product_data: product.values }.to_json
+      { product: product.values }.to_json
     else
       { product_errors: product.errors }.to_json
     end
