@@ -216,7 +216,12 @@ class Api < Sinatra::Base
 
   post '/result_set' do
     process_request request, 'result_set' do |_req, _username|
-      { result_set: ResultSet[id: params['result_set_data']['id']].values }.to_json
+      result_set = ResultSet[id: params['result_set_data']['id']]
+      if result_set
+        { result_sets: [result_set.values] }.to_json
+      else
+        { result_sets: nil}.to_json
+      end
     end
   end
 

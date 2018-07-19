@@ -6,7 +6,7 @@ class AbstractResultSetPack
     @result_sets = []
     runs = JSON.parse(result_set_pack.body)['result_sets']
     runs.map do |result_set|
-      @result_sets << AbstractResultSet.new(['result_sets' => result_set])
+      @result_sets << AbstractResultSet.new('result_sets' => result_set)
     end
   end
 

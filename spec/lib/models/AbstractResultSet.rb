@@ -1,19 +1,20 @@
 require 'json'
 require_relative '../../tests/test_management'
 class AbstractResultSet
-  attr_accessor :id, :name, :run_id, :created_at, :updated_at, :is_null, :run, :errors
+  attr_accessor :id, :name, :run_id, :created_at, :updated_at, :is_null, :run, :errors, :response
 
   def initialize(data)
+    @response = data
     if data.class == Hash
-      parsed_result_set = data['result_sets'].first
+      parsed_result_set = data['result_sets']
     else
       data = JSON.parse(data.body)
-      parsed_result_set = data['result_sets'].first
       if data['result_sets'].nil?
         @is_null = true
-        @errors = data['result_sets']['errors'] if data['result_sets']['errors']
+        @errors = data['result_sets_errors'] if data['result_sets_errors']
         return
       end
+      parsed_result_set = data['result_sets'].first
     end
     @id = parsed_result_set['id']
     @name = parsed_result_set['name']

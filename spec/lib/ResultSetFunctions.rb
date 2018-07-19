@@ -39,11 +39,13 @@ class ResultSetFunctions
   end
 
   def self.get_result_set(http, options = {})
-    http.post_request('/api/result_set', result_set_data: { id: options[:id] })
+    response = http.post_request('/api/result_set', result_set_data: { id: options[:id] })
+    AbstractResultSet.new(response)
   end
 
   def self.delete_result_set(http, option = {})
-    http.post_request('/api/result_set_delete', result_set_data: { id: option[:id] })
+    response = http.post_request('/api/result_set_delete', result_set_data: { id: option[:id] })
+    [JSON.parse(response.body), response.code]
   end
 
   def self.update_result_set(http, options = {})
