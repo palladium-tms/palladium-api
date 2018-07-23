@@ -4,11 +4,12 @@ class CaseFunctions
   # @param [Hash] args must has :id with exist product id
 
   def self.get_cases(http, options = {})
-    if options[:id]
-      http.post_request('/api/cases', case_data: { suite_id: options[:id] })
-    else
-      http.post_request('/api/cases', case_data: { product_id: options[:product_id], run_id: options[:run_id] })
-    end
+    responce = if options[:id]
+                 http.post_request('/api/cases', case_data: { suite_id: options[:id] })
+               else
+                 http.post_request('/api/cases', case_data: { product_id: options[:product_id], run_id: options[:run_id] })
+               end
+    AbstractCasePack.new(responce)
   end
 
   def self.delete_case(http, options = {})

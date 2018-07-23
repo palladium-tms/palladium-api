@@ -19,15 +19,12 @@ class ErrorMessages
 
   # region plan
   CANT_BE_EMPTY_PLAN_NAME = 'cannot be empty'.freeze
-  PRODUCT_ID_CANT_BE_NIL_PLAN_NAME = "product_id can't be nil".freeze
-  PRODUCT_ID_CANT_BE_EMPTY_PLAN_NAME = "product_id can't be empty".freeze
   PLAN_ID_CANT_BE_NIL_PLAN_NAME = "plan_id can't be nil".freeze
   PLAN_ID_WRONG = 'plan_id is not belongs to any product'.freeze
   # endregion plan
 
   # region run
   CANT_BE_EMPTY_RUN_NAME = 'cannot be empty'.freeze
-  IN_NOT_NUMBER_RESULT_SET_STATUS = 'is not a number'.freeze
   RUN_ID_WRONG = 'run_id is not belongs to any plans'.freeze
   RUN_ID_CANT_BE_EMPTY = "run_id can't be empty".freeze
   # endregion run
@@ -37,7 +34,6 @@ class ErrorMessages
   # endregion results_set
   #
   # # #region status
-  UNCORRECT_Status_NAME = 'is invalid'.freeze
   STATUS_NAME_WRONG = 'status_name is not belongs to any statuses'.freeze
   # endregion status
 end

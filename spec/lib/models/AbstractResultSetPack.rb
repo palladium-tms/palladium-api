@@ -4,9 +4,9 @@ class AbstractResultSetPack
 
   def initialize(result_set_pack)
     @result_sets = []
-    runs = JSON.parse(result_set_pack.body)['result_sets']
-    runs.map do |result_set|
-      @result_sets << AbstractResultSet.new('result_sets' => result_set)
+    result_set_pack = JSON.parse(result_set_pack.body)['result_sets'] unless result_set_pack.is_a?(Hash) || result_set_pack.is_a?(Array)
+    result_set_pack.map do |result_set|
+      @result_sets << AbstractResultSet.new('result_sets' => [ result_set ])
     end
   end
 

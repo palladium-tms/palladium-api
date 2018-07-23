@@ -4,7 +4,8 @@ class ResultFunctions
   # @param [Hash] args must has 'result_data[result_set_id_id]' with result_set id, and can has result_data[message] with hash of messages (or will be generate
   # random message). example: {"result_data[result_set_id_id]" => int, "result_data[message]" => hash }
   def self.create_new_result(http, options = {})
-    http.post_request('/api/result_new', get_params(options))
+    response = http.post_request('/api/result_new', get_params(options))
+    [AbstractResult.new(response), options[:name], response.code]
   end
 
   def self.get_params(param)
@@ -34,10 +35,12 @@ class ResultFunctions
   end
 
   def self.get_results(http, options = {})
-    http.post_request('/api/results', result_data: { result_set_id: options[:id] })
+    response = http.post_request('/api/results', result_data: { result_set_id: options[:id] })
+    AbstractResultPack.new(response)
   end
 
   def self.get_result(http, id)
-    http.post_request('/api/result', result_data: { id: id })
+    response = http.post_request('/api/result', result_data: { id: id })
+    AbstractResult.new(response)
   end
 end
