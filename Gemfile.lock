@@ -12,7 +12,7 @@ GEM
     jwt (2.1.0)
     mustermann (1.0.2)
     pg (1.0.0)
-    puma (3.11.4)
+    puma (3.12.0)
     rack (2.0.5)
     rack-protection (2.0.3)
       rack
@@ -53,4 +53,4 @@ DEPENDENCIES
   sinatra-cross_origin
 
 BUNDLED WITH
-   1.16.1
+   1.16.3

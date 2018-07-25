@@ -16,8 +16,8 @@ class AbstractSuite
     @created_at = parsed_one_case['created_at']
     @updated_at = parsed_one_case['updated_at']
   end
-  #
-  # def like_a?(one_case)
-  #   one_case.id == @id && one_case.name == @name && one_case.created_at == @created_at && one_case.updated_at == @updated_at && one_case.is_archived == @is_archived && one_case.product_id == @product_id
-  # end
+
+  def like_a?(one_case)
+    one_case.id == @id && one_case.name == @name && one_case.created_at == @created_at && one_case.updated_at == @updated_at && one_case.product_id == @product_id
+  end
 end

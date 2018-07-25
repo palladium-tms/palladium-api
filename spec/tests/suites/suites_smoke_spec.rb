@@ -1,60 +1,50 @@
 require_relative '../../tests/test_management'
-http, product, plan = nil
+http, plan_name, product_name = nil
 describe 'Suites Smoke' do
   before :each do
     http = Http.new(token: AuthFunctions.create_user_and_get_token)
+    plan_name, product_name = Array.new(2).map { http.random_name }
   end
 
   describe 'Create suite' do
     it 'check creating new suite after run created' do
-      plan_name, product_name = Array.new(2).map { http.random_name }
-      run_response, run_name = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)
-      responce = SuiteFunctions.get_suites(http, id: JSON.parse(run_response.body)['product']['id'])
-      run_response = JSON.parse(run_response.body)
-      response = JSON.parse(responce.body)
-      expect(response['suites'].find { |suite| suite['name'] == run_name }.nil?).to be_falsey
-      expect(run_response['suite']['name']).to eq(run_name)
+      run = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)[0]
+      suite_pack = SuiteFunctions.get_suites(http, id: run.plan.product.id)
+      expect(suite_pack.suites.first.name).to eq(run.name)
     end
   end
 
   describe 'Get suites' do
     it 'check getting suite' do
-      product_name, plan_name = Array.new(2).map { http.random_name }
-      _, run_name = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)
-      _, run_name1 = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)
-      run_responce, run_name2 = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)
-      responce = JSON.parse(SuiteFunctions.get_suites(http, id: JSON.parse(run_responce.body)['product']['id']).body)
-      expect(responce['suites'].find { |suite| suite['name'] == run_name }.nil?).to be_falsey
-      expect(responce['suites'].find { |suite| suite['name'] == run_name1 }.nil?).to be_falsey
-      expect(responce['suites'].find { |suite| suite['name'] == run_name2 }.nil?).to be_falsey
+      run1 = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)[0]
+      run2 = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)[0]
+      run3 = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)[0]
+      suite_pack = SuiteFunctions.get_suites(http, id: run3.plan.product.id)
+      expect(suite_pack.suites.map(&:name)).to eq([run1.name, run2.name, run3.name])
     end
   end
 
   describe 'Update suite' do
     it 'check update suite' do
       product_name, plan_name, new_suite_name = Array.new(3).map { http.random_name }
-      run_responce, run_name = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)
-      responce = JSON.parse(SuiteFunctions.get_suites(http, id: JSON.parse(run_responce.body)['product']['id']).body)
-      created_suite = responce['suites'].find { |suite| suite['name'] == run_name }
-      new_suite = SuiteFunctions.update_suite(http, id: created_suite['id'], name: new_suite_name)
-      responce = JSON.parse(SuiteFunctions.get_suites(http, id: JSON.parse(run_responce.body)['product']['id']).body)
-      expect(new_suite.code).to eq('200')
-      expect(responce['suites'].find { |suite| suite['name'] == run_name }.nil?).to be_truthy
-      expect(responce['suites'].find { |suite| suite['name'] == new_suite_name }.nil?).to be_falsey
-      expect(new_suite.code).to eq('200')
+      run = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)[0]
+      new_suite = SuiteFunctions.update_suite(http, id: run.plan.product.suite.id, name: new_suite_name)
+      suite_pack = SuiteFunctions.get_suites(http, id: run.plan.product.id)
+      expect(new_suite.name).to eq(new_suite_name)
+      expect(suite_pack.suites.first.name).to eq(new_suite_name)
     end
 
     it 'check update suite and runs' do
       product_name, plan_name, new_suite_name = Array.new(3).map { http.random_name }
-      run_responce, run_name = RunFunctions.create_new_run_and_parse(http, plan_name: plan_name, product_name: product_name)
-      suites = SuiteFunctions.get_suites_and_parse(http, id: run_responce['product']['id'])
-      created_suite = suites.find { |suite| suite['name'] == run_name }
-      new_suite = SuiteFunctions.update_suite(http, id: created_suite['id'], name: new_suite_name)
-      update_body = JSON.parse(RunFunctions.get_runs(http, id: run_responce['plan']['id']).body)
-      expect(new_suite.code).to eq('200')
+      run = RunFunctions.create_new_run(http, plan_name: plan_name, product_name: product_name)[0]
+      new_suite = SuiteFunctions.update_suite(http, id: run.plan.product.suite.id, name: new_suite_name)
+      run_pack = RunFunctions.get_runs(http, id: run.plan.id)
+      expect(run_pack[1]).to eq('200')
+      expect(run_pack[1]).to eq('200')
       expect(update_body['runs'].find do |run|
         run['name'] == new_suite_name
       end.nil?).to be_falsey
+
     end
 
     it 'check update suite and runs only in one product' do
