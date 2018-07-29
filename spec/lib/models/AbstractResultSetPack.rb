@@ -1,22 +1,22 @@
 require 'json'
 class AbstractResultSetPack
-  attr_accessor :result_sets
+  attr_accessor :result_sets, :parsed_body
 
   def initialize(result_set_pack)
     @result_sets = []
-    result_set_pack = JSON.parse(result_set_pack.body)['result_sets'] unless result_set_pack.is_a?(Hash) || result_set_pack.is_a?(Array)
+    @parsed_body = JSON.parse(result_set_pack.body)
+    result_set_pack = @parsed_body['result_sets'] unless result_set_pack.is_a?(Hash) || result_set_pack.is_a?(Array)
     result_set_pack.map do |result_set|
       @result_sets << AbstractResultSet.new('result_sets' => [ result_set ])
     end
   end
 
-  # def diff(product_pack)
-  #   self_ids = @products.map { |product| product.id}
-  #   other_ids = product_pack.products.map { |product| product.id}
-  #   self_ids - other_ids | other_ids - other_ids
-  # end
-  #
-  # def get_product_by_id(id)
-  #   @products.detect { |product| product.id == id}
-  # end
+
+  def contain?(result_set)
+    contain = false
+    @result_sets.each do |current_result_set|
+      contain = contain || result_set.like_a?(current_result_set)
+    end
+    contain
+  end
 end

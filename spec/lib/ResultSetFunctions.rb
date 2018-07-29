@@ -53,6 +53,7 @@ class ResultSetFunctions
   end
 
   def self.get_result_sets_by_status(http, options = {})
-    http.post_request('/api/result_sets_by_status', options)
+    responce = http.post_request('/api/result_sets_by_status', options)
+    AbstractResultSetPack.new(responce)
   end
 end
