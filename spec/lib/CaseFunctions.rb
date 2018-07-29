@@ -17,10 +17,11 @@ class CaseFunctions
   end
 
   def self.update_case(http, options = {})
-    if options[:id]
+    responce = if options[:id]
       http.post_request('/api/case_edit', case_data: { id: options[:id], name: options[:name] })
     else
       http.post_request('/api/case_edit', case_data: { result_set_id: options[:result_set_id], name: options[:name] })
-    end
+               end
+    AbstractCase.new(responce)
   end
 end
