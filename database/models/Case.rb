@@ -108,7 +108,7 @@ class Case < Sequel::Model
   end
 
   def self.get_plans(product_id, records_limit, offset)
-    plans = Plan.dataset.where(product_id: product_id).select(:id, :name, :created_at).limit(records_limit, offset).all
+    plans = Plan.dataset.where(product_id: product_id).order(Sequel.desc(:updated_at)).limit(records_limit, offset).select(:id, :name, :created_at).all
     [plans, plans.map(&:id)]
   end
 
