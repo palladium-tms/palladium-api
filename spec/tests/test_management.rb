@@ -18,6 +18,8 @@ require_relative '../../spec/lib/models/AbstractResultSetPack'
 require_relative '../../spec/lib/models/AbstractResultPack'
 require_relative '../../spec/lib/models/AbstractToken'
 require_relative '../../spec/lib/models/AbstractTokenPack'
+require_relative '../../spec/lib/models/AbstractHistory'
+require_relative '../../spec/lib/models/AbstractHistoryPack'
 
 require_relative '../data/static_data'
 require_relative '../lib/AuthFunctions'
