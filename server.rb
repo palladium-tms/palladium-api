@@ -528,7 +528,7 @@ class Public < Sinatra::Base
   post '/registration' do
     cross_origin
     valid_status = Invite.check_link_validation(user_data['invite'])
-    if User.all.empty? || (ENV['RACK_ENV'] == 'development' && params['invite'].nil?)
+    if User.all.empty? || (ENV['RACK_ENV'] == 'test' && params['invite'].nil?)
       valid_status[0] = true
       valid_status[1] = []
     end
@@ -563,7 +563,7 @@ class Public < Sinatra::Base
       iat: Time.now.to_i,
       iss: ENV['JWT_ISSUER'],
       scopes: %w[products product product_new product_delete product_edit
-                 plan_new plans plan plan_edit plan_delete plan_archive
+                 plan_new plans plan plan_edit plan_delete
                  run_new runs run run_delete
                  result_set_new result_sets result_set result_set_delete
                  result_new results
