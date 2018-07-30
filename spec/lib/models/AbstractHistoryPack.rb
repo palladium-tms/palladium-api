@@ -2,10 +2,12 @@ require 'json'
 require_relative '../../tests/test_management'
 class AbstractHistoryPack
   attr_accessor :histories
-  def initialize(history_pack)
+
+  def initialize(data)
+    parsed_data = JSON.parse(data.body)['history_data']
     @histories = []
-    JSON.parse(history_pack.body)['history_data'].map do |history|
-      @histories << AbstractHistory.new(history)
+    parsed_data.each do |data|
+      @histories << AbstractHistory.new(data)
     end
   end
 end
