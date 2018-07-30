@@ -7,43 +7,43 @@ describe 'Result Smoke' do
   # Fixme: add more checks for history
   describe 'Get history from case id' do
     it '1. Check creating new result with all other elements' do
-      product_name, plan_name, result_set_name, run_name = Array.new(5).map {http.random_name}
-      response_first, run_name = RunFunctions.create_new_run_and_parse(http, plan_name: plan_name,
-                                                                 product_name: product_name, name: run_name)
+      product_name, plan_name, result_set_name, run_name = Array.new(5).map { http.random_name }
+      run_first = RunFunctions.create_new_run(http, plan_name: plan_name,
+                                                    product_name: product_name, name: run_name)[0]
 
 
-      ResultFunctions.create_new_result_and_parse(http, run_id: response_first['run']['id'],
-                                        result_set_name: result_set_name,
-                                        message: 'MessageFor_1',
-                                        status: 'Passed')
+      ResultFunctions.create_new_result(http, run_id: run_first.id,
+                                              result_set_name: result_set_name,
+                                              message: 'MessageFor_1',
+                                              status: 'Passed')
 
 
       2.times do |i|
-        ResultFunctions.create_new_result(http, run_id: response_first['run']['id'],
-                                          result_set_name: result_set_name,
-                                          message: 'MessageFor_' + i.to_s,
-                                          status: 'Passed')
+        ResultFunctions.create_new_result(http, run_id: run_first.id,
+                                                result_set_name: result_set_name,
+                                                message: 'MessageFor_' + i.to_s,
+                                                status: 'Passed')
       end
-      response_second, run_name = RunFunctions.create_new_run_and_parse(http, plan_name: plan_name + '2',
-                                                                 product_name: product_name, name: run_name)
-      second_result_set = ResultFunctions.create_new_result_and_parse(http, run_id: response_second['run']['id'],
-                                                           result_set_name: result_set_name,
-                                                           message: 'MessageFor_1',
-                                                           status: 'Passed')
+      run_second = RunFunctions.create_new_run(http, plan_name: plan_name + '2',
+                                                     product_name: product_name, name: run_name)[0]
+      second_result = ResultFunctions.create_new_result(http, run_id: run_first.id,
+                                                              result_set_name: result_set_name,
+                                                              message: 'MessageFor_1',
+                                                              status: 'Passed')[0]
       2.times do |i|
-        ResultFunctions.create_new_result(http, run_id: response_second['run']['id'],
-                                          result_set_name: result_set_name,
-                                          message: 'MessageFor_' + i.to_s,
-                                          status: 'Passed')
+        ResultFunctions.create_new_result(http, run_id: second_result.id,
+                                                result_set_name: result_set_name,
+                                                message: 'MessageFor_' + i.to_s,
+                                                status: 'Passed')
       end
-      responce = JSON.parse(CaseFunctions.get_cases(http, id: response_first['suite']['id']).body)
+      case_pack = CaseFunctions.get_cases(http, id: run_first.plan.product.suite.id)
 
-      responce = JSON.parse(HistoryFunctions.case_history(http, responce['cases'].first['id']).body)
-      expect(responce['history_data'].size).to eq(2)
-      expect(responce['history_data'][0]['plan_id']).to eq(response_first['plan']['id'])
-      expect(responce['history_data'][0]['run_id']).to eq(response_first['run']['id'])
-      expect(responce['history_data'][1]['run_id']).to eq(response_second['run']['id'])
-      expect(responce['history_data'][1]['plan_id']).to eq(response_second['plan']['id'])
+      history_pack = HistoryFunctions.case_history(http, case_pack.cases.first.id)
+      expect(history_pack.histories.size).to eq(2)
+      expect(history_pack.histories[0].plan_id).to eq(run_first.plan.id)
+      expect(history_pack.histories[0].run_id).to eq(run_first.id)
+      expect(history_pack.histories[1].plan_id).to eq(run_second.plan.id)
+      expect(history_pack.histories[1].run_id).to eq(run_second.id)
     end
   end
 end

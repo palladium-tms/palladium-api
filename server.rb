@@ -125,6 +125,13 @@ class Api < Sinatra::Base
       { plan: params['plan_data']['id'], errors: errors }.to_json
     end
   end
+
+  post '/plan_archive' do
+    process_request request, 'plan_archive' do |_req, _username|
+      plan = Plan.archive(params['plan_data']['id'])
+      { plan: plan }.to_json
+    end
+  end
   # endregion plans
 
   # region runs
@@ -159,7 +166,12 @@ class Api < Sinatra::Base
 
   post '/run' do
     process_request request, 'run' do |_req, _username|
-      { run: Run[id: params['run_data']['id']].values }.to_json
+      run = Run[id: params['run_data']['id']]
+      if run
+        { run: run.values }.to_json
+      else
+        { run: { errors: 'run not found' } }.to_json
+      end
     end
   end
 
@@ -204,7 +216,12 @@ class Api < Sinatra::Base
 
   post '/result_set' do
     process_request request, 'result_set' do |_req, _username|
-      { result_set: ResultSet[id: params['result_set_data']['id']].values }.to_json
+      result_set = ResultSet[id: params['result_set_data']['id']]
+      if result_set
+        { result_sets: [result_set.values] }.to_json
+      else
+        { result_sets: nil}.to_json
+      end
     end
   end
 

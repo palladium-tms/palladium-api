@@ -8,48 +8,43 @@ describe 'Plan Validation' do
   describe 'Create new plan and product' do
     it 'Create product and plan one command with empty product name' do
       correct_plan_name = http.random_name
-      response = PlanFunctions.create_new_plan(http, name: correct_plan_name,
-                                                     product_name: '')[0]
-      expect(response.code).to eq('422')
-      expect(JSON.parse(response.body)['plan_errors']).to eq('product creating error')
-      expect(JSON.parse(response.body)['product_errors']).not_to be_empty
+      plan, _, code = PlanFunctions.create_new_plan(http, name: correct_plan_name,
+                                                          product_name: '')
+      expect(code).to eq('422')
+      expect(plan.plan_errors).to eq('product creating error')
+      expect(plan.is_null).to be_truthy
     end
 
     it 'Create product and plan one command with empty plan name' do
       correct_product_name = http.random_name
-      response = PlanFunctions.create_new_plan(http, name: '',
-                                                     product_name: correct_product_name)[0]
-      expect(response.code).to eq('422')
-      expect(JSON.parse(response.body)['plan_errors']).to eq(['name cannot be empty'])
+      plan, _, code = PlanFunctions.create_new_plan(http, name: '',
+                                                          product_name: correct_product_name)
+      expect(code).to eq('422')
+      expect(plan.plan_errors).to eq(['name cannot be empty'])
     end
 
     it 'Create product and plan one command with empty plan name and product name' do
-      correct_product_name = http.random_name
-      response = PlanFunctions.create_new_plan(http, name: '',
-                                                     product_name: '')[0]
-      expect(response.code).to eq('422')
-      response = JSON.parse(response.body)
-      expect(response['plan_errors']).to eq('product creating error')
-      expect(response['product_errors']).to eq(['name cannot be empty'])
+      plan, _, code = PlanFunctions.create_new_plan(http, name: '',
+                                                          product_name: '')
+      expect(code).to eq('422')
+      expect(plan.plan_errors).to eq('product creating error')
+      expect(plan.product.product_errors).to eq(['name cannot be empty'])
     end
 
     it 'Create product and plan with spaces name' do
-      correct_product_name = http.random_name
-      response = PlanFunctions.create_new_plan(http, name: '   ',
-                                                     product_name: '   ')[0]
-      expect(response.code).to eq('422')
-      response = JSON.parse(response.body)
-      expect(response['plan_errors']).to eq('product creating error')
-      expect(response['product_errors']).to eq(['name cannot contains only spaces'])
+      plan, _, code = PlanFunctions.create_new_plan(http, name: '   ',
+                                                          product_name: '   ')
+      expect(code).to eq('422')
+      expect(plan.plan_errors).to eq('product creating error')
+      expect(plan.product.product_errors).to eq(['name cannot contains only spaces'])
     end
   end
 
   describe 'Edit plan validation' do
     it 'Change plan name to empty' do
-      response, plan_name = PlanFunctions.create_new_plan(http, product_name: http.random_name)
-      response = JSON.parse(response.body)
-      plan_new = PlanFunctions.update_plan(http, id: response['plan']['id'], plan_name: '').body
-      expect(JSON.parse(plan_new)['plan_errors']).to eq(['name cannot be empty'])
+      plan = PlanFunctions.create_new_plan(http, product_name: http.random_name)[0]
+      plan_new = PlanFunctions.update_plan(http, id: plan.id, plan_name: '')[0]
+      expect(plan_new.plan_errors).to eq(['name cannot be empty'])
     end
   end
 end
