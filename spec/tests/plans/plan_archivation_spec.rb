@@ -10,15 +10,15 @@ describe 'Plan Archivation' do
       #---product creating
       product = ProductFunctions.create_new_product(http)[0]
     end
-
-    it 'Create plan, not archive by default' do
-      correct_plan_name = http.random_name
-      plan = PlanFunctions.create_new_plan(http, name: correct_plan_name,
-                                                 product_id: product.id)[0]
-      plan, code = PlanFunctions.archive_plan(http, plan.id)
-      expect(code).to eq('200')
-      expect(plan.is_archived).to be_truthy
-    end
+    #
+    # it 'Create plan, not archive by default' do
+    #   correct_plan_name = http.random_name
+    #   plan = PlanFunctions.create_new_plan(http, name: correct_plan_name,
+    #                                              product_id: product.id)[0]
+    #   plan, code = PlanFunctions.archive_plan(http, plan.id)
+    #   expect(code).to eq('200')
+    #   expect(plan.is_archived).to be_truthy
+    # end
 
     # it 'Archive  plan and run' do
     #   correct_plan_name = http.random_name
