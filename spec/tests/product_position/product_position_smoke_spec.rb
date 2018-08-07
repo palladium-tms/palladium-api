@@ -33,11 +33,11 @@ describe 'Product Position Smoke' do
     end
 
     it 'Set product position after product create' do
-      5.times { ProductFunctions.create_new_product_and_parse(http) }
-      products_id = ProductFunctions.get_all_products(http).products.map(&:id)
-      shuffled_products = products_id.sample(products_id.size)
+      5.times {  ProductFunctions.create_new_product(http)[0].id}
+      products = ProductFunctions.get_all_products(http).products.map{ |elem| elem.id }
+      shuffled_products = products.sample(products.size)
       ProductPosition.set_product_position(http, product_position: shuffled_products)
-      new_products_list = ProductFunctions.get_all_products(http).products.map(&:id)
+      new_products_list = ProductFunctions.get_all_products(http).products.map{ |elem| elem.id }
       expect(new_products_list).to eq(shuffled_products)
     end
   end
