@@ -45,5 +45,27 @@ describe 'Result Smoke' do
       expect(history_pack.histories[1].plan_id).to eq(run_second.plan.id)
       expect(history_pack.histories[1].run_id).to eq(run_second.id)
     end
+
+    it 'Get history only by 30 plans' do
+      product_name, plan_name, result_set_name, run_name = Array.new(5).map {http.random_name}
+      run = RunFunctions.create_new_run(http, plan_name: plan_name,
+                                        product_name: product_name, name: run_name)[0]
+      results = []
+      35.times do |i|
+        sleep 1
+        results << ResultFunctions.create_new_result(http, product_name: product_name,
+                                                     plan_name: plan_name + i.to_s,
+                                                     run_name: run.name,
+                                                     result_set_name: result_set_name,
+                                                     message: 'MessageFor_' + i.to_s,
+                                                     status: 'Passed')[0].result_set.run.plan.id
+      end
+      case_pack = CaseFunctions.get_cases(http, id: run.plan.product.suite.id)
+
+      history_pack = HistoryFunctions.case_history(http, case_pack.cases.first.id)
+      expect(history_pack.histories.size).to eq(30)
+      expect(history_pack.get_youngest_by_plan).to eq(results.last)
+      expect(history_pack.get_oldest_by_plan).to eq(results[5])
+    end
   end
 end

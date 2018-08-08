@@ -8,4 +8,20 @@ class AbstractHistoryPack
       @histories << AbstractHistory.new(history)
     end
   end
+
+  def get_oldest_by_plan
+    oldest = @histories.first.plan_id
+    @histories.each do |element|
+      oldest = element.plan_id if element.plan_id < oldest
+    end
+    oldest
+  end
+
+  def get_youngest_by_plan
+    youngest = @histories.first.plan_id
+    @histories.each do |element|
+      youngest = element.plan_id if element.plan_id > youngest
+    end
+    youngest
+  end
 end
