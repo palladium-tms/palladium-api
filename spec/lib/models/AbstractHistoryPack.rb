@@ -24,4 +24,18 @@ class AbstractHistoryPack
     end
     youngest
   end
+
+  def plan_exist?(plan_id)
+      @histories.each do |history|
+        return true if history.plan_id == plan_id
+      end
+    false
+  end
+
+  def run_exist?(run_id)
+      @histories.each do |history|
+        return true if history.run_id == run_id
+      end
+    false
+  end
 end
