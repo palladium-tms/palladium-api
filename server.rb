@@ -8,7 +8,7 @@ class Api < Sinatra::Base
   end
 
   before do
-    content_type :json
+    # content_type :json
     cross_origin
     body = request.body.read
     @params = JSON.parse(body) unless body == ''
@@ -578,6 +578,6 @@ class Public < Sinatra::Base
   end
 
   post '/version' do
-    { version: '0.4.0' }.to_json
+    { version: '0.4.1' }.to_json
   end
 end

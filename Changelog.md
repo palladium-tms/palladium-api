@@ -1,5 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.4.1] - 2018-10-22
+### Fixed
+    - 403 error for all post requests to /api from firefox
 ## [0.4.0] - 2018-07-11
 ### Changed
     - Delete most of hooks
