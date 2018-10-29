@@ -18,7 +18,7 @@ class Api < Sinatra::Base
   post '/products' do
     process_request request, 'products' do |_req, _username|
       positions = User[email: _username].product_position
-      defarr = Array.new(positions.size).compact
+      defarr = []
       products = Product.all.map(&:values)
       products.delete_if do |element|
         index = positions.index(element[:id])
@@ -28,7 +28,7 @@ class Api < Sinatra::Base
           false
         end
       end
-      { products: defarr + products}.to_json
+      { products: (defarr + products).compact}.to_json
     end
   end
 
@@ -578,6 +578,6 @@ class Public < Sinatra::Base
   end
 
   post '/version' do
-    { version: '0.4.1' }.to_json
+    { version: '0.4.2' }.to_json
   end
 end

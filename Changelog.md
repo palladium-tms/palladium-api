@@ -1,5 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.4.2] - 2018-10-30
+### Fixed
+    - Phantom products after deleting
 ## [0.4.1] - 2018-10-22
 ### Fixed
     - 403 error for all post requests to /api from firefox
