@@ -11,7 +11,6 @@ describe 'History Smoke' do
       run_first = RunFunctions.create_new_run(http, plan_name: plan_name,
                                               product_name: product_name, name: run_name)[0]
 
-
       3.times do |i|
         ResultFunctions.create_new_result(http, run_id: run_first.id,
                                           result_set_name: result_set_name,
@@ -28,12 +27,12 @@ describe 'History Smoke' do
       end
       case_pack = CaseFunctions.get_cases(http, id: run_first.plan.product.suite.id)
 
-      history_pack = HistoryFunctions.case_history(http, case_pack.cases.first.id)
-      expect(history_pack.histories.size).to eq(2)
-      expect(history_pack.plan_exist?(run_first.plan.id)).to be_truthy
-      expect(history_pack.run_exist?(run_first.id)).to be_truthy
-      expect(history_pack.plan_exist?(run_second.plan.id)).to be_truthy
-      expect(history_pack.run_exist?(run_second.id)).to be_truthy
+      result_sets_history = HistoryFunctions.case_history(http, case_pack.cases.first.id)
+      expect(result_sets_history.histories.size).to eq(2)
+      expect(result_sets_history.plan_exist?(run_first.plan.id)).to be_truthy
+      expect(result_sets_history.plan_exist?(run_second.plan.id)).to be_truthy
+      expect(result_sets_history.run_exist?(run_first.id)).to be_truthy
+      expect(result_sets_history.run_exist?(run_second.id)).to be_truthy
     end
 
     it 'Get history only by 30 plans' do

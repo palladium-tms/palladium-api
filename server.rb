@@ -392,11 +392,8 @@ class Api < Sinatra::Base
   # region history
   post '/case_history' do
     process_request request, 'case_history' do |_req, _username|
-      start = Time.now
-      $stdout.puts 'stdout'
-      results = Case.get_history(params)
-      $stdout.puts "##case_history# time: #{Time.now - start}"
-      { history_data: results }.to_json
+      result_sets = Case.get_history(params)
+      { result_sets_history: result_sets }.to_json
     end
   end
   # endregion
@@ -578,6 +575,6 @@ class Public < Sinatra::Base
   end
 
   post '/version' do
-    { version: '0.4.2' }.to_json
+    { version: '0.4.3' }.to_json
   end
 end
