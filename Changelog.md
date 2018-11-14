@@ -1,5 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.4.3] - 2018-11-14
+### Changed
+    - History os not uniq object. Now it a generic result set with new fiend - plan(with plan values)
 ## [0.4.2] - 2018-10-30
 ### Fixed
     - Phantom products after deleting
