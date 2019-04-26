@@ -463,6 +463,16 @@ class Api < Sinatra::Base
   end
   # endregion product_position
 
+  # region user_setting
+  post '/user_setting' do
+    process_request request, 'user_setting' do |_req, _username|
+      user_setting = User[email:_username].user_setting
+      {timezone: user_setting.timezone}.to_json
+    end
+  end
+  # endregion user_setting
+
+
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
     username = user['email']
@@ -567,7 +577,7 @@ class Public < Sinatra::Base
                  status_new statuses status_edit not_blocked_statuses
                  token_new tokens token_delete suites suite_edit
                  suite_delete cases case_delete case_edit result
-                 case_history get_invite_token check_link_validation set_product_position],
+                 case_history get_invite_token check_link_validation set_product_position user_setting],
       user: {
         email: email
       }
