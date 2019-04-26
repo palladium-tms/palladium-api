@@ -3,6 +3,7 @@ class User < Sequel::Model
   include BCrypt
   one_to_many :tokens
   one_to_one :invite
+  one_to_one :user_setting
   plugin :validation_helpers
 
   def password
@@ -29,6 +30,7 @@ class User < Sequel::Model
       @user.password = data['password']
       @user.password.salt
       @user.save if @user.valid?
+      @user.user_setting = UserSetting.create
       @user
     end
   end

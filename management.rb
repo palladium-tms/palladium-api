@@ -8,6 +8,7 @@ require_relative 'database/database'
 require_relative 'database/migrate/001_create_product_positions.rb'
 
 # models
+require_relative 'database/models/UserSetting'
 require_relative 'database/models/User'
 require_relative 'database/models/Product'
 require_relative 'database/models/Plan'
@@ -25,4 +26,5 @@ require_relative 'database/models/Case'
 # core modules
 require_relative 'core/authorization/auth'
 require_relative 'core/authorization/jwt_auth'
+require_relative 'core/settings/palladium_settings'
 
