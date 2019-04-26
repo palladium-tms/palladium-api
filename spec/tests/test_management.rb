@@ -1,6 +1,7 @@
 require 'rspec'
 require 'net/http'
 require 'json'
+require 'faker'
 require_relative '../../spec/lib/models/AbstractProduct'
 require_relative '../../spec/lib/models/AbstractPlan'
 require_relative '../../spec/lib/models/AbstractRun'
@@ -36,6 +37,7 @@ require_relative '../lib/InviteTokenFunctions'
 require_relative '../lib/SuiteFunctions'
 require_relative '../lib/ProductPositionFunctions.rb'
 require_relative '../lib/CaseFunctions'
+require_relative '../lib/UserSettingFunctions'
 require_relative '../../spec/lib/ObjectWrap/http'
 class TestManagement
 end

@@ -6,8 +6,8 @@ class AuthFunctions
   # @param [String] password  for account. Min size = 6 simbols. If it empty - will be generate
   # return array with request and product name [request, product_name]
   def self.create_new_account(option = {})
-    option[:email] ||= 10.times.map { StaticData::ALPHABET.sample }.join + '@g.com'
-    option[:password] ||= 7.times.map { StaticData::ALPHABET.sample }.join
+    option[:email] ||= Faker::Internet.email
+    option[:password] ||= Faker::Lorem.characters(7)
     request = Net::HTTP::Post.new('/public/registration', 'Content-Type' => 'application/json')
     params = {'user_data[email]': option[:email], 'user_data[password]': option[:password]}
     params.merge!(invite: option[:invite]) unless option[:invite].nil?
@@ -23,8 +23,8 @@ class AuthFunctions
 
   def self.create_user_and_get_token(email = nil, password = nil)
     http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
-    email ||= 10.times.map { StaticData::ALPHABET.sample }.join + '@g.com'
-    password ||= 7.times.map { StaticData::ALPHABET.sample }.join
+    email ||= Faker::Internet.email
+    password ||= Faker::Lorem.characters(7)
     request = Net::HTTP::Post.new('/public/registration', 'Content-Type' => 'application/json')
     request.set_form_data({'user_data[email]': email, 'user_data[password]': password})
     http.request(request)
