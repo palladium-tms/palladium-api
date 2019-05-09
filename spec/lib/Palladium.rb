@@ -1,4 +1,7 @@
-require_relative './UserSettingFunctions'
+require_relative '../data/static_data'
+require_relative 'ObjectWrap/http'
 module Palladium
-  include UserSetting
+  def http
+    @http = Http.new
+  end
 end

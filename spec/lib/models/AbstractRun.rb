@@ -23,7 +23,7 @@ class AbstractRun
     @plan_id = parsed_run['plan_id']
     @created_at = parsed_run['created_at']
     @updated_at = parsed_run['updated_at']
-    @plan = AbstractPlan.new(data) if data['plan']
+    @plan = AbstractPlan.new(@response) if data['plan']
   end
 
   def like_a?(run)

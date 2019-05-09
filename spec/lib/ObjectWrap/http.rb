@@ -14,8 +14,12 @@ class Http
   end
 
   def post_request(path, params = nil)
-    request = Net::HTTP::Post.new(path, 'Authorization' => @token, 'Content-Type' => 'application/json')
+    request = if @token
+                Net::HTTP::Post.new(path, 'Authorization' => @token, 'Content-Type' => 'application/json')
+              else
+                Net::HTTP::Post.new(path, 'Content-Type' => 'application/json')
+              end
     request.body = params.to_json if params
-    http.request(request)
+    @http.request(request)
   end
 end

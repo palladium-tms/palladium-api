@@ -5,6 +5,7 @@ class AbstractStatus
 
   def initialize(data)
     @response = data
+    @errors = []
     if data.class == Hash
       parsed_status = data['status']
     else

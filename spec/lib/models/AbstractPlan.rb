@@ -1,9 +1,12 @@
 require 'json'
 require_relative '../../tests/test_management'
 class AbstractPlan
-  attr_accessor :id, :name, :product_id, :created_at, :updated_at, :is_archived, :is_null, :plan_errors, :product
+  attr_accessor :id, :name, :product_id,
+                :created_at, :updated_at, :is_archived, :is_null,
+                :plan_errors, :product, :response
 
   def initialize(data)
+    @response = data
     if data.class == Hash
       parsed_plan = data['plan']
       parsed_data = data
@@ -13,7 +16,7 @@ class AbstractPlan
       if parsed_data['plan'].nil?
         @is_null = true
         @plan_errors = parsed_data['plan_errors']
-        @product = AbstractProduct.new(data) if parsed_data['product'] || parsed_data['product_errors']
+        @product = AbstractProduct.new(@response) if parsed_data['product'] || parsed_data['product_errors']
         return
       end
     end
@@ -23,7 +26,7 @@ class AbstractPlan
     @created_at = parsed_plan['created_at']
     @updated_at = parsed_plan['updated_at']
     @is_archived = parsed_plan['is_archived']
-    @product = AbstractProduct.new(parsed_data) if parsed_data['product']
+    @product = AbstractProduct.new(@response) if parsed_data['product']
   end
 
   def like_a?(plan)

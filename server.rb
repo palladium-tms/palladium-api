@@ -501,15 +501,19 @@ end
 class Public < Sinatra::Base
   register Sinatra::CrossOrigin
 
+  before do
+    content_type :json
+    body = request.body.read
+    @params = JSON.parse(body) unless body == ''
+  end
+
   post '/login' do
     cross_origin
-    current_user = User.find(email: user_data[:email])
-    if current_user.nil?
-      halt 401, 'User or password not correct'
-    elsif current_user.password != user_data[:password]
-      halt 401, 'User or password not correct'
-    else
+    current_user = User.find(email: user_data['email'])
+    if !current_user.nil? && current_user.password == user_data['password']
       { token: token(user_data['email']) }.to_json
+    else
+      halt 401, {errors: 'User or password not correct'}.to_json
     end
   end
 
