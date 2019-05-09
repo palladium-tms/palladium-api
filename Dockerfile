@@ -5,6 +5,5 @@ ENV RACK_ENV=production
 RUN mkdir /palladium-api
 WORKDIR /palladium-api
 ADD . /palladium-api
-RUN gem install bundler
-RUN gem update --system
+RUN gem update bundler
 RUN bundle install --without test development
