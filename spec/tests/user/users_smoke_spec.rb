@@ -20,7 +20,7 @@ describe 'Users Smoke' do
     it 'check getting user settings' do
       response = @user.get_setting
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['timezone']).to eq('MSK')
+      expect(JSON.parse(response.body)['timezone']).not_to be_nil
     end
   end
 end
