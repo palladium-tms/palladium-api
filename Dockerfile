@@ -1,4 +1,4 @@
-FROM ruby:2.4.1
+FROM ruby:2.6.3
 ENV JWT_SECRET=someawesomesecret
 ENV JWT_ISSUER=someawesomesecret
 ENV RACK_ENV=production
