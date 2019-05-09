@@ -11,6 +11,7 @@ before_install:
               - docker run -e "RACK_ENV=test" --name server --link db:postgres -itd -p 80:80 palladium puma
 
 install:
+        - gem update bundler
         - bundle install
 
 script:
