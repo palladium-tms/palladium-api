@@ -8,7 +8,6 @@ class Api < Sinatra::Base
   end
 
   before do
-    # content_type :json
     cross_origin
     body = request.body.read
     @params = JSON.parse(body) unless body == ''
@@ -472,7 +471,6 @@ class Api < Sinatra::Base
   end
   # endregion user_setting
 
-
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
     username = user['email']
@@ -501,8 +499,15 @@ end
 class Public < Sinatra::Base
   register Sinatra::CrossOrigin
 
+  def initialize
+    super
+  end
+
   before do
-    content_type :json
+    if env['REQUEST_METHOD'] == 'OPTIONS'
+      halt  200, { 'Access-Control-Allow-Origin' => '*', 'Access-Control-Allow-Headers' => 'Authorization, Content-Type' }, []
+    end
+    cross_origin
     body = request.body.read
     @params = JSON.parse(body) unless body == ''
   end
