@@ -1,5 +1,4 @@
 require_relative '../test_management'
-http = nil
 describe 'Auth Smoke' do
   before :each do
     @user = AccountFunctions.create_and_parse
