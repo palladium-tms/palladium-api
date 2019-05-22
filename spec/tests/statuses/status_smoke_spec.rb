@@ -1,91 +1,83 @@
 require_relative '../../tests/test_management'
-http = nil
 describe 'Status Smoke' do
   before :each do
-    http = Http.new(token: AuthFunctions.create_user_and_get_token)
+    @user = AccountFunctions.create_and_parse
+    @user.login
   end
 
   describe 'Create new status' do
     it 'check creating new status' do
-      status_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      response = JSON.parse(StatusFunctions.create_new_status(http, name: status_name).body)
-      expect(response['errors'].empty?).to be_truthy
-      expect(response['status']['name']).to eq(status_name)
-      expect(response['status']['color']).to eq(DefaultValues::DEFAULT_STATUS_COLOR)
+      name = rand_status_name
+      status = @user.create_new_status(name: name)
+      expect(status.errors).to be_empty
+      expect(status.name).to eq(name)
+      expect(status.color).to eq(DefaultValues::DEFAULT_STATUS_COLOR)
     end
 
     it 'check creating new status with color' do
-      status_name = Array.new(30) { StaticData::ALPHABET.sample }.join
-      response = StatusFunctions.create_new_status(http, name: status_name, color: '#aaccbb')
-      expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
-      expect(JSON.parse(response.body)['status']['name']).to eq(status_name)
-      expect(JSON.parse(response.body)['status']['color']).to eq('#aaccbb')
+      name = rand_status_name
+      status = @user.create_new_status(name: name, color: '#aaccbb')
+      expect(status.response.code).to eq('200')
+      expect(status.errors).to be_empty
+      expect(status.name).to eq(name)
+      expect(status.color).to eq('#aaccbb')
     end
 
     it 'check creating new status if it has created later' do
-      status_name = http.random_name
-      status_color = '#aaccbb'
-      first_status = StatusFunctions.create_new_status(http, name: status_name, color: status_color)
-      second_status = StatusFunctions.create_new_status(http, name: status_name, color: status_color)
-      expect(first_status.code).to eq('200')
-      expect(second_status.code).to eq('200')
-      expect(first_status.body).to eq(second_status.body)
+      name = rand_status_name
+      color = '#aaccbb'
+      first_status = @user.create_new_status(name: name, color: color)
+      second_status = @user.create_new_status(name: name, color: color)
+      expect(first_status.response.code).to eq('200')
+      expect(second_status.response.code).to eq('200')
+      expect(first_status.id).to eq(second_status.id)
     end
 
     it 'check block new status' do
-      status_name = http.random_name
-      status = JSON.parse(StatusFunctions.create_new_status(http, name: status_name).body)['status']
-      response = JSON.parse(StatusFunctions.status_edit(http, id: status['id'], block: true).body)
-      expect(response['errors'].empty?).to be_truthy
-      expect(response['status']['name']).to eq(status_name)
-      expect(response['status']['block']).to be_truthy
-      expect(response['status']['color']).to eq(DefaultValues::DEFAULT_STATUS_COLOR)
+      name = rand_status_name
+      status = @user.create_new_status(name: name)
+      status_new = @user.status_edit(id: status.id, block: true)
+      expect(status_new.block).to be_truthy
+      expect(status_new.id).to eq(status.id)
+      expect(status_new.errors).to be_empty
     end
 
     it 'check unblock new status' do
-      status_name = http.random_name
-      status = JSON.parse(StatusFunctions.create_new_status(http, name: status_name).body)['status']
-      JSON.parse(StatusFunctions.status_edit(http, id: status['id'], block: true).body)
-      response = StatusFunctions.status_edit(http, id: status['id'], block: false)
-      status = JSON.parse(response.body)
-      expect(response.code).to eq('200')
-      expect(status['errors'].empty?).to be_truthy
-      expect(status['status']['name']).to eq(status_name)
-      expect(status['status']['block']).to be_falsey
-      expect(status['status']['color']).to eq(DefaultValues::DEFAULT_STATUS_COLOR)
+      name = rand_status_name
+      status = @user.create_new_status(name: name)
+      @user.status_edit(id: status.id, block: true)
+      status_new = @user.status_edit(id: status.id, block: false)
+      expect(status_new.block).to be_falsey
+      expect(status_new.id).to eq(status.id)
+      expect(status_new.errors).to be_empty
     end
 
     it 'check change name of status' do
-      status_name, new_status_name = Array.new(2).map { http.random_name }
-      status = JSON.parse(StatusFunctions.create_new_status(http, name: status_name).body)['status']
-      response = StatusFunctions.status_edit(http, id: status['id'], name: new_status_name)
-      status_new = JSON.parse(response.body)
-      expect(response.code).to eq('200')
-      expect(status_new['errors'].empty?).to be_truthy
-      expect(status_new['status']['name']).to eq(new_status_name)
-      expect(status_new['status']['block']).to be_falsey
-      expect(status_new['status']['color']).to eq(DefaultValues::DEFAULT_STATUS_COLOR)
+      name = rand_status_name
+      new_name = rand_status_name
+      status = @user.create_new_status(name: name)
+      status_new = @user.status_edit(id: status.id, name: new_name)
+      expect(status_new.response.code).to eq('200')
+      expect(status_new.errors).to be_empty
+      expect(status_new.name).to eq(new_name)
+      expect(status_new.block).to be_falsey
     end
   end
 
   describe 'Statuses get all' do
     it 'check get all statuses after create' do
-      status_name = http.random_name
-      status = JSON.parse(StatusFunctions.create_new_status(http, name: status_name).body)['status']
-      statuses = JSON.parse(StatusFunctions.get_all_statuses(http).body)['statuses']
-      expect(statuses.key?(status['id'].to_s)).to be_truthy
+      status = @user.create_new_status
+      statuses_pack = @user.get_all_statuses
+      expect(statuses_pack.contain?(status)).to be_truthy
     end
 
     it 'check get not blocked statuses after create' do
-      status_name_block = http.random_name
-      status_name = http.random_name
-      status_block = JSON.parse(StatusFunctions.create_new_status(http, name: status_name_block).body)['status']
-      status_not_block = JSON.parse(StatusFunctions.create_new_status(http, name: status_name).body)['status']
-      JSON.parse(StatusFunctions.status_edit(http, id: status_block['id'], block: true).body)
-      statuses = JSON.parse(StatusFunctions.get_not_blocked_statuses(http).body)['statuses']
-      expect(statuses.key?(status_not_block['id'].to_s)).to be_truthy
-      expect(statuses.key?(status_block['id'].to_s)).to be_falsey
+      status_not_blocked = @user.create_new_status
+      status = @user.create_new_status
+      status = @user.status_edit(id: status.id, block: true)
+      statuses = @user.get_not_blocked_statuses
+      expect(statuses.contain?(status_not_blocked)).to be_truthy
+      expect(statuses.contain?(status)).to be_falsey
     end
   end
 end

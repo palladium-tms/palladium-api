@@ -1,10 +1,11 @@
 require 'json'
 class AbstractPlanPack
-  attr_accessor :plans
+  attr_accessor :plans, :response
 
-  def initialize(plan_pack)
+  def initialize(response)
+    @response = response
     @plans = []
-    plans = JSON.parse(plan_pack.body)['plans']
+    plans = JSON.parse(@response.body)['plans']
     plans.map do |plan|
       @plans  << AbstractPlan.new('plan' => plan)
     end

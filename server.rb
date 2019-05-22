@@ -8,7 +8,6 @@ class Api < Sinatra::Base
   end
 
   before do
-    # content_type :json
     cross_origin
     body = request.body.read
     @params = JSON.parse(body) unless body == ''
@@ -463,6 +462,15 @@ class Api < Sinatra::Base
   end
   # endregion product_position
 
+  # region user_setting
+  post '/user_setting' do
+    process_request request, 'user_setting' do |_req, _username|
+      user_setting = User[email:_username].user_setting
+      {timezone: user_setting.timezone}.to_json
+    end
+  end
+  # endregion user_setting
+
   def process_request(req, scope)
     scopes, user = req.env.values_at :scopes, :user
     username = user['email']
@@ -491,15 +499,26 @@ end
 class Public < Sinatra::Base
   register Sinatra::CrossOrigin
 
+  def initialize
+    super
+  end
+
+  before do
+    if env['REQUEST_METHOD'] == 'OPTIONS'
+      halt  200, { 'Access-Control-Allow-Origin' => '*', 'Access-Control-Allow-Headers' => 'Authorization, Content-Type' }, []
+    end
+    cross_origin
+    body = request.body.read
+    @params = JSON.parse(body) unless body == ''
+  end
+
   post '/login' do
     cross_origin
-    current_user = User.find(email: user_data[:email])
-    if current_user.nil?
-      halt 401, 'User or password not correct'
-    elsif current_user.password != user_data[:password]
-      halt 401, 'User or password not correct'
-    else
+    current_user = User.find(email: user_data['email'])
+    if !current_user.nil? && current_user.password == user_data['password']
       { token: token(user_data['email']) }.to_json
+    else
+      halt 401, {errors: 'User or password not correct'}.to_json
     end
   end
 
@@ -567,7 +586,7 @@ class Public < Sinatra::Base
                  status_new statuses status_edit not_blocked_statuses
                  token_new tokens token_delete suites suite_edit
                  suite_delete cases case_delete case_edit result
-                 case_history get_invite_token check_link_validation set_product_position],
+                 case_history get_invite_token check_link_validation set_product_position user_setting],
       user: {
         email: email
       }

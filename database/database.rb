@@ -12,6 +12,12 @@ DB.create_table? :users do
   String :password_hash
 end
 
+DB.create_table? :user_settings do
+  primary_key :id
+  String :timezone
+  foreign_key :user_id, :users
+end
+
 DB.create_table? :tokens do
   primary_key :id
   String :name

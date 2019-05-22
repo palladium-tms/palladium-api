@@ -4,6 +4,9 @@ require_relative 'server.rb'
 run Rack::URLMap.new('/public' => Public,
                      '/api' => Api)
 
+if ENV['JWT_SECRET'] == nil || ENV['JWT_ISSUER'] == nil
+  raise 'JWT keys not found'
+end
 configure do
   set :server, :puma
   set :root, File.dirname(__FILE__)

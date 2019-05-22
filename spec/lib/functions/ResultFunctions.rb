@@ -1,11 +1,9 @@
 require 'net/http'
 require 'json'
-class ResultFunctions
-  # @param [Hash] args must has 'result_data[result_set_id_id]' with result_set id, and can has result_data[message] with hash of messages (or will be generate
-  # random message). example: {"result_data[result_set_id_id]" => int, "result_data[message]" => hash }
-  def self.create_new_result(http, options = {})
-    response = http.post_request('/api/result_new', get_params(options))
-    [AbstractResult.new(response), options[:name], response.code]
+module ResultFunctions
+  def create_new_result(options = {})
+    response = @http.post_request('/api/result_new', ResultFunctions.get_params(options))
+    AbstractResult.new(response)
   end
 
   def self.get_params(param)
@@ -34,12 +32,12 @@ class ResultFunctions
     JSON.parse(ResultFunctions.create_new_result(http, options).body)
   end
 
-  def self.get_results(http, options = {})
-    response = http.post_request('/api/results', result_data: { result_set_id: options[:id] })
+  def get_results(options = {})
+    response = @http.post_request('/api/results', result_data: { result_set_id: options[:id] })
     AbstractResultPack.new(response)
   end
 
-  def self.get_result(http, id)
+  def get_result(id)
     response = http.post_request('/api/result', result_data: { id: id })
     AbstractResult.new(response)
   end

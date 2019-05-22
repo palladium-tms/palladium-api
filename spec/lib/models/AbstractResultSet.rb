@@ -22,7 +22,7 @@ class AbstractResultSet
     @plan_id = parsed_result_set['plan_id']
     @created_at = parsed_result_set['created_at']
     @updated_at = parsed_result_set['updated_at']
-    @run = AbstractRun.new(data) if data['run']
+    @run = AbstractRun.new(@response) if data['run']
   end
 
   def like_a?(result_set)

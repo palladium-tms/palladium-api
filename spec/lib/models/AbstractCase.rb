@@ -1,14 +1,14 @@
 require 'json'
 require_relative '../../tests/test_management'
 class AbstractCase
-  attr_accessor :id, :name, :product_id, :created_at, :updated_at, :is_archived, :is_null, :case_errors, :product, :responce
+  attr_accessor :id, :name, :product_id, :created_at, :updated_at, :is_archived, :is_null, :case_errors, :product, :response
 
   def initialize(data)
     if data.class == Hash
       parsed_one_case = data['case'].first
       parsed_data = data
     else
-      @responce = data
+      @response = data
       parsed_data = JSON.parse(data.body)
       parsed_one_case = parsed_data['case']
     end

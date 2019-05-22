@@ -5,8 +5,8 @@ class AbstractProductPack
   def initialize(product_pack)
     @products = []
     products = JSON.parse(product_pack.body)['products']
-    products.map do |product|
-      @products << AbstractProduct.new('product' => product)
+    products.map do |product_data|
+      @products << AbstractProduct.new(product_data)
     end
   end
 

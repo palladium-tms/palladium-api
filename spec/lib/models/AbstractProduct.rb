@@ -1,20 +1,29 @@
 require 'json'
 class AbstractProduct
-  attr_accessor :id, :name, :created_at, :updated_at, :is_archived, :product_errors, :suite
+  attr_accessor :id, :name, :created_at, :updated_at, :is_archived, :product_errors, :suite, :response
 
-  def initialize(data)
-    @product_errors = JSON.parse(data.body)['product_errors'] unless data.class == Hash
+  def initialize(product_data = default_data)
+    unless product_data.is_a?(Hash)
+      @response = product_data
+      body = JSON.parse(product_data.body)
+      @product_errors = body['product_errors']
+      product_data = body['product']
+      @suite = AbstractSuite.new(@response) if body['suite']
+    end
     return unless @product_errors.nil?
-    parsed_product = if data.class == Hash
-                       data['product']
-                     else
-                       JSON.parse(data.body)['product']
-                     end
-    @id = parsed_product['id']
-    @name = parsed_product['name']
-    @created_at = parsed_product['created_at']
-    @updated_at = parsed_product['updated_at']
-    @suite = AbstractSuite.new(data) if data['suite']
+    @id = product_data['id']
+    @name = product_data['name']
+    @created_at = product_data['created_at']
+    @updated_at = product_data['updated_at']
+  end
+
+  def default_data
+    {
+        'id': 0,
+        'name': rand_product_name,
+        'created_at': '0',
+        'updated_at': '0'
+    }
   end
 
   def like_a?(product)
