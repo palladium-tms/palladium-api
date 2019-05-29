@@ -1,5 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.4.4] - 2019-05-29
+### Changed
+    - Dockerfile and docker-compose file for testing and deploy
+    - Delete defould secret keys
+    - Rewrite all tests. Add new framework for tests
+### Add
+    - Add new database: user settings. Not inplemented to interface
 ## [0.4.3] - 2018-11-14
 ### Changed
     - History os not uniq object. Now it a generic result set with new fiend - plan(with plan values)
