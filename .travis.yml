@@ -6,9 +6,7 @@ services:
          - docker
 
 before_install:
-              - docker build . -t palladium
-              - docker run --name db -itd postgres
-              - docker run -e "RACK_ENV=test" --name server --link db:postgres -itd -p 80:80 palladium puma
+         - docker-compose up -d
 
 install:
         - gem update bundler
