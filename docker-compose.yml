@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   db:
     image: postgres
@@ -6,10 +6,14 @@ services:
       - "5432:5432"
   server:
     build: .
-    command: ["puma"]
     volumes:
       - .:/palladium
     ports:
       - "80:80"
+    command: ["puma"]
+    environment:
+      - JWT_SECRET=abc
+      - JWT_ISSUER=abc
+      - RACK_ENV=test
     depends_on:
       - db
