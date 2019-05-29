@@ -1,12 +1,16 @@
+# frozen_string_literal: true
+
 require 'sinatra'
 require_relative 'server.rb'
 
-run Rack::URLMap.new('/public' => Public,
-                     '/api' => Api)
+run Rack::URLMap.new('/public' => Public, '/api' => Api)
 
-if ENV['JWT_SECRET'] == nil || ENV['JWT_ISSUER'] == nil
-  raise 'JWT keys not found'
+raise 'JWT keys not found' if ENV['JWT_SECRET'].nil? || ENV['JWT_ISSUER'].nil?
+
+if ENV['RACK_ENV'] == 'production'
+  raise 'JWT is to short' if ENV['JWT_SECRET'].size < 4 || ENV['JWT_ISSUER'].size < 4
 end
+
 configure do
   set :server, :puma
   set :root, File.dirname(__FILE__)
