@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'sinatra'
 require_relative 'server.rb'
 
-run Rack::URLMap.new('/public' => Public,
-                     '/api' => Api)
+run Rack::URLMap.new('/public' => Public, '/api' => Api)
 
 raise 'JWT keys not found' if ENV['JWT_SECRET'].nil? || ENV['JWT_ISSUER'].nil?
 
