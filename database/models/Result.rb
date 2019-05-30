@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Result < Sequel::Model
   many_to_many :result_sets
   plugin :validation_helpers
@@ -17,7 +19,7 @@ class Result < Sequel::Model
         current_result_set.update(status: result.status_id) unless result.status_id.nil?
       end
       objects[:result_sets].first.run.plan.update(updated_at: Time.now)
-      objects.merge({result: result, status: status})
+      objects.merge(result: result, status: status)
     else
       objects.merge(result_error: 'result_data not found')
     end

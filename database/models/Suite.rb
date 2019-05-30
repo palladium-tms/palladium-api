@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Suite < Sequel::Model
   many_to_one :product
   one_to_many :cases
@@ -6,7 +8,6 @@ class Suite < Sequel::Model
   add_association_dependencies cases: :destroy
   self.raise_on_save_failure = false
   plugin :timestamps
-
 
   def before_destroy
     super
@@ -29,7 +30,7 @@ class Suite < Sequel::Model
       edited_suite.errors.add('name', "can't change name to self")
       return edited_suite
     end
-    unless edited_suite.nil? # Fixme: need optimize
+    unless edited_suite.nil? # FIXME: need optimize
       edited_suite.errors.add('name', 'name must be unique')
       return edited_suite
     end

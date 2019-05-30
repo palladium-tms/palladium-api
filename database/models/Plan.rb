@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Plan < Sequel::Model
   many_to_one :product
   one_to_many :runs
@@ -30,6 +32,7 @@ class Plan < Sequel::Model
     elsif Plan[id: plan_id].nil?
       return { 'plan_id' => ['plan_id is not belongs to any product'] }
     end
+
     []
   end
 
@@ -56,6 +59,7 @@ class Plan < Sequel::Model
   # return responce = {product: {product_data}, plan: {plan_data}, errors:: {product_errors: {}, plan_errors: {}}}
   def self.create_new(data)
     return { plan: Plan[id: data['run_data']['plan_id']] } if plan_id_exist?(data)
+
     product_resp = create_product(data)
     if product_resp[:product].nil?
       { plan_errors: 'product creating error' }.merge(product_resp)
@@ -73,15 +77,14 @@ class Plan < Sequel::Model
 
   def self.create_product(data)
     unless data['plan_data'].nil?
-      unless data['plan_data']['product_id'].nil? && data['plan_data']['product_name'].nil?
-        return Product.create_new(data['plan_data']['product_id'] || data['plan_data']['product_name'])
-      end
+      return Product.create_new(data['plan_data']['product_id'] || data['plan_data']['product_name']) unless data['plan_data']['product_id'].nil? && data['plan_data']['product_name'].nil?
     end
-    return { product_errors: 'product id of name not found' }
+    { product_errors: 'product id of name not found' }
   end
 
   def self.plan_id_exist?(data)
     return !data['run_data']['plan_id'].nil? unless data['run_data'].nil?
+
     false
   end
 

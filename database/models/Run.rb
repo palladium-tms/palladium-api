@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Run < Sequel::Model
   many_to_one :plan
   one_to_many :result_sets
@@ -39,6 +41,7 @@ class Run < Sequel::Model
 
   def self.create_new(data)
     return { run: Run[id: data['result_set_data']['run_id']] } if run_id_exist?(data)
+
     objects = Plan.create_new(data)
     if objects[:product_errors] || objects[:plan_errors]
       { run_errors: 'product or plan creating error' }.merge(objects)
@@ -58,11 +61,13 @@ class Run < Sequel::Model
 
   def self.run_id_exist?(data)
     return !data['result_set_data']['run_id'].nil? unless data['result_set_data'].nil?
+
     false
   end
 
   def self.case_id_exist?(data)
     return !data['result_set_data']['case_id'].nil? unless data['result_set_data'].nil?
+
     false
   end
 
