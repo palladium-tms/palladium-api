@@ -7,8 +7,8 @@ class Case < Sequel::Model
   plugin :timestamps
 
   def before_destroy
-    plan_ids = self.suite.product.plans.map(&:id)
-    runs_id = Run.where(name: self.suite.name, plan_id: plan_ids).map(&:id)
+    plan_ids = suite.product.plans.map(&:id)
+    runs_id = Run.where(name: suite.name, plan_id: plan_ids).map(&:id)
     ResultSet.where(name: name, plan_id: plan_ids, run_id: runs_id).each do |current_result_set|
       current_result_set.remove_all_results
       current_result_set.destroy
@@ -63,7 +63,7 @@ class Case < Sequel::Model
     runs = get_runs(plans.map(&:id), suite)
     result_sets = get_result_sets(plans.map(&:id), runs.map(&:id), params['case_data']['id'])
     result_sets = result_sets.map do |result_set|
-      result_set['plan'] = plans.find { |plan| plan.id == result_set[:plan_id]}.values
+      result_set['plan'] = plans.find { |plan| plan.id == result_set[:plan_id] }.values
       result_set
     end
     result_sets

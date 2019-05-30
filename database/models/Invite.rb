@@ -13,7 +13,7 @@ class Invite < Sequel::Model
       else
         invite = Invite.create(token: SecureRandom.hex)
         invite.expiration_data = invite.created_at + 10 * 60
-        User[email: _username].invite.destroy unless User[email: _username].invite.nil?
+        User[email: _username].invite&.destroy
         User[email: _username].invite = invite
       end
     end
