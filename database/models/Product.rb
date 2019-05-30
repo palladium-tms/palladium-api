@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Product < Sequel::Model
   one_to_many :plans
   one_to_many :suites
@@ -23,12 +25,14 @@ class Product < Sequel::Model
     elsif Product[id: product_id].nil?
       return { product_id: ['product_id is not belongs to any product'] }
     end
+
     {}
   end
 
   # try to find element by name of id(str or number), of create new product by str=name
   def self.find_or_new(data)
     return Product[id: data] if data.is_a?(Numeric)
+
     Product.find(name: data) || Product.new(name: data)
   end
 

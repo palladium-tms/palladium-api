@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'bcrypt'
 class User < Sequel::Model
   include BCrypt
@@ -14,7 +16,6 @@ class User < Sequel::Model
     @password = Password.create(new_password)
     self.password_hash = @password
   end
-
 
   def validate
     validates_unique :email, message: 'Email is already taken.'

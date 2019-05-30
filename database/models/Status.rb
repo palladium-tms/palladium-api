@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Status < Sequel::Model
   one_to_many :results
   plugin :validation_helpers

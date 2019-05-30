@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Case < Sequel::Model
   many_to_one :suite
   plugin :validation_helpers

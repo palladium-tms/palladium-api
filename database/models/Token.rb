@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Token < Sequel::Model
   many_to_one :user
   plugin :validation_helpers
