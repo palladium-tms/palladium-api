@@ -17,42 +17,42 @@ require_relative '../lib/helpers/string_helper'
 require_relative 'ObjectWrap/http'
 require 'json'
 
-  class User
-    include UserSetting
-    include TokenFunctions
-    include ProductPosition
-    include ResultFunctions
-    include SuiteFunctions
-    include PlanFunctions
-    include ProductFunctions
-    include ResultSetFunctions
-    include RunFunctions
-    include StatusFunctions
-    include HistoryFunctions
-    include CaseFunctions
-    include InviteTokenFunctions
-    include StringHelper
-    attr_accessor :email, :password, :token, :http
-    def initialize(options = {})
-      @email = options[:email]
-      @password = options[:password]
-      @http = Http.new
-    end
-
-    def login
-      puts "Login from #{@email} #{@password}"
-      response = @http.post_request('/public/login', { 'user_data': {'email': @email, 'password': @password}})
-      @token = JSON.parse(response.body)['token']
-      @http = Http.new(token:  @token)
-      response
-    end
-
-    def token=(token)
-      @token = token
-      @http = Http.new(token:  @token)
-    end
-
-    def post_request(path, params = nil)
-      @http.post_request(path, params)
-    end
+class User
+  include UserSetting
+  include TokenFunctions
+  include ProductPosition
+  include ResultFunctions
+  include SuiteFunctions
+  include PlanFunctions
+  include ProductFunctions
+  include ResultSetFunctions
+  include RunFunctions
+  include StatusFunctions
+  include HistoryFunctions
+  include CaseFunctions
+  include InviteTokenFunctions
+  include StringHelper
+  attr_accessor :email, :password, :token, :http
+  def initialize(options = {})
+    @email = options[:email]
+    @password = options[:password]
+    @http = Http.new
   end
+
+  def login
+    puts "Login from #{@email} #{@password}"
+    response = @http.post_request('/public/login', 'user_data': { 'email': @email, 'password': @password })
+    @token = JSON.parse(response.body)['token']
+    @http = Http.new(token:  @token)
+    response
+  end
+
+  def token=(token)
+    @token = token
+    @http = Http.new(token:  @token)
+  end
+
+  def post_request(path, params = nil)
+    @http.post_request(path, params)
+  end
+end
