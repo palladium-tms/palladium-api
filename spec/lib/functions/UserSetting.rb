@@ -5,4 +5,8 @@ module UserSetting
   def get_setting
     @http.post_request('/api/user_setting')
   end
+
+  def update_user_setting(params = {})
+    @http.post_request('/api/user_setting_edit', user_settings: params)
+  end
 end

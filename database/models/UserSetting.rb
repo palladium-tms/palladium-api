@@ -7,4 +7,9 @@ class UserSetting < Sequel::Model
     self.timezone = Time.now.getlocal.zone || Sequel::PalladiumSettings.timezone
     super
   end
+
+  def self.edit(setting, params)
+    setting.update(timezone: params['timezone'])
+    { setting: setting.values }.to_json
+  end
 end
