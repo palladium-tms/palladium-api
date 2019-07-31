@@ -10,7 +10,7 @@ module PlanFunctions
   end
 
   def get_plans(options = {})
-    response = @http.post_request('/api/plans', PlanFunctions.name_or_id(options))
+    response = @http.post_request('/api/plans', plan_data: options)
     AbstractPlanPack.new(response)
   end
 
@@ -19,21 +19,13 @@ module PlanFunctions
     AbstractPlan.new(response)
   end
 
-  def delete_plan( options = {})
+  def delete_plan(options = {})
     @http.post_request('/api/plan_delete', plan_data: { id: options[:id] })
   end
 
   def update_plan(options = {})
     response = @http.post_request('/api/plan_edit', plan_data: { id: options[:id], plan_name: options[:plan_name] })
     AbstractPlan.new(response)
-  end
-
-  def self.name_or_id(params)
-    if params[:product_id]
-      { plan_data: { product_id: params[:product_id] } }
-    else
-      { plan_data: { product_name: params[:product_name] } }
-    end
   end
 
   def self.archive_plan(http, id)
