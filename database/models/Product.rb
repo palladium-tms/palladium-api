@@ -59,13 +59,20 @@ class Product < Sequel::Model
   end
 
   def self.get_plans(*args)
+    args.first['offset'] = 0 unless args.first['offset']
     product = if args.first['product_id']
                 Product[id: args.first['product_id']]
               elsif args.first['product_name']
                 Product[name: args.first['product_name']]
               end
     begin
-      [product.plans, []]
+      plans = Plan.where(product_id: product.id).order(Sequel.desc(:id))
+      return [plans.limit(3, args.first['offset']).all, []] unless args.first['plan_id']
+
+      plans_by_id = plans.where(Sequel.lit('id >= ?', args.first['plan_id'].to_i)).all
+      return [plans.limit(3, args.first['offset']).all, []] if plans_by_id.count <= 3
+
+      [plans_by_id, []]
     rescue StandardError
       [[], 'Plan data is incorrect']
     end
