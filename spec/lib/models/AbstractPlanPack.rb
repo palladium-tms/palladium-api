@@ -7,7 +7,7 @@ class AbstractPlanPack
     @plans = []
     plans = JSON.parse(@response.body)['plans']
     plans.map do |plan|
-      @plans  << AbstractPlan.new('plan' => plan)
+      @plans << AbstractPlan.new('plan' => plan)
     end
   end
 
