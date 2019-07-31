@@ -1,5 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.5.0]
+### Changed
+    - Change getting plans. Now you can get only 3  plan in one time, or get all plans yanger plan_id
 ## [0.4.4] - 2019-05-29
 ### Changed
     - Dockerfile and docker-compose file for testing and deploy
