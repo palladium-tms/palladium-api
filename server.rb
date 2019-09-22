@@ -99,7 +99,6 @@ class Api < Sinatra::Base
 
   post '/plans_statistic' do
     process_request request, 'plans_statistic' do |_req, _username|
-      # sleep 2
       statistic = Product.get_statistic(params['plan_data'])
       { statistic: statistic }.to_json
     end
