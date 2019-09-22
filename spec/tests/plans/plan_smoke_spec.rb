@@ -89,6 +89,7 @@ describe 'Plan Smoke' do
     it 'edit plan after create' do
       new_name = rand_plan_name
       plan_new = @user.update_plan(id: @plan.id, plan_name: new_name)
+      expect(plan_new.plan_errors).to be_nil
       expect(plan_new.id).to eq(@plan.id)
       expect(plan_new.name).to eq(new_name)
     end
