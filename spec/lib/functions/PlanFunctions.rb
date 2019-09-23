@@ -14,6 +14,18 @@ module PlanFunctions
     AbstractPlanPack.new(response)
   end
 
+  def get_plans_statistic(plan_ids_array)
+    @http.post_request('/api/plans_statistic', plan_data: plan_ids_array)
+  end
+
+  def reformat_statistic(statistic)
+    statistic_result = {}
+    statistic.each do |value|
+      statistic_result[value['status']] = value['count']
+    end
+    statistic_result
+  end
+
   def show_plan(options = {})
     response = @http.post_request('/api/plan', plan_data: { id: options[:id] })
     AbstractPlan.new(response)

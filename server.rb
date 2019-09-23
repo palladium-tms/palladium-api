@@ -92,9 +92,15 @@ class Api < Sinatra::Base
   post '/plans' do
     process_request request, 'plans' do |_req, _username|
       plans, errors = Product.get_plans(params['plan_data'])
-      plans = Product.add_statictic(plans)
       status 422 unless errors
-      { plans: plans, errors: errors }.to_json
+      { plans: plans.map(&:values), errors: errors }.to_json
+    end
+  end
+
+  post '/plans_statistic' do
+    process_request request, 'plans_statistic' do |_req, _username|
+      statistic = Product.get_statistic(params['plan_data'])
+      { statistic: statistic }.to_json
     end
   end
 
@@ -110,7 +116,7 @@ class Api < Sinatra::Base
     process_request request, 'plan_edit' do |_req, _username|
       plan = Plan.edit(params)
       if plan[:plan_errors].nil?
-        { plan: Product.add_statictic([*plan])[0] }
+        { plan: plan.values }
       else
         plan
       end.to_json
@@ -550,6 +556,8 @@ class Public < Sinatra::Base
   post '/registration' do
     cross_origin
     valid_status = Invite.check_link_validation(user_data['invite'])
+    # ENV['RACK_ENV'] == 'development' for debug
+    #
     if User.all.empty? || (ENV['RACK_ENV'] == 'test' && params['invite'].nil?)
       valid_status[0] = true
       valid_status[1] = []
@@ -585,7 +593,7 @@ class Public < Sinatra::Base
       iat: Time.now.to_i,
       iss: ENV['JWT_ISSUER'],
       scopes: %w[products product product_new product_delete product_edit
-                 plan_new plans plan plan_edit plan_delete
+                 plan_new plans plans_statistic plans_and_statistic plan plan_edit plan_delete
                  run_new runs run run_delete
                  result_set_new result_sets result_set result_set_delete
                  result_new results
@@ -600,6 +608,6 @@ class Public < Sinatra::Base
   end
 
   post '/version' do
-    { version: '0.5.0' }.to_json
+    { version: '0.5.1' }.to_json
   end
 end

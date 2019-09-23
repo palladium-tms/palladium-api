@@ -1,5 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.5.1]
+### Changed 
+    - Get plan method not sent plans and plan statistic. Nowm it is different methods 
+### Added
+    - Method for getting plan statistic
+    - Tests for getting plans statistic
 ## [0.5.0]
 ### Changed
     - Change getting plans. Now you can get only 3  plan in one time, or get all plans yanger plan_id
