@@ -1,5 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [0.5.2]
+    - Fixes: change max database connections to 10 by default
 ## [0.5.1]
 ### Changed 
     - Get plan method not sent plans and plan statistic. Nowm it is different methods 
