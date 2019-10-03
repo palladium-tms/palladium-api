@@ -608,6 +608,6 @@ class Public < Sinatra::Base
   end
 
   post '/version' do
-    { version: '0.5.1' }.to_json
+    { version: '0.5.2' }.to_json
   end
 end

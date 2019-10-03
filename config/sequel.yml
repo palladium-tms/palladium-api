@@ -3,15 +3,19 @@
   database: postgres
   username: postgres
   host: db
+  max_connections: 10
 
 :development:
   adapter: postgres
   database: postgres
   username: postgres
+  password: qq
   host: localhost
+  max_connections: 10
 
 :test:
   adapter: postgres
   database: postgres
   username: postgres
   host: db
+  max_connections: 10
