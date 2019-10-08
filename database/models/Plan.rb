@@ -126,9 +126,26 @@ class Plan < Sequel::Model
   end
 
   # Getting statistic and save in database(usually, statistic is not saving)
+  # Creating result_set and run for all cases and suites, if it not be created before
   def self.archive(plan_id)
-    plan = Plan.find(id: plan_id)
-    Product.add_statictic([plan]).first
-    plan.update(is_archived: true).values
+    plan = Plan[plan_id]
+    runs = plan.runs
+    suites = {}
+    plan.product.suites.each do |suite|
+      suites[suite.name] = suite
+    end
+    (suites.values.map(&:name) - runs.map(&:name)).each do |run_name|
+      new_run = Run.find_or_new(run_name, plan.id)
+      plan.add_run(new_run)
+      runs << new_run
+      suites[new_run.name].cases.each do |this_case|
+        new_result_set = ResultSet.find_or_new(this_case.name, new_run.id)
+        plan.add_result_set(new_result_set)
+        new_run.add_result_set(new_result_set)
+      end
+    end
+    plan.update(statistic: Product.get_statistic(plan_id)[plan_id].to_json)
+    plan.update(is_archived: true)
+    plan
   end
 end
