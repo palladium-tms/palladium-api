@@ -4,7 +4,7 @@ class Case < Sequel::Model
   many_to_one :suite
   plugin :validation_helpers
   self.raise_on_save_failure = false
-  plugin :timestamps
+  plugin :timestamps, force: true, update_on_create: true
 
   def before_destroy
     plan_ids = suite.product.plans.map(&:id)

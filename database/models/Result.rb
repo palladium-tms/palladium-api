@@ -4,7 +4,7 @@ class Result < Sequel::Model
   many_to_many :result_sets
   plugin :validation_helpers
   self.raise_on_save_failure = false
-  plugin :timestamps
+  plugin :timestamps, force: true, update_on_create: true
 
   def self.create_new(data)
     objects = ResultSet.create_new(data)

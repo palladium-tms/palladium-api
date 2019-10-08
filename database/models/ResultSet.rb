@@ -8,7 +8,7 @@ class ResultSet < Sequel::Model
   plugin :association_dependencies
   add_association_dependencies results: :nullify
   self.raise_on_save_failure = false
-  plugin :timestamps
+  plugin :timestamps, force: true, update_on_create: true
 
   def validate
     super
