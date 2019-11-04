@@ -75,5 +75,15 @@ describe 'Result Set Smoke' do
       expect(JSON.parse(delete_responce.body)['result_set']['id']).to eq(@result_set.id)
       expect(result_ser_after_deleting.response.code).to eq('200')
     end
+
+    it 'Delete result set from archived plan' do
+      @result_set = @user.create_new_result_set(plan_name: rand_plan_name, product_name: rand_product_name, run_name: rand_run_name, name: rand_run_name)
+      @user.create_new_result_set(plan_name: rand_plan_name, product_name: rand_product_name, run_name: rand_run_name, name: rand_run_name)
+      delete_responce = @user.delete_result_set(id: @result_set.id)
+      @user.archive_plan(id: @result_set.run.plan.id)
+      result_ser_after_deleting = @user.get_result_set(id: @result_set.id)
+      expect(JSON.parse(delete_responce.body)['result_set']['id']).to eq(@result_set.id)
+      expect(result_ser_after_deleting.response.code).to eq('200')
+    end
   end
 end

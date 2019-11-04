@@ -144,8 +144,22 @@ class Plan < Sequel::Model
         new_run.add_result_set(new_result_set)
       end
     end
-    plan.update(statistic: Product.get_statistic(plan_id)[plan_id].to_json)
+    runs_filling(runs, suites)
+    statistic = Product.get_statistic(plan_id)[plan_id] || {}
+    plan.update(statistic: statistic.to_json)
     plan.update(is_archived: true)
     plan
+  end
+
+  def self.runs_filling(runs, suites)
+    runs.each do |run|
+      if run.result_sets.count != suites[run.name].cases.count
+        (suites[run.name].cases.map(&:name) - run.result_sets.map(&:name)).each do |result_set_name|
+          new_result_set = ResultSet.find_or_new(result_set_name, run.id)
+          run.plan.add_result_set(new_result_set)
+          run.add_result_set(new_result_set)
+        end
+      end
+    end
   end
 end

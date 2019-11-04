@@ -2,6 +2,10 @@ require 'net/http'
 require 'json'
 require_relative '../Abstractions'
 module RunFunctions
+  # @param [Hash] options must contain plan_id or plan_name and product_id
+  # :name is optional, and it will be generated it not exist
+  # @example:
+  # option = {name: 'run_name', :plan_id: 123}
   def create_new_run(options = {})
     options[:name] ||= rand_run_name
     params = if options[:plan_id]

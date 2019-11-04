@@ -134,7 +134,7 @@ class Api < Sinatra::Base
   post '/plan_archive' do
     process_request request, 'plan_archive' do |_req, _username|
       plan = Plan.archive(params['plan_data']['id'])
-      { plan: plan }.to_json
+      { plan: plan.values }.to_json
     end
   end
   # endregion plans
@@ -558,7 +558,7 @@ class Public < Sinatra::Base
     valid_status = Invite.check_link_validation(user_data['invite'])
     # ENV['RACK_ENV'] == 'development' for debug
     #
-    if User.all.empty? || (ENV['RACK_ENV'] == 'test' && params['invite'].nil?)
+    if User.all.empty? || (ENV['RACK_ENV'] == 'development' && params['invite'].nil?)
       valid_status[0] = true
       valid_status[1] = []
     end
@@ -593,7 +593,7 @@ class Public < Sinatra::Base
       iat: Time.now.to_i,
       iss: ENV['JWT_ISSUER'],
       scopes: %w[products product product_new product_delete product_edit
-                 plan_new plans plans_statistic plans_and_statistic plan plan_edit plan_delete
+                 plan_new plans plans_statistic plan_archive plans_and_statistic plan plan_edit plan_delete
                  run_new runs run run_delete
                  result_set_new result_sets result_set result_set_delete
                  result_new results

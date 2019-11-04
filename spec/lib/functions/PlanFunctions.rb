@@ -2,7 +2,11 @@ require 'net/http'
 require 'json'
 require_relative '../Abstractions'
 module PlanFunctions
-  def create_new_plan(options = {})
+  # @param options [Hash]
+  # options must contain :product_id key
+  # @example
+  # create_new_plan({name: 'plan_name', product_id: 1})
+  def create_new_plan(options)
     options[:name] ||= rand_plan_name
     plan_data = { name: options[:name] }.merge(options)
     response = @http.post_request('/api/plan_new', plan_data: plan_data)
@@ -40,8 +44,8 @@ module PlanFunctions
     AbstractPlan.new(response)
   end
 
-  def self.archive_plan(http, id)
-    response = http.post_request('/api/plan_archive', plan_data: { id: id })
-    [AbstractPlan.new(response), response.code]
+  def archive_plan(option = {})
+    response = @http.post_request('/api/plan_archive', plan_data: { id: option[:id] })
+    AbstractPlan.new(response)
   end
 end
