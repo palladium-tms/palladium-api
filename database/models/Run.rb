@@ -95,15 +95,7 @@ class Run < Sequel::Model
   end
 
   def self.delete(run)
-    count = ResultSet.where(id: run.result_sets.map(&:id))
-    count.destroy
-    # count = Run.where(id: run.result_sets.map(&:id)).dataset.delete
-    # run.result_sets.each do |result_set|
-    #   p count
-    #   result_set.destroy
-    #   count -= 1
-    # end
-    # p 1
+     ResultSet.where(id: run.result_sets.map(&:id)).destroy
   end
 
   # def self.edit(data)
