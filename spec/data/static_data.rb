@@ -1,7 +1,7 @@
 
 class StaticData
   ADDRESS = '0.0.0.0'.freeze
-  PORT = 80
+  PORT = 9292
   MAINPAGE = "http://#{ADDRESS}:#{PORT}".freeze
 
   ALPHABET = ('a'..'z').to_a

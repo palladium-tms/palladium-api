@@ -81,5 +81,18 @@ describe 'Suites Smoke' do
       expect(suite_pack.suites).to be_empty
       expect(run_pack.runs).to be_empty
     end
+
+    it 'check deleting all runs after suite delete' do
+      product_name = rand_product_name
+      run = @user.create_new_run(plan_name: rand_plan_name, product_name: product_name)
+      run2 = @user.create_new_run(plan_name: rand_plan_name, product_name: product_name)
+      @user.delete_suite(id: run.plan.product.suite.id)
+      suite_pack = @user.get_suites(id: run.plan.product.id)
+      run_pack = @user.get_runs(id: run.plan.id)
+      run_pack2 = @user.get_runs(id: run2.plan.id)
+      expect(suite_pack.suites).to be_empty
+      expect(run_pack.runs.count).to eq(0)
+      expect(run_pack2.runs.count).to eq(0)
+    end
   end
 end
