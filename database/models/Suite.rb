@@ -11,7 +11,7 @@ class Suite < Sequel::Model
 
   def before_destroy
     super
-    plan_ids = Product[id: product_id].plans.map(&:id)
+    plan_ids = [*Plan[product_id: product_id, is_archived: false]].map(&:id)
     Run.where(name: name, plan_id: plan_ids).destroy
   end
 

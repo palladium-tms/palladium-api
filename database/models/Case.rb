@@ -7,7 +7,7 @@ class Case < Sequel::Model
   plugin :timestamps, force: true, update_on_create: true
 
   def before_destroy
-    plan_ids = suite.product.plans.map(&:id)
+    plan_ids = [*Plan[product_id: suite.product, is_archived: false]].map(&:id)
     runs_id = Run.where(name: suite.name, plan_id: plan_ids).map(&:id)
     ResultSet.where(name: name, plan_id: plan_ids, run_id: runs_id).each do |current_result_set|
       current_result_set.remove_all_results
