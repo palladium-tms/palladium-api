@@ -90,9 +90,9 @@ describe 'Suites Smoke' do
       suite_pack = @user.get_suites(id: run.plan.product.id)
       run_pack = @user.get_runs(id: run.plan.id)
       run_pack2 = @user.get_runs(id: run2.plan.id)
-      expect(suite_pack.suites).to be_empty
+      expect(suite_pack.suites.count).to eq(1)
       expect(run_pack.runs.count).to eq(0)
-      expect(run_pack2.runs.count).to eq(0)
+      expect(run_pack2.runs.count).to eq(1)
     end
   end
 end
