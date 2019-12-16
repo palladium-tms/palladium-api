@@ -126,8 +126,9 @@ class Api < Sinatra::Base
   post '/plan_delete' do
     process_request request, 'plan_delete' do |_req, _username|
       errors = Plan.plan_id_validation(params['plan_data']['id'])
-      Plan[id: params['plan_data']['id']].destroy if errors.empty?
-      { plan: params['plan_data']['id'], errors: errors }.to_json
+      plan = Plan[id: params['plan_data']['id']]
+      plan.destroy if errors.empty?
+      { plan: plan.values, errors: errors }.to_json
     end
   end
 
