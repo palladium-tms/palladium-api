@@ -58,15 +58,25 @@ class Product < Sequel::Model
     end
   end
 
-  def self.get_plans(*args)
-    args.first['offset'] = args.first['offset'].to_i
-    product = if args.first['product_id']
-                Product[id: args.first['product_id']]
-              elsif args.first['product_name']
-                Product[name: args.first['product_name']]
+  def self.get_plans(option = {})
+    product = if option['product_id']
+                Product[id: option['product_id']]
+              elsif option['product_name']
+                Product[name: option['product_name']]
               end
     begin
       plans = Plan.where(product_id: product.id).order(Sequel.desc(:id))
+
+      case option
+      when option['plan_id']
+        plans_by_id = plans.where(Sequel.lit('id <= ?', option['plan_id'].to_i)).all
+      when option['after_plan_id']
+        plans_by_id = plans.where(Sequel.lit('id < ?', option['plan_id'].to_i)).limit(3).all
+
+
+      else
+        # type code here
+      end
       return [plans.limit(3, args.first['offset']).all, []] unless args.first['plan_id'].to_i != 0
 
       plans_by_id = plans.where(Sequel.lit('id < ?', args.first['plan_id'].to_i))
