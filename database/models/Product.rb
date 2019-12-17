@@ -68,21 +68,13 @@ class Product < Sequel::Model
       plans = Plan.where(product_id: product.id).order(Sequel.desc(:id))
 
       case option
-      when option['plan_id']
-        plans_by_id = plans.where(Sequel.lit('id <= ?', option['plan_id'].to_i)).all
       when option['after_plan_id']
-        plans_by_id = plans.where(Sequel.lit('id < ?', option['plan_id'].to_i)).limit(3).all
-
-
+        return [plans.where(Sequel.lit('id < ?', option['plan_id'].to_i)).limit(3).all, []]
+      when option['plan_id']
+        return [plans.where(Sequel.lit('id <= ?', option['plan_id'].to_i)).all, []]
       else
-        # type code here
+        return [plans.limit(3).all, []]
       end
-      return [plans.limit(3, args.first['offset']).all, []] unless args.first['plan_id'].to_i != 0
-
-      plans_by_id = plans.where(Sequel.lit('id < ?', args.first['plan_id'].to_i))
-      return [plans_by_id.limit(3).all, []] if plans_by_id.count <= 3
-
-      [plans_by_id, []]
     rescue StandardError
       [[], 'Plan data is incorrect']
     end
