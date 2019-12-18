@@ -66,12 +66,10 @@ class Product < Sequel::Model
               end
     begin
       plans = Plan.where(product_id: product.id).order(Sequel.desc(:id))
-
-      case option
-      when option['after_plan_id']
-        return [plans.where(Sequel.lit('id < ?', option['plan_id'].to_i)).limit(3).all, []]
-      when option['plan_id']
-        return [plans.where(Sequel.lit('id <= ?', option['plan_id'].to_i)).all, []]
+      if !option['after_plan_id'].nil?
+        return [plans.where(Sequel.lit('id < ?', option['after_plan_id'].to_i)).limit(3).all, []]
+      elsif option['plan_id']
+        return [plans.where(Sequel.lit('id >= ?', option['plan_id'].to_i)).all, []]
       else
         return [plans.limit(3).all, []]
       end
