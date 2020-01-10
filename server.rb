@@ -174,7 +174,8 @@ class Api < Sinatra::Base
     process_request request, 'run' do |_req, _username|
       run = Run[id: params['run_data']['id']]
       if run
-        { run: run.values }.to_json
+        run = Plan.add_statictic([run]).first
+        { run: run }.to_json
       else
         { run: { errors: 'run not found' } }.to_json
       end
