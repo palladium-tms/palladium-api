@@ -58,10 +58,11 @@ class Case < Sequel::Model
     records_limit = 30
     offset = params['offset']
     offset = 0 if params['offset'].nil?
-    suite = get_suite(params['case_data']['id'])
+    suite = get_suite(params['case_data'])
     plans = get_plans(suite.product.id, records_limit, offset)
     runs = get_runs(plans.map(&:id), suite)
-    result_sets = get_result_sets(plans.map(&:id), runs.map(&:id), params['case_data']['id'])
+    name = get_name(params['case_data'])
+    result_sets = get_result_sets(plans.map(&:id), runs.map(&:id), name)
     result_sets = result_sets.map do |result_set|
       result_set['plan'] = plans.find { |plan| plan.id == result_set[:plan_id] }.values
       result_set
@@ -69,8 +70,21 @@ class Case < Sequel::Model
     result_sets
   end
 
-  def self.get_suite(case_id)
-    Case[case_id].suite
+  def self.get_suite(case_data)
+    if case_data['id']
+      Case[case_data['id']].suite
+    else
+      run = ResultSet[case_data['result_set_id']].run
+      run.plan.product.suites.find { |suite| suite.name == run.name}
+    end
+  end
+
+  def self.get_name(case_data)
+    if case_data['id']
+      Case[case_data['id']].name
+    else
+      ResultSet[case_data['result_set_id']].name
+    end
   end
 
   def self.get_plans(product_id, records_limit, offset)
@@ -81,7 +95,7 @@ class Case < Sequel::Model
     Run.dataset.where(plan_id: plan_ids, name: suite.name)
   end
 
-  def self.get_result_sets(plan_ids, runs, this_case)
-    ResultSet.dataset.where(plan_id: plan_ids, run_id: runs, name: Case[this_case].name).map(&:values)
+  def self.get_result_sets(plan_ids, runs, name)
+    ResultSet.dataset.where(plan_id: plan_ids, run_id: runs, name: name).map(&:values)
   end
 end
