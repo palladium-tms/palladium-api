@@ -399,8 +399,8 @@ class Api < Sinatra::Base
   # region history
   post '/case_history' do
     process_request request, 'case_history' do |_req, _username|
-      result_sets = Case.get_history(params)
-      { result_sets_history: result_sets }.to_json
+      result_sets, product_id, suite_name = Case.get_history(params)
+      { result_sets_history: result_sets, product_id: product_id, suite_name: suite_name}.to_json
     end
   end
   # endregion
