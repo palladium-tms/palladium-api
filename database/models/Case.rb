@@ -16,15 +16,16 @@ class Case < Sequel::Model
   end
 
   def self.get_cases(case_data = {})
-    if case_data['suite_id']
-      Suite[case_data['suite_id']].cases
-    elsif case_data['run_id']
-      run = Run[case_data['run_id']]
-      if Suite[name: run.name, product_id: run.plan.product.id]
-        Suite[name: run.name, product_id: run.plan.product.id].cases
-      else
-        []
-      end
+    suite = if case_data['suite_id']
+              Suite[case_data['suite_id']]
+            elsif case_data['run_id']
+              run = Run[case_data['run_id']]
+              Suite[name: run.name, product_id: run.plan.product.id]
+            end
+    if suite
+      [suite.cases, suite]
+    else
+      []
     end
   end
 
