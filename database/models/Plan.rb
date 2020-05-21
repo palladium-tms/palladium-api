@@ -106,7 +106,7 @@ class Plan < Sequel::Model
   def self.get_runs(*args)
     plan = Plan[id: args.first['plan_id']]
     begin
-      [plan.runs, []]
+      [{runs: plan.runs, plan: plan.values}, []]
     rescue StandardError
       [[], 'Run data is incorrect']
     end
@@ -128,6 +128,7 @@ class Plan < Sequel::Model
   # Getting statistic and save in database(usually, statistic is not saving)
   # Creating result_set and run for all cases and suites, if it not be created before
   def self.archive(plan_id)
+    a = Time.now
     plan = Plan[plan_id]
     runs = plan.runs
     suites = {}
@@ -148,6 +149,7 @@ class Plan < Sequel::Model
     statistic = Product.get_statistic(plan_id)[plan_id] || {}
     plan.update(statistic: statistic.to_json)
     plan.update(is_archived: true)
+    p Time.now - a
     plan
   end
 
