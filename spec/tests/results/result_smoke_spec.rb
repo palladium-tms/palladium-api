@@ -180,4 +180,40 @@ describe 'Result Smoke' do
       expect(result.message).to eq(message)
     end
   end
+
+  describe 'New result custom parameters' do
+    before :each do
+      @params = {plan_name: rand_plan_name,
+                 product_name: rand_product_name,
+                 run_name: rand_run_name,
+                 result_set_name: rand_result_set_name,
+                 message: rand_message_custom_data,
+                 status: 'Passed'}
+    end
+
+    it 'Create new result with custom parameters' do
+      result_set = @user.create_new_result_set(plan_name: rand_plan_name,
+                                               product_name: rand_product_name,
+                                               run_name: rand_run_name)
+      @params[:result_set_id] = result_set.id
+      result = @user.create_new_result(@params)
+      expect(result.response.code).to eq('200')
+      expect(result.result_set.name).to eq(result_set.name)
+      expect(result.message).to eq(@params[:message])
+      expect(result.status.name).to eq('Passed')
+    end
+
+    it 'Create new result with custom parameters number in value' do
+      result_set = @user.create_new_result_set(plan_name: rand_plan_name,
+                                               product_name: rand_product_name,
+                                               run_name: rand_run_name)
+      @params[:result_set_id] = result_set.id
+      @params[:message] = rand_message_custom_with_numbers
+      result = @user.create_new_result(@params)
+      expect(result.response.code).to eq('200')
+      expect(result.result_set.name).to eq(result_set.name)
+      expect(result.message).to eq(@params[:message])
+      expect(result.status.name).to eq('Passed')
+    end
+  end
 end
