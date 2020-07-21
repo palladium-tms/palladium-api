@@ -2,6 +2,7 @@
 
 class Case < Sequel::Model
   many_to_one :suite
+  many_to_one :plan
   plugin :validation_helpers
   self.raise_on_save_failure = false
   plugin :timestamps, force: true, update_on_create: true

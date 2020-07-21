@@ -3,6 +3,7 @@
 class Plan < Sequel::Model
   many_to_one :product
   one_to_many :runs
+  one_to_many :cases
   one_to_many :result_sets
   plugin :validation_helpers
   plugin :association_dependencies
