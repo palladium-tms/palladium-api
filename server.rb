@@ -93,7 +93,7 @@ class Api < Sinatra::Base
     process_request request, 'plans' do |_req, _username|
       plans, errors = Product.get_plans(params['plan_data'])
       status 422 unless errors
-      { plans: plans.map(&:values), errors: errors }.to_json
+      { plans: plans, errors: errors }.to_json
     end
   end
 
@@ -390,8 +390,14 @@ class Api < Sinatra::Base
 
   post '/case_delete' do
     process_request request, 'case_delete' do |_req, _username|
-      this_case = Case[params['case_data']['id']].destroy
-      { case: this_case.values }.to_json
+      plan = Plan[params['case_data']['plan_id']]
+      if plan.cases
+        Case.where_all(suite_id: Plan[params['case_data']['plan_id']].product.suites.map(&:id)).each do |current_case|
+          plan.add_case current_case
+        end
+      end
+      this_case = plan.remove_case(Case[params['case_data']['id']])
+       { case: this_case.values }.to_json
     end
   end
   # endregion

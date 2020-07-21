@@ -66,14 +66,24 @@ class Product < Sequel::Model
               end
     begin
       all_plans = Plan.where(product_id: product.id).order(Sequel.desc(:id))
-      if option['after_plan_id'] && option['after_plan_id'].is_a?(Numeric)
-        plans = all_plans.where(Sequel.lit('id < ?', option['after_plan_id'].to_i)).limit(3).all
+      plans = if option['after_plan_id'] && option['after_plan_id'].is_a?(Numeric)
+        all_plans.where(Sequel.lit('id < ?', option['after_plan_id'].to_i)).limit(3).all
       elsif option['plan_id'] && option['plan_id'].is_a?(Numeric)
-        plans = all_plans.where(Sequel.lit('id >= ?', option['plan_id'])).all
+        all_plans.where(Sequel.lit('id >= ?', option['plan_id'])).all
       else
-        plans = all_plans.limit(3).all
+        all_plans.limit(3).all
       end
-      return [plans, []]
+      plan_object = []
+      all_case_count = Case.where(suite_id: product.suites.map(&:id)).count
+      plans.each do |plan|
+        case_count = if plan.cases.empty?
+                       all_case_count
+                     else
+                       plan.cases.size
+                     end
+        plan_object << plan.values.merge(case_count: case_count)
+      end
+      return [plan_object, []]
     rescue StandardError
       [[], 'Plan data is incorrect']
     end
