@@ -65,14 +65,15 @@ class Product < Sequel::Model
                 Product[name: option['product_name']]
               end
     begin
-      plans = Plan.where(product_id: product.id).order(Sequel.desc(:id))
+      all_plans = Plan.where(product_id: product.id).order(Sequel.desc(:id))
       if option['after_plan_id'] && option['after_plan_id'].is_a?(Numeric)
-        return [plans.where(Sequel.lit('id < ?', option['after_plan_id'].to_i)).limit(3).all, []]
+        plans = all_plans.where(Sequel.lit('id < ?', option['after_plan_id'].to_i)).limit(3).all
       elsif option['plan_id'] && option['plan_id'].is_a?(Numeric)
-        return [plans.where(Sequel.lit('id >= ?', option['plan_id'])).all, []]
+        plans = all_plans.where(Sequel.lit('id >= ?', option['plan_id'])).all
       else
-        return [plans.limit(3).all, []]
+        plans = all_plans.limit(3).all
       end
+      return [plans, []]
     rescue StandardError
       [[], 'Plan data is incorrect']
     end
