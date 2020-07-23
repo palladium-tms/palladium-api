@@ -4,6 +4,7 @@ class Plan < Sequel::Model
   many_to_one :product
   one_to_many :runs
   one_to_many :cases
+  one_to_many :suites
   one_to_many :result_sets
   plugin :validation_helpers
   plugin :association_dependencies
@@ -106,10 +107,17 @@ class Plan < Sequel::Model
 
   def self.get_runs(*args)
     plan = Plan[id: args.first['plan_id']]
+    suites = if plan.suites.empty?
+               plan.product.suites
+             else
+               Case.where(plan: plan).group_and_count(:plan_id).map(&:values)
+               all_case_count = Case.where(plan_id: args.first['plan_id']).count
+             end
+    suites = Product.add_case_counts(suites)
     begin
-      [{runs: plan.runs, plan: plan.values}, []]
+      [{runs: plan.runs, plan: plan.values}, suites, []]
     rescue StandardError
-      [[], 'Run data is incorrect']
+      [[],[], 'Run data is incorrect']
     end
   end
 
