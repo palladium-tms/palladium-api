@@ -103,4 +103,18 @@ DB.create_table? :cases do
   DateTime :created_at
   DateTime :updated_at
 end
+
+DB.create_table? :cases_plans do
+  primary_key :id
+  foreign_key :plan_id, :plans
+  foreign_key :case_id, :cases
+end
+
+DB.create_table? :plans_suites do
+  primary_key :id
+  foreign_key :plan_id, :plans
+  foreign_key :suite_id, :suites
+end
+
+
 Sequel::Migrator.run(DB, 'database/migrate')

@@ -2,7 +2,7 @@
 
 class Case < Sequel::Model
   many_to_one :suite
-  many_to_one :plan
+  many_to_many :plans
   plugin :validation_helpers
   self.raise_on_save_failure = false
   plugin :timestamps, force: true, update_on_create: true
@@ -27,7 +27,9 @@ class Case < Sequel::Model
       if Plan[case_data['plan_id']].cases.empty?
         [suite.cases, suite]
       else
-        [Case.where(suite_id: suite.id, plan_id: case_data['plan_id']).all, suite]
+        # Case.where(suite_id: suite.id).where(plans: Plan[case_data['plan_id']])
+        # [Case.where(suite_id: suite.id, plan: Plan[case_data['plan_id']]).all, suite]
+        [Case.where(suite_id: suite.id).where(plans: Plan[case_data['plan_id']]), suite]
       end
     else
       []

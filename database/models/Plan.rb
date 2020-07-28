@@ -3,9 +3,9 @@
 class Plan < Sequel::Model
   many_to_one :product
   one_to_many :runs
-  one_to_many :cases
-  one_to_many :suites
+  many_to_many :suites
   one_to_many :result_sets
+  many_to_many :cases
   plugin :validation_helpers
   plugin :association_dependencies
   add_association_dependencies runs: :destroy
@@ -110,8 +110,7 @@ class Plan < Sequel::Model
     suites = if plan.suites.empty?
                plan.product.suites
              else
-               Case.where(plan: plan).group_and_count(:plan_id).map(&:values)
-               all_case_count = Case.where(plan_id: args.first['plan_id']).count
+               plan.suites
              end
     suites = Product.add_case_counts(suites)
     begin

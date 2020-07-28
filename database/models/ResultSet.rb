@@ -99,7 +99,9 @@ class ResultSet < Sequel::Model
   def self.get_results(*args)
     result_set = ResultSet[id: args.first['result_set_id']]
     begin
-      [result_set.results, []]
+      [{results: result_set.results,
+        result_set: result_set.values,
+        product_id: result_set.plan.product.id}, []]
     rescue StandardError
       [[], 'Result data is incorrect']
     end

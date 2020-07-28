@@ -110,7 +110,7 @@ class Run < Sequel::Model
   def self.get_result_sets(*args)
     run = Run[id: args.first['run_id']]
     begin
-      [run.result_sets, []]
+      [{result_sets: run.result_sets, run: run.values}, []]
     rescue StandardError
       [[], 'Result_set data is incorrect']
     end
