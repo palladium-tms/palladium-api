@@ -72,9 +72,12 @@ class ResultSet < Sequel::Model
     suite = Suite.find_or_create(product_id: Plan[id: run.plan_id].product_id, name: run.name) do |suite|
       suite.name = run.name
     end
-    if suite.cases_dataset[name: result_set_name].nil?
-      _case = Case.create(name: result_set_name)
-      suite.add_case(_case)
+    current_case = suite.cases_dataset[name: result_set_name]
+    if current_case.nil?
+      current_case = Case.create(name: result_set_name)
+      suite.add_case(current_case)
+    elsif !run.plan.cases.map(&:id).include?(current_case.id)
+      run.plan.add_case(current_case)
     end
   end
 

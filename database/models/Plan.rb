@@ -172,4 +172,25 @@ class Plan < Sequel::Model
       end
     end
   end
+
+  def self.add_all_suites(plan)
+    plan.product.suites.each do |current_suite|
+      plan.add_suite(current_suite)
+    end
+    plan
+  end
+
+  def self.add_all_cases(plan)
+    Case.where_all(suite_id: plan.product.suites.map(&:id)).each do |current_case|
+      plan.add_case current_case
+    end
+    plan
+  end
+
+  def self.remove_cases_by_suite(plan, suite)
+    suite.cases.each do |current_case|
+      plan.remove_case(current_case)
+    end
+    plan
+  end
 end

@@ -373,15 +373,19 @@ class Api < Sinatra::Base
       begin
         plan = Plan[params['suite_data']['plan_id']]
         if plan.suites.empty?
-          plan.product.suites.each do |current_suite|
-            plan.add_suite(current_suite)
-          end
+          Plan.add_all_suites(plan)
+        end
+        if plan.cases.empty?
+          Plan.add_all_cases(plan)
         end
         suite = plan.remove_suite( Suite[id: params['suite_data']['id']])
+        plan = Plan.remove_cases_by_suite(plan, suite)
       rescue StandardError => e
         errors = e
       end
-      { suite: suite.values.merge(statistic: [{ 'suite_id' => 0, 'status' => 0, 'count' => 0 }]), errors: errors }.to_json
+      { suite: suite.values.merge(statistic: [{ 'suite_id' => 0, 'status' => 0, 'count' => 0 }]),
+        errors: errors,
+        plan: plan.values.merge(case_count: plan.cases.count)}.to_json
     end
   end
   # endregion
@@ -405,9 +409,7 @@ class Api < Sinatra::Base
     process_request request, 'case_delete' do |_req, _username|
       plan = Plan[params['case_data']['plan_id']]
       if plan.cases
-        Case.where_all(suite_id: Plan[params['case_data']['plan_id']].product.suites.map(&:id)).each do |current_case|
-          plan.add_case current_case
-        end
+        plan = Plan.add_all_cases(plan)
       end
       this_case = plan.remove_case(Case[params['case_data']['id']])
        { case: this_case.values }.to_json

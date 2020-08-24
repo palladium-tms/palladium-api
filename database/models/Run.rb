@@ -89,9 +89,14 @@ class Run < Sequel::Model
     if suite.nil?
       suite = Suite.create(name: run.name)
       Product[id: plan.product_id].add_suite(suite)
-    else
-      suite
+      plan.add_suite(suite)
+    elsif !plan.suites.map(&:id).include?(suite.id)
+           plan.add_suite(suite)
+           suite.cases.each do |current_case|
+             plan.add_case(current_case)
+           end
     end
+    suite
   end
 
   def self.delete(run)
