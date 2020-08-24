@@ -301,11 +301,14 @@ class Api < Sinatra::Base
   post '/results' do
     process_request request, 'results' do |_req, _username|
       data, errors = ResultSet.get_results(params['result_data'])
-      status 422 unless errors
-      { results: data[:results].map(&:values),
-        result_set: data[:result_set],
-        product_id: data[:product_id],
-        errors: errors }.to_json
+      if errors
+        status 422 unless errors
+        {errors: errors}.to_json
+      else
+        { results: data[:results].map(&:values),
+          result_set: data[:result_set],
+          product_id: data[:product_id]}.to_json
+      end
     end
   end
   # endregion
