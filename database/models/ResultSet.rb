@@ -99,9 +99,13 @@ class ResultSet < Sequel::Model
   def self.get_results(*args)
     result_set = ResultSet[id: args.first['result_set_id']]
     begin
-      [{results: result_set.results,
-        result_set: result_set.values,
-        product_id: result_set.plan.product.id}, []]
+      if result_set
+        [{results: result_set.results,
+          result_set: result_set.values,
+          product_id: result_set.plan.product.id}]
+      else
+        [[], 'Result Set not found']
+      end
     rescue StandardError
       [[], 'Result data is incorrect']
     end
