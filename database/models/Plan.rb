@@ -112,7 +112,7 @@ class Plan < Sequel::Model
              else
                plan.suites
              end
-    suites = Product.add_case_counts(suites)
+    suites = Product.add_case_counts(suites, plan)
     begin
       [{runs: plan.runs, plan: plan.values}, suites, []]
     rescue StandardError

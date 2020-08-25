@@ -95,8 +95,8 @@ class Product < Sequel::Model
     end
   end
 
-  def self.add_case_counts(suites)
-    statistic = get_cases_count(suites)
+  def self.add_case_counts(suites, plan)
+    statistic = get_cases_count(suites, plan)
     suites.map(&:values).map do |suite|
       if statistic.key?(suite[:id])
         suite.merge!(statistic: [statistic[suite[:id]].first.merge!(status: 0)])
@@ -106,9 +106,19 @@ class Product < Sequel::Model
     end
   end
 
-  def self.get_cases_count(suites)
-    Case.where(suite_id: suites.map(&:id)).group_and_count(:suite_id).map(&:values).group_by do |e|
-      e[:suite_id]
+  def self.get_cases_count(suites, plan)
+    if !plan.cases.empty?
+      case_ids = plan.cases.map(&:id)
+      Case.where(id: case_ids).
+          where(suite_id: suites.map(&:id)).
+          group_and_count(:suite_id).map(&:values).group_by do |e|
+        e[:suite_id]
+      end
+
+    else
+      Case.where(suite_id: suites.map(&:id)).group_and_count(:suite_id).map(&:values).group_by do |e|
+        e[:suite_id]
+      end
     end
   end
 end

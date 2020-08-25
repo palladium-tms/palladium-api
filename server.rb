@@ -351,7 +351,7 @@ class Api < Sinatra::Base
   post '/suites' do
     process_request request, 'suites' do |_req, _username|
       suites = Suite.where(product_id: params['suite_data']['product_id'])
-      suites = Product.add_case_counts(suites)
+      suites = Product.add_case_counts(suites, plan)
       { suites: suites }.to_json
     end
   end
@@ -408,7 +408,7 @@ class Api < Sinatra::Base
   post '/case_delete' do
     process_request request, 'case_delete' do |_req, _username|
       plan = Plan[params['case_data']['plan_id']]
-      if plan.cases
+      if plan.case.empty?
         plan = Plan.add_all_cases(plan)
       end
       this_case = plan.remove_case(Case[params['case_data']['id']])
