@@ -107,8 +107,8 @@ class Plan < Sequel::Model
     end
   end
 
-  def self.get_runs(*args)
-    plan = Plan[id: args.first['plan_id']]
+  def self.get_runs(plan_id)
+    plan = Plan[id: plan_id]
     suites = if plan.suites.empty?
                plan.product.suites
              else

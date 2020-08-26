@@ -24,7 +24,7 @@ class Case < Sequel::Model
               Suite[name: run.name, product_id: run.plan.product.id]
             end
     if suite
-      if Plan[case_data['plan_id']].cases.empty?
+      if !case_data['plan_id'] || Plan[case_data['plan_id']].cases.empty?
         [suite.cases, suite]
       else
         # Case.where(suite_id: suite.id).where(plans: Plan[case_data['plan_id']])

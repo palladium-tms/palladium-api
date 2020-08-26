@@ -163,7 +163,7 @@ class Api < Sinatra::Base
 
   post '/runs' do
     process_request request, 'runs' do |_req, _username|
-      results, suites, errors = Plan.get_runs(params['run_data'])
+      results, suites, errors = Plan.get_runs(params['run_data']['plan_id'])
       runs = Plan.add_statictic(results[:runs])
       status 422 unless errors
       { runs: runs, errors: errors, suites: suites, plan: results[:plan] }.to_json
@@ -408,7 +408,7 @@ class Api < Sinatra::Base
   post '/case_delete' do
     process_request request, 'case_delete' do |_req, _username|
       plan = Plan[params['case_data']['plan_id']]
-      if plan.case.empty?
+      if plan.cases.empty?
         plan = Plan.add_all_cases(plan)
       end
       this_case = plan.remove_case(Case[params['case_data']['id']])

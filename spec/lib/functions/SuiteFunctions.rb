@@ -6,8 +6,8 @@ module SuiteFunctions
     AbstractSuitePack.new(response)
   end
 
-  def delete_suite(options = {})
-    @http.post_request('/api/suite_delete', suite_data: { id: options[:id] })
+  def delete_suite(suite_id:, plan_id:)
+    @http.post_request('/api/suite_delete', suite_data: { id: suite_id, plan_id: plan_id })
   end
 
   def update_suite(options = {})

@@ -19,9 +19,9 @@ module RunFunctions
     AbstractRun.new(response)
   end
 
-  def get_runs(options = {})
-    response = http.post_request('/api/runs', run_data: { plan_id: options[:id] })
-    AbstractRunPack.new(response)
+  def get_runs(plan_id:)
+    response = http.post_request('/api/runs', run_data: { plan_id: plan_id })
+    [AbstractRunPack.new(response), AbstractSuitePack.new(response)]
   end
 
   def get_run(options = {})
