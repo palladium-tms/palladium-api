@@ -9,6 +9,8 @@ class Plan < Sequel::Model
   plugin :validation_helpers
   plugin :association_dependencies
   add_association_dependencies runs: :destroy
+  add_association_dependencies suites: :nullify
+  add_association_dependencies cases: :nullify
   self.raise_on_save_failure = false
   plugin :timestamps
 
