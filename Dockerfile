@@ -4,4 +4,4 @@ RUN mkdir /palladium-api
 WORKDIR /palladium-api
 ADD . /palladium-api
 RUN gem update bundler
-RUN bundle install --without test development
+RUN bundle install

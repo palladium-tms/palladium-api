@@ -2,13 +2,16 @@ version: '3'
 services:
   db:
     image: postgres
+    environment:
+      - POSTGRES_PASSWORD=password
   server:
     build: .
     volumes:
       - .:/palladium
     ports:
       - "80:80"
-    command: ["puma"]
+    command: ["bundle", "exec", "puma"]
+    tty: true
     environment:
       - JWT_SECRET=abc
       - JWT_ISSUER=abc
