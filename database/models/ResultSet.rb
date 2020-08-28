@@ -76,6 +76,7 @@ class ResultSet < Sequel::Model
     if current_case.nil?
       current_case = Case.create(name: result_set_name)
       suite.add_case(current_case)
+      run.plan.add_case(current_case)
     elsif !run.plan.cases.map(&:id).include?(current_case.id)
       run.plan.add_case(current_case)
     end
