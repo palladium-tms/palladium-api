@@ -72,10 +72,22 @@ class Plan < Sequel::Model
       if new_plan.valid?
         new_plan.save
         product_resp[:product].add_plan(new_plan)
+        associate_for_plan(new_plan, product_resp[:product])
         { plan: new_plan }.merge(product_resp)
       else
         { plan_errors: new_plan.errors.full_messages }
       end
+    end
+  end
+
+  def self.associate_for_plan(plan, product)
+    suites = product.suites.select { |suite| !suite[:deleted]}
+    suites.each do |suite|
+      plan.add_suite(suite)
+    end
+    suites_id = suites.map(&:id)
+    Case.where(suite_id: suites_id, deleted: false).all.each do |current_case|
+      plan.add_case(current_case)
     end
   end
 
