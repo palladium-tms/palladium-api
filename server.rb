@@ -412,7 +412,8 @@ class Api < Sinatra::Base
         plan = Plan.add_all_cases(plan)
       end
       this_case = plan.remove_case(Case[params['case_data']['id']])
-       { case: this_case.values }.to_json
+      this_case.update(deleted: true)
+      { case: this_case.values }.to_json
     end
   end
   # endregion
