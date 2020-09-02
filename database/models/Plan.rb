@@ -72,7 +72,9 @@ class Plan < Sequel::Model
       if new_plan.valid?
         new_plan.save
         product_resp[:product].add_plan(new_plan)
-        associate_for_plan(new_plan, product_resp[:product])
+        if new_plan.suites.empty?
+          associate_for_plan(new_plan, product_resp[:product])
+        end
         { plan: new_plan }.merge(product_resp)
       else
         { plan_errors: new_plan.errors.full_messages }
