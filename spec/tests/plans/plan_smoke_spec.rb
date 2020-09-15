@@ -66,7 +66,7 @@ describe 'Plan Smoke' do
       response = @user.delete_plan(id: @plan.id)
       plan_pack = @user.get_plans(product_id: @plan.product_id)
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['plan']).to eq(@plan.id)
+      expect(JSON.parse(response.body)['plan']['id']).to eq(@plan.id)
       expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
       expect(plan_pack.plans).to be_empty
     end
@@ -76,7 +76,7 @@ describe 'Plan Smoke' do
       response = @user.delete_plan(id: @plan.id)
       plans = @user.get_plans(product_id: @plan.product_id)
       expect(JSON.parse(response.body)['errors']).to be_empty
-      expect(JSON.parse(response.body)['plan']).to eq(@plan.id)
+      expect(JSON.parse(response.body)['plan']['id']).to eq(@plan.id)
       expect(plans.plans).to be_empty
     end
   end

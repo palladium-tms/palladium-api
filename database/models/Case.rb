@@ -2,12 +2,13 @@
 
 class Case < Sequel::Model
   many_to_one :suite
+  many_to_many :plans
   plugin :validation_helpers
   self.raise_on_save_failure = false
-  plugin :timestamps
+  plugin :timestamps, force: true, update_on_create: true
 
   def before_destroy
-    plan_ids = suite.product.plans.map(&:id)
+    plan_ids = [*Plan.where(product_id: suite.product.id, is_archived: false)].map(&:id)
     runs_id = Run.where(name: suite.name, plan_id: plan_ids).map(&:id)
     ResultSet.where(name: name, plan_id: plan_ids, run_id: runs_id).each do |current_result_set|
       current_result_set.remove_all_results
@@ -16,15 +17,22 @@ class Case < Sequel::Model
   end
 
   def self.get_cases(case_data = {})
-    if case_data['suite_id']
-      Suite[case_data['suite_id']].cases
-    elsif case_data['run_id']
-      run = Run[case_data['run_id']]
-      if Suite[name: run.name, product_id: run.plan.product.id]
-        Suite[name: run.name, product_id: run.plan.product.id].cases
+    suite = if case_data['suite_id']
+              Suite[case_data['suite_id']]
+            elsif case_data['run_id']
+              run = Run[case_data['run_id']]
+              Suite[name: run.name, product_id: run.plan.product.id]
+            end
+    if suite
+      if !case_data['plan_id'] || Plan[case_data['plan_id']].cases.empty?
+        [suite.cases, suite]
       else
-        []
+        # Case.where(suite_id: suite.id).where(plans: Plan[case_data['plan_id']])
+        # [Case.where(suite_id: suite.id, plan: Plan[case_data['plan_id']]).all, suite]
+        [Case.where(suite_id: suite.id).where(plans: Plan[case_data['plan_id']]), suite]
       end
+    else
+      []
     end
   end
 
@@ -58,30 +66,50 @@ class Case < Sequel::Model
     records_limit = 30
     offset = params['offset']
     offset = 0 if params['offset'].nil?
-    suite = get_suite(params['case_data']['id'])
-    plans = get_plans(suite.product.id, records_limit, offset)
-    runs = get_runs(plans.map(&:id), suite)
-    result_sets = get_result_sets(plans.map(&:id), runs.map(&:id), params['case_data']['id'])
+
+    suite_name, product_id = if params['case_data']['id']
+                               suite = Case[params['case_data']['id']].suite
+                               [suite.name, suite.product_id]
+                             else
+                               run = ResultSet[params['case_data']['result_set_id']].run
+                               [run.name, run.plan.product.id]
+                             end
+    plans = get_plans(product_id, records_limit, offset)
+    runs = get_runs(plans.map(&:id), suite_name)
+    name = get_name(params['case_data'])
+    result_sets = get_result_sets(plans.map(&:id), runs.map(&:id), name)
     result_sets = result_sets.map do |result_set|
       result_set['plan'] = plans.find { |plan| plan.id == result_set[:plan_id] }.values
       result_set
     end
-    result_sets
+    [result_sets, product_id, suite_name]
   end
 
-  def self.get_suite(case_id)
-    Case[case_id].suite
+  def self.get_suite_name(case_data)
+    if case_data['id']
+      Case[case_data['id']].suite.name
+    else
+      ResultSet[case_data['result_set_id']].run.name
+    end
+  end
+
+  def self.get_name(case_data)
+    if case_data['id']
+      Case[case_data['id']].name
+    else
+      ResultSet[case_data['result_set_id']].name
+    end
   end
 
   def self.get_plans(product_id, records_limit, offset)
     Plan.dataset.where(product_id: product_id).order(Sequel.desc(:updated_at)).limit(records_limit, offset).all
   end
 
-  def self.get_runs(plan_ids, suite)
-    Run.dataset.where(plan_id: plan_ids, name: suite.name)
+  def self.get_runs(plan_ids, suite_name)
+    Run.dataset.where(plan_id: plan_ids, name: suite_name)
   end
 
-  def self.get_result_sets(plan_ids, runs, this_case)
-    ResultSet.dataset.where(plan_id: plan_ids, run_id: runs, name: Case[this_case].name).map(&:values)
+  def self.get_result_sets(plan_ids, runs, name)
+    ResultSet.dataset.where(plan_id: plan_ids, run_id: runs, name: name).map(&:values)
   end
 end

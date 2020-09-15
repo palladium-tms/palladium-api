@@ -2,7 +2,7 @@ require_relative '../test_management'
 describe 'Auth Smoke' do
   describe 'registration' do
     it 'create new without token' do
-      expect(AuthFunctions.create_new_account(Faker::Internet.email, Faker::Lorem.characters(7)).code).to eq('200')
+      expect(AuthFunctions.create_new_account(Faker::Internet.email, Faker::Lorem.characters(number: 7)).code).to eq('200')
     end
   end
 
@@ -14,7 +14,7 @@ describe 'Auth Smoke' do
     end
 
     it 'try login with uncorrect user_data' do
-      response = User.new(email: Faker::Internet.email, password: Faker::Lorem.characters(7)).login
+      response = User.new(email: Faker::Internet.email, password: Faker::Lorem.characters(number: 7)).login
       expect(response.code).to eq('401')
       expect(response.body).to eq('{"errors":"User or password not correct"}')
     end

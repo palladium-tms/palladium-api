@@ -3,7 +3,7 @@
 require 'securerandom'
 require 'time'
 class Invite < Sequel::Model
-  plugin :timestamps
+  plugin :timestamps, force: true, update_on_create: true
   one_to_one :user
 
   def self.create_new(_username = nil)

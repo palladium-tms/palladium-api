@@ -7,7 +7,7 @@ class Run < Sequel::Model
   plugin :association_dependencies
   add_association_dependencies result_sets: :destroy
   self.raise_on_save_failure = false
-  plugin :timestamps
+  plugin :timestamps, force: true, update_on_create: true
 
   def validate
     super
@@ -89,9 +89,18 @@ class Run < Sequel::Model
     if suite.nil?
       suite = Suite.create(name: run.name)
       Product[id: plan.product_id].add_suite(suite)
-    else
-      suite
+      plan.add_suite(suite)
+    elsif !plan.suites.map(&:id).include?(suite.id)
+           plan.add_suite(suite)
+           suite.cases.each do |current_case|
+             plan.add_case(current_case)
+           end
     end
+    suite
+  end
+
+  def self.delete(run)
+     ResultSet.where(id: run.result_sets.map(&:id)).destroy
   end
 
   # def self.edit(data)
@@ -106,7 +115,7 @@ class Run < Sequel::Model
   def self.get_result_sets(*args)
     run = Run[id: args.first['run_id']]
     begin
-      [run.result_sets, []]
+      [{result_sets: run.result_sets, run: run.values}, []]
     rescue StandardError
       [[], 'Result_set data is incorrect']
     end

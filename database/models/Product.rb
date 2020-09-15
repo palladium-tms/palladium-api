@@ -58,21 +58,32 @@ class Product < Sequel::Model
     end
   end
 
-  def self.get_plans(*args)
-    args.first['offset'] = args.first['offset'].to_i
-    product = if args.first['product_id']
-                Product[id: args.first['product_id']]
-              elsif args.first['product_name']
-                Product[name: args.first['product_name']]
+  def self.get_plans(option = {})
+    product = if option['product_id']
+                Product[id: option['product_id']]
+              elsif option['product_name']
+                Product[name: option['product_name']]
               end
     begin
-      plans = Plan.where(product_id: product.id).order(Sequel.desc(:id))
-      return [plans.limit(3, args.first['offset']).all, []] unless args.first['plan_id'].to_i != 0
-
-      plans_by_id = plans.where(Sequel.lit('id >= ?', args.first['plan_id'].to_i)).all
-      return [plans.limit(3, args.first['offset']).all, []] if plans_by_id.count <= 3
-
-      [plans_by_id, []]
+      all_plans = Plan.where(product_id: product.id).order(Sequel.desc(:id))
+      plans = if option['after_plan_id'] && option['after_plan_id'].is_a?(Numeric)
+        all_plans.where(Sequel.lit('id < ?', option['after_plan_id'].to_i)).limit(3).all
+      elsif option['plan_id'] && option['plan_id'].is_a?(Numeric)
+        all_plans.where(Sequel.lit('id >= ?', option['plan_id'])).all
+      else
+        all_plans.limit(3).all
+      end
+      plan_object = []
+      all_case_count = Case.where(suite_id: product.suites.map(&:id)).count
+      plans.each do |plan|
+        case_count = if plan.cases.empty?
+                       all_case_count
+                     else
+                       plan.cases.size
+                     end
+        plan_object << plan.values.merge(case_count: case_count)
+      end
+      return [plan_object, []]
     rescue StandardError
       [[], 'Plan data is incorrect']
     end
@@ -84,8 +95,8 @@ class Product < Sequel::Model
     end
   end
 
-  def self.add_case_counts(suites)
-    statistic = get_cases_count(suites)
+  def self.add_case_counts(suites, plan)
+    statistic = get_cases_count(suites, plan)
     suites.map(&:values).map do |suite|
       if statistic.key?(suite[:id])
         suite.merge!(statistic: [statistic[suite[:id]].first.merge!(status: 0)])
@@ -95,9 +106,19 @@ class Product < Sequel::Model
     end
   end
 
-  def self.get_cases_count(suites)
-    Case.where(suite_id: suites.map(&:id)).group_and_count(:suite_id).map(&:values).group_by do |e|
-      e[:suite_id]
+  def self.get_cases_count(suites, plan)
+    if !plan.cases.empty?
+      case_ids = plan.cases.map(&:id)
+      Case.where(id: case_ids).
+          where(suite_id: suites.map(&:id)).
+          group_and_count(:suite_id).map(&:values).group_by do |e|
+        e[:suite_id]
+      end
+
+    else
+      Case.where(suite_id: suites.map(&:id)).group_and_count(:suite_id).map(&:values).group_by do |e|
+        e[:suite_id]
+      end
     end
   end
 end

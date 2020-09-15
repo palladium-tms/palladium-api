@@ -4,7 +4,7 @@ class Status < Sequel::Model
   one_to_many :results
   plugin :validation_helpers
   self.raise_on_save_failure = false
-  plugin :timestamps
+  plugin :timestamps, force: true, update_on_create: true
 
   def validate
     validates_presence [:name]

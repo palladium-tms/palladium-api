@@ -3,15 +3,16 @@
 class Suite < Sequel::Model
   many_to_one :product
   one_to_many :cases
+  many_to_many :plans
   plugin :validation_helpers
   plugin :association_dependencies
   add_association_dependencies cases: :destroy
   self.raise_on_save_failure = false
-  plugin :timestamps
+  plugin :timestamps, force: true, update_on_create: true
 
   def before_destroy
     super
-    plan_ids = Product[id: product_id].plans.map(&:id)
+     plan_ids = Plan.where(product_id: product_id, is_archived: false).map(&:id)
     Run.where(name: name, plan_id: plan_ids).destroy
   end
 

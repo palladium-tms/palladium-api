@@ -3,10 +3,14 @@
 class Plan < Sequel::Model
   many_to_one :product
   one_to_many :runs
+  many_to_many :suites
   one_to_many :result_sets
+  many_to_many :cases
   plugin :validation_helpers
   plugin :association_dependencies
   add_association_dependencies runs: :destroy
+  add_association_dependencies suites: :nullify
+  add_association_dependencies cases: :nullify
   self.raise_on_save_failure = false
   plugin :timestamps
 
@@ -68,10 +72,24 @@ class Plan < Sequel::Model
       if new_plan.valid?
         new_plan.save
         product_resp[:product].add_plan(new_plan)
+        if new_plan.suites.empty?
+          associate_for_plan(new_plan, product_resp[:product])
+        end
         { plan: new_plan }.merge(product_resp)
       else
         { plan_errors: new_plan.errors.full_messages }
       end
+    end
+  end
+
+  def self.associate_for_plan(plan, product)
+    suites = product.suites.select { |suite| !suite[:deleted]}
+    suites.each do |suite|
+      plan.add_suite(suite)
+    end
+    suites_id = suites.map(&:id)
+    Case.where(suite_id: suites_id, deleted: false).all.each do |current_case|
+      plan.add_case(current_case)
     end
   end
 
@@ -103,12 +121,18 @@ class Plan < Sequel::Model
     end
   end
 
-  def self.get_runs(*args)
-    plan = Plan[id: args.first['plan_id']]
+  def self.get_runs(plan_id)
+    plan = Plan[id: plan_id]
+    suites = if plan.suites.empty?
+               plan.product.suites
+             else
+               plan.suites
+             end
+    suites = Product.add_case_counts(suites, plan)
     begin
-      [plan.runs, []]
+      [{runs: plan.runs, plan: plan.values}, suites, []]
     rescue StandardError
-      [[], 'Run data is incorrect']
+      [[],[], 'Run data is incorrect']
     end
   end
 
@@ -126,9 +150,63 @@ class Plan < Sequel::Model
   end
 
   # Getting statistic and save in database(usually, statistic is not saving)
+  # Creating result_set and run for all cases and suites, if it not be created before
   def self.archive(plan_id)
-    plan = Plan.find(id: plan_id)
-    Product.add_statictic([plan]).first
-    plan.update(is_archived: true).values
+    a = Time.now
+    plan = Plan[plan_id]
+    runs = plan.runs
+    suites = {}
+    plan.product.suites.each do |suite|
+      suites[suite.name] = suite
+    end
+    (suites.values.map(&:name) - runs.map(&:name)).each do |run_name|
+      new_run = Run.find_or_new(run_name, plan.id)
+      plan.add_run(new_run)
+      runs << new_run
+      suites[new_run.name].cases.each do |this_case|
+        new_result_set = ResultSet.find_or_new(this_case.name, new_run.id)
+        plan.add_result_set(new_result_set)
+        new_run.add_result_set(new_result_set)
+      end
+    end
+    runs_filling(runs, suites)
+    statistic = Product.get_statistic(plan_id)[plan_id] || {}
+    plan.update(statistic: statistic.to_json)
+    plan.update(is_archived: true)
+    p Time.now - a
+    plan
+  end
+
+  def self.runs_filling(runs, suites)
+    runs.each do |run|
+      if run.result_sets.count != suites[run.name].cases.count
+        (suites[run.name].cases.map(&:name) - run.result_sets.map(&:name)).each do |result_set_name|
+          new_result_set = ResultSet.find_or_new(result_set_name, run.id)
+          run.plan.add_result_set(new_result_set)
+          run.add_result_set(new_result_set)
+        end
+      end
+    end
+  end
+
+  def self.add_all_suites(plan)
+    plan.product.suites.each do |current_suite|
+      plan.add_suite(current_suite)
+    end
+    plan
+  end
+
+  def self.add_all_cases(plan)
+    Case.where_all(suite_id: plan.product.suites.map(&:id)).each do |current_case|
+      plan.add_case current_case
+    end
+    plan
+  end
+
+  def self.remove_cases_by_suite(plan, suite)
+    suite.cases.each do |current_case|
+      plan.remove_case(current_case)
+    end
+    plan
   end
 end

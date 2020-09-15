@@ -55,7 +55,7 @@ describe 'Run Smoke' do
     end
 
     it 'Get runs by plan_id' do
-      run_pack = @user.get_runs(id: @plan.id)
+      run_pack, _ = @user.get_runs(plan_id: @plan.id)
       expect(run_pack.runs.first.id).to eq(@run.id)
       expect(run_pack.runs.first.plan_id).to eq(@plan.id)
     end

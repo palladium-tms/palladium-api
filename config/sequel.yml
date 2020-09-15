@@ -9,13 +9,13 @@
   adapter: postgres
   database: postgres
   username: postgres
-  password: qq
   host: localhost
   max_connections: 10
 
 :test:
   adapter: postgres
   database: postgres
+  password: password
   username: postgres
   host: db
   max_connections: 10
