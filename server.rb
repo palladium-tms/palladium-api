@@ -496,7 +496,7 @@ class Api < Sinatra::Base
   post '/user_setting' do
     process_request request, 'user_setting' do |_req, _username|
       user_setting = User[email: _username].user_setting
-      { timezone: user_setting.timezone }.to_json
+      { timezone: user_setting&.timezone }.to_json
     end
   end
 
