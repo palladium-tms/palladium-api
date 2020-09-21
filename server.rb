@@ -243,8 +243,15 @@ class Api < Sinatra::Base
       errors = []
       begin
         result_set_id = params['result_set_data']['id']
-        ResultSet[id: result_set_id].remove_all_results
-        ResultSet[id: result_set_id].delete
+        unless result_set_id.is_a?(Array)
+          result_set_id = [result_set_id]
+        end
+        result_set_size = result_set_id.size
+        result_set_id.each_with_index do |id, index|
+          ResultSet[id: id].remove_all_results
+          ResultSet[id: id].delete
+          p "Log: DELETING_RESULT_SET: #{id} (#{index + 1}/#{result_set_size})"
+        end
       rescue StandardError => e
         errors = e
       end
@@ -411,9 +418,19 @@ class Api < Sinatra::Base
       if plan.cases.empty?
         plan = Plan.add_all_cases(plan)
       end
-      this_case = plan.remove_case(Case[params['case_data']['id']])
-      this_case.update(deleted: true)
-      { case: this_case.values }.to_json
+      case_ids = params['case_data']['id']
+      unless case_ids.is_a?(Array)
+        case_ids = [case_ids]
+      end
+      cases_size = case_ids.size
+      this_case = nil
+      case_ids.each_with_index do |case_id, index|
+        this_case = plan.remove_case(Case[case_id])
+        this_case.update(deleted: true)
+        p "Log: DELETING_CASE: #{case_id} (#{index + 1}/#{cases_size})"
+      end
+
+      { cases: case_ids, case: this_case.values }.to_json
     end
   end
   # endregion
