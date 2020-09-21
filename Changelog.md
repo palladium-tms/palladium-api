@@ -1,5 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [master]
+### Added
+    - Ability for multideleting
 ## [0.6.0]
     - Change case delete stratage
 ## [0.5.2]
