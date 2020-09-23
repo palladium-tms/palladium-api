@@ -137,7 +137,7 @@ class Plan < Sequel::Model
   end
 
   def self.get_statistic(runs)
-    ResultSet.where(run_id: runs.map(&:id)).group_and_count(:run_id, :status).map(&:values).group_by do |e|
+    ResultSet.join(Run.where(id: runs.map(&:id)), id: :run_id).group_and_count(:run_id, :status).map(&:values).group_by do |e|
       e[:run_id]
     end
   end
