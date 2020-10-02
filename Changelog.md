@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 ### Added
     - Ability for multideleting
     - Increase porformance x4 in run statistic gettings
+### Fix
+    - Deleted suite now will not to be add to new plans
 ## [0.6.0]
     - Change case delete stratage
 ## [0.5.2]
