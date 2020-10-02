@@ -71,6 +71,20 @@ describe 'Suites Smoke' do
       expect(suites_pack.suites.size).to eq(1)
     end
 
+    it 'check suite not existed in new plan after deleting' do
+      product_name = rand_product_name
+      plan_name = rand_plan_name
+      run_for_delete = @user.create_new_run({product_name: product_name, plan_name: plan_name, name: rand_run_name})
+      run_for_stay = @user.create_new_run({product_name: product_name, plan_name: plan_name, name: rand_run_name})
+      _, suite_pack_before = @user.get_runs(plan_id: run_for_delete.plan.id)
+      @user.delete_suite(suite_id: suite_pack_before.suites.first.id, plan_id: run_for_delete.plan.id) # deleting
+      new_plan = @user.create_new_plan({product_name: product_name})
+      _, suite_pack_after = @user.get_runs(plan_id: new_plan.id)
+      expect(suite_pack_before.suites.size).to eq(2)
+      expect(suite_pack_after.suites.size).to eq(1)
+      expect(run_for_stay.name).to eq(suite_pack_after.suites[0].name)
+    end
+
     # it 'check deleting all suites if product is deleted' do
     #   product = @user.create_new_product
     #   product = @user.create_new_run(plan_name: rand_run_name, product_name: product.name)
