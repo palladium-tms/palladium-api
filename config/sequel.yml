@@ -3,14 +3,14 @@
   database: postgres
   username: postgres
   host: db
-  max_connections: 10
+  max_connections: 50
 
 :development:
   adapter: postgres
   database: postgres
   username: postgres
   host: localhost
-  max_connections: 10
+  max_connections: 50
 
 :test:
   adapter: postgres
@@ -18,4 +18,4 @@
   password: password
   username: postgres
   host: db
-  max_connections: 10
+  max_connections: 50
