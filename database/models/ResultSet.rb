@@ -4,6 +4,7 @@ class ResultSet < Sequel::Model
   many_to_one :plan
   many_to_one :run
   many_to_many :results
+  many_to_one :case
   plugin :validation_helpers
   plugin :association_dependencies
   add_association_dependencies results: :nullify
