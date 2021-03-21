@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/flaminestone/palladium.git
-  revision: cf36ed451f0d525f9053aed681f4f3e6831c59f2
+  revision: 1be681684935a337943f787b4808eed0239822be
   specs:
-    palladium (0.3.4)
+    palladium (1.0.0)
 
 GEM
   remote: https://rubygems.org/
