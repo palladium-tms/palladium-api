@@ -62,17 +62,24 @@ class Plan < Sequel::Model
   # example: data = {'plan_data': {'product_id': id, 'name': name}} or {'plan_data': {'product_name': name, 'name': name}}
   # return responce = {product: {product_data}, plan: {plan_data}, errors:: {product_errors: {}, plan_errors: {}}}
   def self.create_new(data)
+    api_created = data['plan_data']['api_created']
+    api_created = true if api_created.nil?
+
     return { plan: Plan[id: data['run_data']['plan_id']] } if plan_id_exist?(data)
 
     product_resp = create_product(data)
     if product_resp[:product].nil?
       { plan_errors: 'product creating error' }.merge(product_resp)
     else
-      new_plan = Plan.find_or_new(data['plan_data']['name'], product_resp[:product].id)
+      existed_plan = Plan.find(name: data['plan_data']['name'], product_id: product_resp[:product].id)
+      if existed_plan
+        return { plan: existed_plan, request_status: 'Plan with this name is exist', product: product_resp[:product] }
+      end
+      new_plan = Plan.new(name: data['plan_data']['name'], api_created: api_created)
       if new_plan.valid?
         new_plan.save
         product_resp[:product].add_plan(new_plan)
-        if new_plan.suites.empty?
+        if new_plan.suites.empty? && api_created
           associate_for_plan(new_plan, product_resp[:product])
         end
         { plan: new_plan }.merge(product_resp)
