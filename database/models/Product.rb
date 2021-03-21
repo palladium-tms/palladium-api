@@ -67,11 +67,11 @@ class Product < Sequel::Model
     begin
       all_plans = Plan.where(product_id: product.id).order(Sequel.desc(:id))
       plans = if option['after_plan_id'] && option['after_plan_id'].is_a?(Numeric)
-        all_plans.where(Sequel.lit('id < ?', option['after_plan_id'].to_i)).limit(3).all
+        all_plans.where(Sequel.lit('id < ?', option['after_plan_id'].to_i)).limit(6).all
       elsif option['plan_id'] && option['plan_id'].is_a?(Numeric)
         all_plans.where(Sequel.lit('id >= ?', option['plan_id'])).all
       else
-        all_plans.limit(3).all
+        all_plans.limit(6).all
       end
       plan_object = []
       all_case_count = Case.where(suite_id: product.suites.map(&:id)).count
