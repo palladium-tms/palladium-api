@@ -2,11 +2,16 @@
 All notable changes to this project will be documented in this file.
 ## [master]
 ### Added
+    - To create plan with arrtibute :api_created
+### Changed
+    - Database scheme for simplificating in future
+
+## [0.6.0]
+### Added
     - Ability for multideleting
     - Increase porformance x4 in run statistic gettings
 ### Fix
     - Deleted suite now will not to be add to new plans
-## [0.6.0]
     - Change case delete stratage
 ## [0.5.2]
     - Fixes: change max database connections to 10 by default
