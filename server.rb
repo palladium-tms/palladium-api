@@ -91,9 +91,9 @@ class Api < Sinatra::Base
 
   post '/plans' do
     process_request request, 'plans' do |_req, _username|
-      plans, errors = Product.get_plans(params['plan_data'])
-      status 422 unless errors
-      { plans: plans, errors: errors }.to_json
+      result = Product.get_plans(params['plan_data'])
+      status 422 unless result[:errors]
+      { plans: result[:plans], errors: result[:errors], request_status: result[:request_status] }.to_json
     end
   end
 
