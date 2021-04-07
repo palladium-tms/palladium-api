@@ -16,7 +16,7 @@ module AccountFunctions
     if JSON.parse(response.body)['errors'].empty?
       User.new(email: email, password: password)
     else
-      raise 'User creation error', JSON.parse(response.body)
+      raise 'User creation error', response.body
     end
   end
 end
