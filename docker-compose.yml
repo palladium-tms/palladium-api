@@ -9,7 +9,7 @@ services:
     volumes:
       - .:/palladium
     ports:
-      - "9292:80"
+      - "80:80"
     command: ["bundle", "exec", "puma"]
     tty: true
     environment:
