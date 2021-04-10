@@ -7,7 +7,7 @@
 
 :development:
   adapter: postgres
-  database: pall5
+  database: postgres
   username: postgres
   host: localhost
   max_connections: 50
