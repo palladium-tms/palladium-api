@@ -4,11 +4,13 @@ require 'sinatra'
 require_relative 'server.rb'
 
 run Rack::URLMap.new('/public' => Public, '/api' => Api)
-# ENV['JWT_SECRET'] = "JWT_SECRET"
-# ENV['JWT_ISSUER'] = "JWT_ISSUER"
+if Sinatra::Application.environment == :development || Sinatra::Application.environment == :test
+  ENV['JWT_SECRET'] = "JWT_SECRET"
+  ENV['JWT_ISSUER'] = "JWT_ISSUER"
+end
 
 raise 'JWT keys not found' if ENV['JWT_SECRET'].nil? || ENV['JWT_ISSUER'].nil?
-if ENV['RACK_ENV'] == 'production'
+if Sinatra::Application.environment == :production
   raise 'JWT is to short' if ENV['JWT_SECRET'].size < 4 || ENV['JWT_ISSUER'].size < 4
 end
 
