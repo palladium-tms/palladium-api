@@ -59,7 +59,7 @@ class Product < Sequel::Model
   end
 
   def self.get_plans(option = {})
-    limit = JSON.parse(File.read("config/palladium.json"))
+    limit = JSON.parse(File.read("config/palladium.json"))['count_of_plan_loading']
     request_status = ''
     product = if option['product_id']
                 Product[id: option['product_id']]
