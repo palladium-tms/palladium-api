@@ -3,7 +3,7 @@ require_relative '../../tests/test_management'
 class AbstractPlan
   attr_accessor :id, :name, :product_id,
                 :created_at, :updated_at, :is_archived, :statistic, :is_null,
-                :plan_errors, :product, :response
+                :plan_errors, :product, :response, :api_created
 
   def initialize(data)
     @response = data
@@ -27,6 +27,7 @@ class AbstractPlan
     @updated_at = parsed_plan['updated_at']
     @is_archived = parsed_plan['is_archived']
     @statistic = parsed_plan['statistic']
+    @api_created = parsed_plan['api_created']
     @product = AbstractProduct.new(@response) if parsed_data['product']
   end
 

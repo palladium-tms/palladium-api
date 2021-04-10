@@ -15,8 +15,8 @@ describe 'Plan Smoke' do
       plans = @user.get_plans(product_id: @product.id).plans
       @plan = @user.create_new_plan(product_name: @product.name)
       new_plans = @user.get_plans(product_id: @product.id).plans
-      expect(plans.count).to eq(3)
-      expect(new_plans.count).to eq(3)
+      expect(plans.count).to eq(6)
+      expect(new_plans.count).to eq(6)
       expect(new_plans.first.like_a?(@plan)).to be_truthy
     end
   end
@@ -50,7 +50,7 @@ describe 'Plan Smoke' do
       9.times { @user.create_new_plan(product_name: @product.name) }
       plan = @user.create_new_plan(product_name: @product.name)
       plans_pack = @user.get_plans(product_id: @product.id, plan_id: 'string')
-      expect(plans_pack.plans.count).to eq(3)
+      expect(plans_pack.plans.count).to eq(6)
       expect(plans_pack.plans.first.id).to eq(plan.id)
     end
   end

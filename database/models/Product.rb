@@ -59,6 +59,8 @@ class Product < Sequel::Model
   end
 
   def self.get_plans(option = {})
+    limit = JSON.parse(File.read("config/palladium.json"))['count_of_plan_loading']
+    request_status = ''
     product = if option['product_id']
                 Product[id: option['product_id']]
               elsif option['product_name']
@@ -67,11 +69,14 @@ class Product < Sequel::Model
     begin
       all_plans = Plan.where(product_id: product.id).order(Sequel.desc(:id))
       plans = if option['after_plan_id'] && option['after_plan_id'].is_a?(Numeric)
-        all_plans.where(Sequel.lit('id < ?', option['after_plan_id'].to_i)).limit(3).all
+        all_plans.where(Sequel.lit('id < ?', option['after_plan_id'].to_i)).limit(limit).all
       elsif option['plan_id'] && option['plan_id'].is_a?(Numeric)
         all_plans.where(Sequel.lit('id >= ?', option['plan_id'])).all
       else
-        all_plans.limit(3).all
+        all_plans.limit(limit).all
+              end
+      if plans.size < limit || Plan.count < limit
+        request_status = 'Is a last plans'
       end
       plan_object = []
       all_case_count = Case.where(suite_id: product.suites.map(&:id)).count
@@ -83,9 +88,9 @@ class Product < Sequel::Model
                      end
         plan_object << plan.values.merge(case_count: case_count)
       end
-      return [plan_object, []]
+      return { plans: plan_object, errors: [], request_status: request_status }
     rescue StandardError
-      [[], 'Plan data is incorrect']
+      { plans: [], errors: ['Plan data is incorrect'], request_status: request_status }
     end
   end
 

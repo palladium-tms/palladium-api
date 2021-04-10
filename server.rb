@@ -79,7 +79,7 @@ class Api < Sinatra::Base
     process_request request, 'plan_new' do |_req, _username|
       objects = Plan.create_new(params)
       if objects[:plan_errors].nil? && objects[:product_errors].nil?
-        { plan: objects[:plan].values, product: objects[:product].values }.to_json
+        { plan: objects[:plan].values, product: objects[:product].values, request_status: objects[:request_status] }.to_json
       else
         status 422
         errors = { plan_errors: objects[:plan_errors] }
@@ -91,9 +91,9 @@ class Api < Sinatra::Base
 
   post '/plans' do
     process_request request, 'plans' do |_req, _username|
-      plans, errors = Product.get_plans(params['plan_data'])
-      status 422 unless errors
-      { plans: plans, errors: errors }.to_json
+      result = Product.get_plans(params['plan_data'])
+      status 422 unless result[:errors]
+      { plans: result[:plans], errors: result[:errors], request_status: result[:request_status] }.to_json
     end
   end
 

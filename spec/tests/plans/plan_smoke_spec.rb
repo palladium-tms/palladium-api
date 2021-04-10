@@ -27,6 +27,18 @@ describe 'Plan Smoke' do
       expect(plan.response.code).to eq('200')
       expect(plan.product_id).not_to be_nil
     end
+
+    it 'check creating new plan with manual fields' do
+      plan_api_created = @user.create_new_plan(product_name: rand_product_name, api_created: true)
+      plan_manual_created = @user.create_new_plan(product_name: rand_product_name, api_created: false)
+      plan_api_default = @user.create_new_plan(product_name: rand_product_name)
+      expect(plan_api_created.response.code).to eq('200')
+      expect(plan_manual_created.response.code).to eq('200')
+      expect(plan_api_default.response.code).to eq('200')
+      expect(plan_api_created.api_created).to be_truthy
+      expect(plan_manual_created.api_created).to be_falsey
+      expect(plan_api_default.api_created).to be_truthy
+    end
   end
 
   describe 'Show plans' do
