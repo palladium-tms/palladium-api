@@ -17,5 +17,5 @@
   database: postgres
   password: password
   username: postgres
-  host: postgres
+  host: db
   max_connections: 50
