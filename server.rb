@@ -18,7 +18,16 @@ class Api < Sinatra::Base
     process_request request, 'products' do |_req, _username|
       positions = User[email: _username].product_position
       defarr = []
+      last_plans = {}
       products = Product.all.map(&:values)
+      Plan.dataset.order(Sequel.desc(:id), :product_id).first(products.size).each do |plan|
+        last_plans.merge!({plan.product_id => plan})
+      end
+
+      products.map! do |product|
+        product[:last_plan] = last_plans[product[:id]]&.values
+        product
+      end
       products.delete_if do |element|
         index = positions.index(element[:id])
         if index
@@ -600,7 +609,7 @@ class Public < Sinatra::Base
     valid_status = Invite.check_link_validation(user_data['invite'])
     # ENV['RACK_ENV'] == 'development' for debug
     #
-    if User.all.empty? || (ENV['RACK_ENV'] == 'test' && params['invite'].nil?)
+    if User.all.empty? || (ENV['RACK_ENV'] == 'development' && params['invite'].nil?)
       valid_status[0] = true
       valid_status[1] = []
     end
