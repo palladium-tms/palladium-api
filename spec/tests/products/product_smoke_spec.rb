@@ -69,4 +69,23 @@ describe 'Product Smoke' do
       expect(product_after_edit.name).to eq(new_name)
     end
   end
+
+  describe 'Last Plan' do
+    it 'new product without plans' do
+      product = @user.create_new_product
+      expect(product.product_errors).to be_nil
+      expect(product.id).not_to be_nil
+      expect(product.last_plan).to be_nil
+      end
+
+    it 'new product with plans' do
+      product_new = @user.create_new_product
+      plan = @user.create_new_plan({product_id: product_new.id})
+      product = @user.get_all_products.get_product_by_id(product_new.id)
+      last_plan = AbstractPlan.new({'plan' => product.last_plan})
+      expect(product.product_errors).to be_nil
+      expect(product.id).not_to be_nil
+      expect(plan.like_a?(last_plan)).to be_truthy
+    end
+  end
 end
