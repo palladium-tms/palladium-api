@@ -16,18 +16,20 @@ class Api < Sinatra::Base
   # region products
   post '/products' do
     process_request request, 'products' do |_req, _username|
-      positions = User[email: _username].product_position
-      defarr = []
-      last_plans = {}
-      products = Product.all.map(&:values)
-      Plan.dataset.order(Sequel.desc(:id), :product_id).first(products.size).each do |plan|
-        last_plans.merge!({plan.product_id => plan})
+      all_plans = {}
+      Plan.select_group(:id, :product_id, :name, :updated_at).all.each do |plan|
+        if !all_plans.key?(plan[:product_id]) || all_plans[plan[:product_id]][:id] < plan[:id]
+          all_plans[plan[:product_id]] = plan
+        end
+      end
+      all_plans
+
+      products = Product.all.map do |product|
+        product.values.merge!({last_plan: all_plans[product[:id]]&.values || {}})
       end
 
-      products.map! do |product|
-        product[:last_plan] = last_plans[product[:id]]&.values
-        product
-      end
+      positions = User[email: _username].product_position
+      defarr = []
       products.delete_if do |element|
         index = positions.index(element[:id])
         if index

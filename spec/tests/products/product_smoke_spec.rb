@@ -82,10 +82,12 @@ describe 'Product Smoke' do
       product_new = @user.create_new_product
       plan = @user.create_new_plan({product_id: product_new.id})
       product = @user.get_all_products.get_product_by_id(product_new.id)
-      last_plan = AbstractPlan.new({'plan' => product.last_plan})
       expect(product.product_errors).to be_nil
       expect(product.id).not_to be_nil
-      expect(plan.like_a?(last_plan)).to be_truthy
+      expect(plan.product_id).to eq(product.last_plan['product_id'])
+      expect(plan.updated_at).to eq(product.last_plan['updated_at'])
+      expect(plan.id).to eq(product.last_plan['id'])
+      expect(plan.name).to eq(product.last_plan['name'])
     end
   end
 end
