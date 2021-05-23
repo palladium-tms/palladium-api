@@ -4,7 +4,7 @@ gem 'bcrypt'
 gem 'jwt'
 gem 'palladium', git: 'https://github.com/flaminestone/palladium.git'
 gem 'pg'
-gem 'puma' # web server
+gem "puma", ">= 5.3.1" # web server
 gem 'rspec'
 gem 'sequel' # gem for work with database
 gem 'sinatra' # main web framework
