@@ -624,7 +624,7 @@ class Public < Sinatra::Base
     valid_status = Invite.check_link_validation(user_data['invite'])
     # ENV['RACK_ENV'] == 'development' for debug
     #
-    if User.all.empty? || (ENV['RACK_ENV'] == 'development' && params['invite'].nil?)
+    if User.all.empty? || (ENV['RACK_ENV'] == 'test' && params['invite'].nil?)
       valid_status[0] = true
       valid_status[1] = []
     end
