@@ -4,6 +4,8 @@ require 'json'
 require 'jwt'
 require 'pg'
 require 'sinatra/cross_origin'
+require 'sinatra/custom_logger'
+require 'logger'
 require_relative 'database/database'
 require_relative 'database/migrate/001_create_product_positions.rb'
 

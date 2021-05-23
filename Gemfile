@@ -8,6 +8,7 @@ gem 'puma' # web server
 gem 'rspec'
 gem 'sequel' # gem for work with database
 gem 'sinatra' # main web framework
+gem 'sinatra-contrib'
 gem 'sinatra-cross_origin'
 
 gem 'faker'
