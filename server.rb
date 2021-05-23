@@ -1,8 +1,21 @@
 require_relative 'management'
 class Api < Sinatra::Base
+  helpers Sinatra::CustomLogger
   register Sinatra::CrossOrigin
   use JwtAuth
   attr_accessor :params
+
+  configure :development, :production do
+    file = File.open("#{root}/tmp/palladium-server/log/#{environment}.log", 'a')
+    file.sync = true # for writing ogs in real time, not after stop sinatra
+    logger = Logger.new(file)
+    logger.level = development??Logger::DEBUG : Logger::WARN
+    logger.formatter = proc { |severity, datetime, progname, msg|
+      "#{severity} :: #{datetime.strftime('%Y-%m-%d :: %H:%M:%S')} :: #{progname} :: #{msg}\n"
+    }
+      set :logger, logger
+  end
+
   def initialize
     super
   end
