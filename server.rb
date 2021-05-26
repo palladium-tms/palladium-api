@@ -1,8 +1,21 @@
 require_relative 'management'
 class Api < Sinatra::Base
+  helpers Sinatra::CustomLogger
   register Sinatra::CrossOrigin
   use JwtAuth
   attr_accessor :params
+
+  configure :development, :production do
+    file = File.open("#{root}/tmp/palladium-server/log/#{environment}.log", 'a')
+    file.sync = true # for writing ogs in real time, not after stop sinatra
+    logger = Logger.new(file)
+    logger.level = development??Logger::DEBUG : Logger::WARN
+    logger.formatter = proc { |severity, datetime, progname, msg|
+      "#{severity} :: #{datetime.strftime('%Y-%m-%d :: %H:%M:%S')} :: #{progname} :: #{msg}\n"
+    }
+      set :logger, logger
+  end
+
   def initialize
     super
   end
@@ -16,9 +29,20 @@ class Api < Sinatra::Base
   # region products
   post '/products' do
     process_request request, 'products' do |_req, _username|
+      all_plans = {}
+      Plan.select_group(:id, :product_id, :name, :updated_at).all.each do |plan|
+        if !all_plans.key?(plan[:product_id]) || all_plans[plan[:product_id]][:id] < plan[:id]
+          all_plans[plan[:product_id]] = plan
+        end
+      end
+      all_plans
+
+      products = Product.all.map do |product|
+        product.values.merge!({last_plan: all_plans[product[:id]]&.values || {}})
+      end
+
       positions = User[email: _username].product_position
       defarr = []
-      products = Product.all.map(&:values)
       products.delete_if do |element|
         index = positions.index(element[:id])
         if index

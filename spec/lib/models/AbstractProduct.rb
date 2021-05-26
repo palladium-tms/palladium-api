@@ -1,6 +1,6 @@
 require 'json'
 class AbstractProduct
-  attr_accessor :id, :name, :created_at, :updated_at, :is_archived, :product_errors, :suite, :response
+  attr_accessor :id, :name, :created_at, :updated_at, :is_archived, :product_errors, :suite, :response, :last_plan
 
   def initialize(product_data = default_data)
     unless product_data.is_a?(Hash)
@@ -15,6 +15,7 @@ class AbstractProduct
     @name = product_data['name']
     @created_at = product_data['created_at']
     @updated_at = product_data['updated_at']
+    @last_plan = product_data['last_plan']
   end
 
   def default_data
