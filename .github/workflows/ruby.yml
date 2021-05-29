@@ -35,6 +35,7 @@ jobs:
     - name: Install bundler dependencies
       run: |
         gem install bundler
+        bundle config set --local with 'server'
         bundle install --jobs 4 --retry 3
     - name: Run tests
       run: bundle exec rspec spec/tests --fail-fast
