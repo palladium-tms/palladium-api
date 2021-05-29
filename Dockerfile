@@ -4,4 +4,5 @@ RUN mkdir /palladium-api
 WORKDIR /palladium-api
 ADD . /palladium-api
 RUN gem update bundler
+RUN bundle config set --local with 'server'
 RUN bundle install
