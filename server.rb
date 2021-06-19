@@ -557,9 +557,7 @@ class Api < Sinatra::Base
     if scopes.include?(scope) && User[email: username].exists? && user_token
       result = nil
       begin
-        time_start = Time.now
         result = yield req, username
-        logger.debug("Executing time [#{scope}]") { Time.now - time_start }
       rescue StandardError => e
         logger.error("Error") do
           "#{e.message}\n#{e.backtrace.join("\n")}"
