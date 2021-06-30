@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/flaminestone/palladium.git
-  revision: 07c8220eef5746d843c2768ecf5b6ca72462296e
+  revision: aad308c914eaf39669a96319d2a521d6a2fdbd30
   specs:
     palladium (1.0.0)
 
