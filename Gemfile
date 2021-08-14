@@ -11,3 +11,7 @@ gem 'sinatra' # main web framework
 gem 'sinatra-cross_origin'
 
 gem 'faker'
+
+
+gem 'ruby-debug-ide'
+gem 'debase'
