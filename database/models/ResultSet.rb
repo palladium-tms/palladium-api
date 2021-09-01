@@ -45,7 +45,7 @@ class ResultSet < Sequel::Model
       [*name].map do |current_name|
         new_result_set = ResultSet.find_or_new(current_name, objects[:run].id)
         if new_result_set.valid?
-          new_result_set.save
+          new_result_set.save_changes
           if objects[:plan]
             objects[:plan].add_result_set(new_result_set)
           else

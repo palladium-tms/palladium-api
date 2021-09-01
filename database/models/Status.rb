@@ -23,7 +23,7 @@ class Status < Sequel::Model
     params[:color] = data['color'] unless data['color'].nil?
     status = new(params)
     if status.valid?
-      status.save
+      status.save_changes
     else
       { status_errors: status.errors.full_messages }
     end

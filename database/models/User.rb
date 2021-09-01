@@ -30,7 +30,7 @@ class User < Sequel::Model
     else
       @user.password = data['password']
       @user.password.salt
-      @user.save if @user.valid?
+      @user.save_changes if @user.valid?
       @user.user_setting = UserSetting.create
       @user
     end

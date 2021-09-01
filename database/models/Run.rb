@@ -49,7 +49,7 @@ class Run < Sequel::Model
       run_name = get_run_name(data)
       run = Run.find_or_new(run_name, objects[:plan].id)
       if run.valid?
-        run.save
+        run.save_changes
         suite = suite_detected(objects[:plan], run)
         objects[:plan].add_run(run)
         { run: run, suite: suite }.merge(objects)

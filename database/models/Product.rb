@@ -41,7 +41,7 @@ class Product < Sequel::Model
   def self.create_new(data)
     product = Product.find_or_new(data)
     if product.valid?
-      product.save
+      product.save_changes
       { product: product }
     else
       { product_errors: product.errors.full_messages }

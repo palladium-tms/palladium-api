@@ -113,17 +113,6 @@ Sequel/ColumnDefault:
     - 'database/migrate/004_create_case_suite_delete.rb'
     - 'database/migrate/006_create_plan_creation_type.rb'
 
-# Offense count: 6
-# Cop supports --auto-correct.
-Sequel/SaveChanges:
-  Exclude:
-    - 'database/models/Plan.rb'
-    - 'database/models/Product.rb'
-    - 'database/models/ResultSet.rb'
-    - 'database/models/Run.rb'
-    - 'database/models/Status.rb'
-    - 'database/models/User.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: AllowOnConstant.

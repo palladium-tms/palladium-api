@@ -77,7 +77,7 @@ class Plan < Sequel::Model
 
       new_plan = Plan.new(name: data['plan_data']['name'], api_created: api_created)
       if new_plan.valid?
-        new_plan.save
+        new_plan.save_changes
         product_resp[:product].add_plan(new_plan)
         if new_plan.suites.empty? && api_created
           associate_for_plan(new_plan, product_resp[:product])
