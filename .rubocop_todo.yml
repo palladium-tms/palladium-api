@@ -11,13 +11,6 @@ Lint/BinaryOperatorWithIdenticalOperands:
   Exclude:
     - 'spec/lib/models/AbstractProductPack.rb'
 
-# Offense count: 2
-# Configuration parameters: AllowComments.
-Lint/EmptyClass:
-  Exclude:
-    - 'spec/lib/Abstractions.rb'
-    - 'spec/tests/test_management.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Lint/ParenthesesAsGroupedExpression:

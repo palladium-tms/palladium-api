@@ -18,5 +18,3 @@ require_relative 'models/AbstractSuite'
 require_relative 'models/AbstractSuitePack'
 require_relative 'models/AbstractToken'
 require_relative 'models/AbstractTokenPack'
-class Abstractions
-end
