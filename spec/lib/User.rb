@@ -43,7 +43,7 @@ class User
 
   def login
     puts "Login from #{@email} #{@password}"
-    response = @http.post_request('/public/login', 'user_data': { 'email': @email, 'password': @password })
+    response = @http.post_request('/public/login', user_data: { email: @email, password: @password })
     @token = JSON.parse(response.body)['token']
     @http = Http.new(token: @token)
     response

@@ -20,10 +20,10 @@ class AbstractProduct
 
   def default_data
     {
-      'id': 0,
-      'name': rand_product_name,
-      'created_at': '0',
-      'updated_at': '0'
+      id: 0,
+      name: rand_product_name,
+      created_at: '0',
+      updated_at: '0'
     }
   end
 

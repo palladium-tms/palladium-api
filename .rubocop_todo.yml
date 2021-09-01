@@ -16,16 +16,6 @@ Lint/ShadowingOuterLocalVariable:
   Exclude:
     - 'database/models/ResultSet.rb'
 
-# Offense count: 19
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: strict, consistent
-Lint/SymbolConversion:
-  Exclude:
-    - 'spec/lib/User.rb'
-    - 'spec/lib/helpers/string_helper.rb'
-    - 'spec/lib/models/AbstractProduct.rb'
-
 # Offense count: 9
 # Configuration parameters: AllowKeywordBlockArguments.
 Lint/UnderscorePrefixedVariableName:
