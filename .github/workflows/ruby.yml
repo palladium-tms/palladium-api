@@ -23,6 +23,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+    - name: Check markdown files using `markdownlint`
+      run: |
+        npm install -g markdownlint-cli
+        markdownlint *.md
     - name: Set up Ruby
     # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
     # change this to (see https://github.com/ruby/setup-ruby#versioning):
