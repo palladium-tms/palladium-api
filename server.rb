@@ -403,7 +403,7 @@ class Api < Sinatra::Base
   post '/cases' do
     process_request request, 'cases' do |_req, _username|
       cases, suite = Case.get_cases(params['case_data'])
-      { cases: cases.map(&:values) , suite: suite.values}.to_json
+      { cases: cases.map(&:values), suite: suite.values}.to_json
     end
   end
 
