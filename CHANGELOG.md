@@ -8,6 +8,7 @@
 * Actualize rubocop configs and add it's extensions
 * Add `rubocop` check to CI
 * Add `markdownlint` check in CI
+* Add `.bundle` folder to `gitignore`
 
 ### Changed
 
