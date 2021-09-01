@@ -11,11 +11,6 @@ Lint/BinaryOperatorWithIdenticalOperands:
   Exclude:
     - 'spec/lib/models/AbstractProductPack.rb'
 
-# Offense count: 2
-Lint/ShadowingOuterLocalVariable:
-  Exclude:
-    - 'database/models/ResultSet.rb'
-
 # Offense count: 9
 # Configuration parameters: AllowKeywordBlockArguments.
 Lint/UnderscorePrefixedVariableName:

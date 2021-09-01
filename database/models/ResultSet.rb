@@ -42,8 +42,8 @@ class ResultSet < Sequel::Model
       name = get_result_set_name(data)
       errors_stack = []
       objects[:result_sets] = []
-      [*name].map do |name|
-        new_result_set = ResultSet.find_or_new(name, objects[:run].id)
+      [*name].map do |current_name|
+        new_result_set = ResultSet.find_or_new(current_name, objects[:run].id)
         if new_result_set.valid?
           new_result_set.save
           if objects[:plan]
@@ -70,8 +70,8 @@ class ResultSet < Sequel::Model
   end
 
   def self.case_detected(result_set_name, run)
-    suite = Suite.find_or_create(product_id: Plan[id: run.plan_id].product_id, name: run.name) do |suite|
-      suite.name = run.name
+    suite = Suite.find_or_create(product_id: Plan[id: run.plan_id].product_id, name: run.name) do |current_suite|
+      current_suite.name = run.name
     end
     current_case = suite.cases_dataset[name: result_set_name]
     if current_case.nil?
