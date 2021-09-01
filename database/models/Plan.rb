@@ -182,12 +182,12 @@ class Plan < Sequel::Model
 
   def self.runs_filling(runs, suites)
     runs.each do |run|
-      if run.result_sets.count != suites[run.name].cases.count
-        (suites[run.name].cases.map(&:name) - run.result_sets.map(&:name)).each do |result_set_name|
-          new_result_set = ResultSet.find_or_new(result_set_name, run.id)
-          run.plan.add_result_set(new_result_set)
-          run.add_result_set(new_result_set)
-        end
+      next unless run.result_sets.count != suites[run.name].cases.count
+
+      (suites[run.name].cases.map(&:name) - run.result_sets.map(&:name)).each do |result_set_name|
+        new_result_set = ResultSet.find_or_new(result_set_name, run.id)
+        run.plan.add_result_set(new_result_set)
+        run.add_result_set(new_result_set)
       end
     end
   end
