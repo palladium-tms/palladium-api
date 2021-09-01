@@ -9,9 +9,12 @@ describe 'Product Smoke' do
 
   describe 'Create new product' do
     it 'check creating new product with correct user_data and correct product_data' do
+      products_before_create = @user.get_all_products
       product = @user.create_new_product
       expect(product.product_errors).to be_nil
       expect(product.id).not_to be_nil
+      products_after_create = @user.get_all_products
+      expect(products_before_create.diff(products_after_create)).to eq([product.id])
     end
 
     it 'check creating new product with correct user_data and exists correct product_data' do
