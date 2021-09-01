@@ -1,6 +1,6 @@
 require_relative '../../tests/test_management'
 describe 'Cases Smoke' do
-  before :each do
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
   end
@@ -32,7 +32,7 @@ describe 'Cases Smoke' do
   end
 
   describe 'Case edit by case id' do
-    before :each do
+    before do
       @params = { plan_name: rand_plan_name,
                   run_name: rand_run_name,
                   product_name: rand_product_name,
@@ -92,7 +92,7 @@ describe 'Cases Smoke' do
   end
 
   describe 'Delete case' do
-    before :each do
+    before do
       @params = { product_name: rand_product_name,
                   plan_name: rand_plan_name,
                   run_name: rand_run_name,

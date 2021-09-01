@@ -96,13 +96,6 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Max: 19
 
-# Offense count: 31
-# Cop supports --auto-correct.
-# Configuration parameters: .
-# SupportedStyles: implicit, each, example
-RSpec/HookArgument:
-  EnforcedStyle: each
-
 # Offense count: 610
 # Configuration parameters: AssignmentOnly.
 RSpec/InstanceVariable:

@@ -2,7 +2,7 @@ require 'time'
 require 'securerandom'
 require_relative '../test_management'
 describe 'Auth Smoke' do
-  before :each do
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
   end

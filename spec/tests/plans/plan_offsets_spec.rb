@@ -5,7 +5,7 @@ describe 'Plan Smoke' do
     @user.login
   end
 
-  before :each do
+  before do
     @product = @user.create_new_product
     10.times { @user.create_new_plan(product_name: @product.name) }
   end

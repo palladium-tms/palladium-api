@@ -1,6 +1,6 @@
 require_relative '../../tests/test_management'
 describe 'Result Set Validations' do
-  before :each do
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
     @params = { plan_name: rand_plan_name,

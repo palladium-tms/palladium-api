@@ -1,12 +1,12 @@
 require_relative '../../tests/test_management'
 describe 'Result Set Smoke' do
-  before :each do
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
   end
 
   describe 'Create new result_sets' do
-    before :each do
+    before do
       @params = { plan_name: rand_plan_name, product_name: rand_product_name, run_name: rand_run_name, name: rand_run_name }
     end
 
@@ -51,7 +51,7 @@ describe 'Result Set Smoke' do
   end
 
   describe 'Show result_set' do
-    before :each do
+    before do
       @result_set = @user.create_new_result_set(plan_name: rand_plan_name, product_name: rand_product_name, run_name: rand_run_name, name: rand_run_name)
     end
 

@@ -11,7 +11,7 @@ describe 'Users Smoke' do
   end
 
   describe 'User Settings' do
-    before :each do
+    before do
       @user = AccountFunctions.create_and_parse
       @user.login
     end

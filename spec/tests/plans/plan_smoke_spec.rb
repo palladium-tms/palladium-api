@@ -5,7 +5,7 @@ describe 'Plan Smoke' do
     @user.login
   end
 
-  before :each do
+  before do
     @product = @user.create_new_product
   end
 
@@ -42,7 +42,7 @@ describe 'Plan Smoke' do
   end
 
   describe 'Show plans' do
-    before :each do
+    before do
       @plan = @user.create_new_plan(product_name: @product.name)
     end
 
@@ -70,7 +70,7 @@ describe 'Plan Smoke' do
   end
 
   describe 'Delete Plan' do
-    before :each do
+    before do
       @plan = @user.create_new_plan(product_name: @product.name)
     end
 
@@ -94,7 +94,7 @@ describe 'Plan Smoke' do
   end
 
   describe 'Edit Plan' do
-    before :each do
+    before do
       @plan = @user.create_new_plan(product_name: @product.name)
     end
 

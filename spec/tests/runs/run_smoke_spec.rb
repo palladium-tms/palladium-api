@@ -47,7 +47,7 @@ describe 'Run Smoke' do
   end
 
   describe 'Show runs' do
-    before :each do
+    before do
       @product = @user.create_new_product
       @plan = @user.create_new_plan(product_id: @product.id)
       @run = @user.create_new_run(plan_id: @plan.id)
@@ -66,7 +66,7 @@ describe 'Run Smoke' do
   end
 
   describe 'Delete Run' do
-    before :each do
+    before do
       @product = @user.create_new_product
       @plan = @user.create_new_plan(product_id: @product.id)
       @run = @user.create_new_run(plan_id: @plan.id)

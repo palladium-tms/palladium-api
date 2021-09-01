@@ -6,7 +6,7 @@ describe 'Result Smoke' do
   end
 
   describe 'Create new result' do
-    before :each do
+    before do
       @params = { plan_name: rand_plan_name,
                   product_name: rand_product_name,
                   run_name: rand_run_name,
@@ -145,7 +145,7 @@ describe 'Result Smoke' do
   end
 
   describe 'Get results' do
-    before :each do
+    before do
       @params = { plan_name: rand_plan_name,
                   product_name: rand_product_name,
                   run_name: rand_run_name,
@@ -182,7 +182,7 @@ describe 'Result Smoke' do
   end
 
   describe 'New result custom parameters' do
-    before :each do
+    before do
       @params = { plan_name: rand_plan_name,
                   product_name: rand_product_name,
                   run_name: rand_run_name,

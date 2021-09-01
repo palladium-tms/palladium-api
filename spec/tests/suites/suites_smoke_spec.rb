@@ -1,6 +1,6 @@
 require_relative '../../tests/test_management'
 describe 'Suites Smoke' do
-  before :each do
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
     @params = { plan_name: rand_plan_name, product_name: rand_product_name,

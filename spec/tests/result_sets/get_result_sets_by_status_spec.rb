@@ -1,6 +1,6 @@
 require_relative '../../tests/test_management'
 describe 'Get result sets by status' do
-  before :each do
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
     @params = { plan_name: rand_plan_name,
@@ -39,7 +39,7 @@ describe 'Get result sets by status' do
   end
 
   describe 'Incorrect data' do
-    before :each do
+    before do
       @user.token = @user.create_new_api_token.token
     end
 
