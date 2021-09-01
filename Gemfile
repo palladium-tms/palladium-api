@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'bcrypt'
 gem 'jwt'
-gem 'palladium', git: 'https://github.com/flaminestone/palladium.git'
+gem 'palladium'
 gem 'pg'
 gem 'puma' # web server
 gem 'rspec'

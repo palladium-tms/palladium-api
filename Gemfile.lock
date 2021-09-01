@@ -1,14 +1,11 @@
-GIT
-  remote: https://github.com/flaminestone/palladium.git
-  revision: 07c8220eef5746d843c2768ecf5b6ca72462296e
-  specs:
-    palladium (1.0.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
     bcrypt (3.1.16)
     concurrent-ruby (1.1.8)
+    debase (0.2.4.1)
+      debase-ruby_core_source (>= 0.10.2)
+    debase-ruby_core_source (0.10.12)
     diff-lcs (1.4.4)
     faker (2.18.0)
       i18n (>= 1.6, < 2)
@@ -18,12 +15,14 @@ GEM
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.5.7)
+    palladium (1.0.0)
     pg (1.2.3)
     puma (5.4.0)
       nio4r (~> 2.0)
     rack (2.2.3)
     rack-protection (2.1.0)
       rack
+    rake (13.0.6)
     rspec (3.10.0)
       rspec-core (~> 3.10.0)
       rspec-expectations (~> 3.10.0)
@@ -37,6 +36,8 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
     rspec-support (3.10.2)
+    ruby-debug-ide (0.7.2)
+      rake (>= 0.8.1)
     ruby2_keywords (0.0.4)
     sequel (5.47.0)
     sinatra (2.1.0)
@@ -52,15 +53,17 @@ PLATFORMS
 
 DEPENDENCIES
   bcrypt
+  debase
   faker
   jwt
-  palladium!
+  palladium
   pg
   puma
   rspec
+  ruby-debug-ide
   sequel
   sinatra
   sinatra-cross_origin
 
 BUNDLED WITH
-   2.2.11
+   2.2.26
