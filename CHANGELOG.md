@@ -18,6 +18,7 @@
 * Fix different typos in all parts of project
 * Cleanup `Dockerfile`
 * Correct logging to `STDOUT` for Docker usage
+* Cleanup unused constants in `static_data.rb`
 
 ## 0.6.0
 
