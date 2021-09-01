@@ -46,7 +46,6 @@ class Case < Sequel::Model
       ResultSet.where(name: this_case.name, run_id: run_ids).each do |current_result_set|
         current_result_set.update(name: case_data['name'])
       end
-      this_case.update(name: case_data['name'])
     else
       result_set = ResultSet[case_data['result_set_id']]
       product = result_set.run.plan.product
@@ -57,8 +56,8 @@ class Case < Sequel::Model
       ResultSet.where(name: result_set.name, run_id: run_ids).each do |current_result_set|
         current_result_set.update(name: case_data['name'])
       end
-      this_case.update(name: case_data['name'])
     end
+    this_case.update(name: case_data['name'])
   end
 
   # return result_sets for all plans

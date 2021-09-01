@@ -8,7 +8,6 @@ class AbstractResultSet
   def initialize(data)
     @response = data
     if data.instance_of?(Hash)
-      parsed_result_set = data['result_sets'].first
     else
       data = JSON.parse(data.body)
       if data['result_sets'].nil?
@@ -16,8 +15,8 @@ class AbstractResultSet
         @errors = data['result_sets_errors'] if data['result_sets_errors']
         return
       end
-      parsed_result_set = data['result_sets'].first
     end
+    parsed_result_set = data['result_sets'].first
     @id = parsed_result_set['id']
     @name = parsed_result_set['name']
     @run_id = parsed_result_set['run_id']
