@@ -4,7 +4,7 @@ class AbstractSuite
   attr_accessor :id, :name, :product_id, :created_at, :updated_at, :is_archived, :is_null, :case_errors, :product
 
   def initialize(data)
-    if data.class == Hash
+    if data.instance_of?(Hash)
       parsed_one_case = data['suite']
     else
       parsed_data = JSON.parse(data.body)

@@ -7,7 +7,7 @@ class AbstractPlan
 
   def initialize(data)
     @response = data
-    if data.class == Hash
+    if data.instance_of?(Hash)
       parsed_plan = data['plan']
       parsed_data = data
     else

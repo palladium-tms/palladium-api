@@ -5,7 +5,7 @@ class AbstractResultSet
 
   def initialize(data)
     @response = data
-    if data.class == Hash
+    if data.instance_of?(Hash)
       parsed_result_set = data['result_sets'].first
     else
       data = JSON.parse(data.body)

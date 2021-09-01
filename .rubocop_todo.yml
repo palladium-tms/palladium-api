@@ -120,20 +120,6 @@ Style/CaseEquality:
   Exclude:
     - 'spec/lib/models/AbstractProduct.rb'
 
-# Offense count: 7
-# Cop supports --auto-correct.
-# Configuration parameters: IgnoredMethods.
-# IgnoredMethods: ==, equal?, eql?
-Style/ClassEqualityComparison:
-  Exclude:
-    - 'spec/lib/models/AbstractCase.rb'
-    - 'spec/lib/models/AbstractPlan.rb'
-    - 'spec/lib/models/AbstractResult.rb'
-    - 'spec/lib/models/AbstractResultSet.rb'
-    - 'spec/lib/models/AbstractRun.rb'
-    - 'spec/lib/models/AbstractStatus.rb'
-    - 'spec/lib/models/AbstractSuite.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: Keywords, RequireColon.

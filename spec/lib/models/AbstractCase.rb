@@ -4,7 +4,7 @@ class AbstractCase
   attr_accessor :id, :name, :product_id, :created_at, :updated_at, :is_archived, :is_null, :case_errors, :product, :response
 
   def initialize(data)
-    if data.class == Hash
+    if data.instance_of?(Hash)
       parsed_one_case = data['case'].first
       parsed_data = data
     else

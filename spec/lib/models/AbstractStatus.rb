@@ -6,7 +6,7 @@ class AbstractStatus
   def initialize(data)
     @response = data
     @errors = []
-    if data.class == Hash
+    if data.instance_of?(Hash)
       parsed_status = data['status']
     else
       data = JSON.parse(data.body)
