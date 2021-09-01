@@ -91,16 +91,16 @@ class Run < Sequel::Model
       Product[id: plan.product_id].add_suite(suite)
       plan.add_suite(suite)
     elsif !plan.suites.map(&:id).include?(suite.id)
-           plan.add_suite(suite)
-           suite.cases.each do |current_case|
-             plan.add_case(current_case)
-           end
+      plan.add_suite(suite)
+      suite.cases.each do |current_case|
+        plan.add_case(current_case)
+      end
     end
     suite
   end
 
   def self.delete(run)
-     ResultSet.where(id: run.result_sets.map(&:id)).destroy
+    ResultSet.where(id: run.result_sets.map(&:id)).destroy
   end
 
   # def self.edit(data)
