@@ -54,6 +54,7 @@ describe 'Result Set Smoke' do
     before :each do
       @result_set = @user.create_new_result_set(plan_name: rand_plan_name, product_name: rand_product_name, run_name: rand_run_name, name: rand_run_name)
     end
+
     it 'get result_sets by run_id' do
       result_set_pack = @user.get_result_sets(id: @result_set.run.id)
       expect(result_set_pack.result_sets.first.like_a?(@result_set)).to be_truthy

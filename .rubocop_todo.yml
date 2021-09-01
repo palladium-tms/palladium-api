@@ -91,14 +91,6 @@ RSpec/BeforeAfterAll:
 RSpec/DescribeClass:
   Enabled: false
 
-# Offense count: 5
-# Cop supports --auto-correct.
-RSpec/EmptyLineAfterHook:
-  Exclude:
-    - 'spec/tests/cases/cases_smoke_spec.rb'
-    - 'spec/tests/history/history_smoke_spec.rb'
-    - 'spec/tests/result_sets/result_set_smoke_spec.rb'
-
 # Offense count: 76
 # Configuration parameters: CountAsOne.
 RSpec/ExampleLength:

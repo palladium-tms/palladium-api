@@ -5,6 +5,7 @@ describe 'History Smoke' do
     @user.login
   end
   # Fixme: add more checks for history
+
   describe 'Get history from case id' do
     before :each do
       @params = { product_name: rand_product_name,
@@ -14,6 +15,7 @@ describe 'History Smoke' do
                   message: rand_message,
                   status: 'Passed' }
     end
+
     it '1. Check creating new result with all other elements' do
       3.times do
         @first_result ||= @user.create_new_result(@params)
@@ -56,6 +58,7 @@ describe 'History Smoke' do
                   message: rand_message,
                   status: 'Passed' }
     end
+
     it '1. Check creating new result with all other elements' do
       3.times do
         @first_result ||= @user.create_new_result(@params)

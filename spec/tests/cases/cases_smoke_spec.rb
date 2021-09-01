@@ -38,6 +38,7 @@ describe 'Cases Smoke' do
                   product_name: rand_product_name,
                   name: rand_result_set_name }
     end
+
     it 'Change case name' do
       result_set = @user.create_new_result_set(plan_name: rand_plan_name,
                                                run_name: rand_run_name,
