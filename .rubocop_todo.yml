@@ -11,13 +11,6 @@ Lint/BinaryOperatorWithIdenticalOperands:
   Exclude:
     - 'spec/lib/models/AbstractProductPack.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: AllowComments.
-Lint/UselessMethodDefinition:
-  Exclude:
-    - 'server.rb'
-
 # Offense count: 27
 # Configuration parameters: IgnoredMethods, CountRepeatedAttributes.
 Metrics/AbcSize:

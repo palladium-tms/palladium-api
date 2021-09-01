@@ -4,10 +4,6 @@ class Api < Sinatra::Base
   use JwtAuth
   attr_accessor :params
 
-  def initialize
-    super
-  end
-
   before do
     cross_origin
     body = request.body.read
@@ -553,10 +549,6 @@ end
 
 class Public < Sinatra::Base
   register Sinatra::CrossOrigin
-
-  def initialize
-    super
-  end
 
   before do
     if env['REQUEST_METHOD'] == 'OPTIONS'
