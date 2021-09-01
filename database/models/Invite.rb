@@ -23,7 +23,7 @@ class Invite < Sequel::Model
   def self.check_link_validation(link)
     if link.nil? || Invite[token: link].nil?
       [false, ['token_not_found']]
-    elsif Invite[token: link].expiration_data - Time.now < 0
+    elsif (Invite[token: link].expiration_data - Time.now).negative?
       [false, ['token is expired']]
     else
       [true, []]
