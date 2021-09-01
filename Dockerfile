@@ -1,7 +1,12 @@
 FROM ruby:2.6.3
+
 ENV RACK_ENV=production
-RUN mkdir /palladium-api
-WORKDIR /palladium-api
+
 ADD . /palladium-api
+WORKDIR /palladium-api
+
 RUN gem update bundler
-RUN bundle install
+RUN bundle config set without 'development' && \
+    bundle install
+
+CMD ["bundle", "exec", "puma"]
