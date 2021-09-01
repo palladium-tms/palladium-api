@@ -4,7 +4,7 @@ describe 'History Smoke' do
     @user = AccountFunctions.create_and_parse
     @user.login
   end
-  # Fixme: add more checks for history
+  # FIXME: add more checks for history
 
   describe 'Get history from case id' do
     before do

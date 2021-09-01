@@ -122,14 +122,6 @@ Style/CaseEquality:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-# Configuration parameters: Keywords, RequireColon.
-# Keywords: TODO, FIXME, OPTIMIZE, HACK, REVIEW, NOTE
-Style/CommentAnnotation:
-  Exclude:
-    - 'spec/tests/history/history_smoke_spec.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
 Style/CommentedKeyword:
   Exclude:
     - 'database/models/Run.rb'
