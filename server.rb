@@ -612,8 +612,8 @@ class Public < Sinatra::Base
 
   def user_data
     params['user_data']
-  rescue StandardError => error
-    error
+  rescue StandardError => e
+    e
   end
 
   def token(email)
