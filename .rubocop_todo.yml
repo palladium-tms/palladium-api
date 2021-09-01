@@ -11,12 +11,6 @@ Lint/BinaryOperatorWithIdenticalOperands:
   Exclude:
     - 'spec/lib/models/AbstractProductPack.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Lint/ParenthesesAsGroupedExpression:
-  Exclude:
-    - 'spec/tests/api_token/token_smoke_spec.rb'
-
 # Offense count: 2
 Lint/ShadowingOuterLocalVariable:
   Exclude:
