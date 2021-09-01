@@ -9,7 +9,7 @@ services:
     volumes:
       - .:/palladium
     ports:
-      - "80:80"
+      - "9292:80"
     tty: true
     environment:
       - JWT_SECRET=abc
