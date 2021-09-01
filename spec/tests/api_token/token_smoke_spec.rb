@@ -26,6 +26,7 @@ describe 'Auth Smoke' do
 
   describe 'use api token' do
     let(:rand_word) { Faker::TvShows::Buffy.celebrity }
+
     it 'Use api token for result_new method' do
       token = @user.create_new_api_token
       @user_2 = AccountFunctions.create_and_parse

@@ -91,12 +91,6 @@ RSpec/BeforeAfterAll:
 RSpec/DescribeClass:
   Enabled: false
 
-# Offense count: 1
-# Cop supports --auto-correct.
-RSpec/EmptyLineAfterFinalLet:
-  Exclude:
-    - 'spec/tests/api_token/token_smoke_spec.rb'
-
 # Offense count: 5
 # Cop supports --auto-correct.
 RSpec/EmptyLineAfterHook:
