@@ -70,9 +70,9 @@ class Product < Sequel::Model
       all_plans = Plan.where(product_id: product.id).order(Sequel.desc(:id))
       plans = if option['after_plan_id'] && option['after_plan_id'].is_a?(Numeric)
         all_plans.where(Sequel.lit('id < ?', option['after_plan_id'].to_i)).limit(limit).all
-      elsif option['plan_id'] && option['plan_id'].is_a?(Numeric)
+              elsif option['plan_id'] && option['plan_id'].is_a?(Numeric)
         all_plans.where(Sequel.lit('id >= ?', option['plan_id'])).all
-      else
+              else
         all_plans.limit(limit).all
               end
       if plans.size < limit || Plan.count < limit
