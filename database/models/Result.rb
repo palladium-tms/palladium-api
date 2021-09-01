@@ -20,7 +20,8 @@ class Result < Sequel::Model
       end
       objects[:result_sets].first.run.plan.update(updated_at: Time.now)
       product_id = objects[:result_sets].first.run.plan.product.id
-      objects.merge!(result: result, status: status)
+      objects[:result] = result
+      objects[:status] = status
       objects.merge(product_id: product_id)
     else
       objects.merge(result_error: 'result_data not found')

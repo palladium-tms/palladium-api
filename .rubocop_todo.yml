@@ -69,13 +69,6 @@ Naming/VariableNumber:
     - 'spec/tests/cases/cases_smoke_spec.rb'
     - 'spec/tests/products/product_smoke_spec.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: MaxKeyValuePairs.
-Performance/RedundantMerge:
-  Exclude:
-    - 'database/models/Result.rb'
-
 # Offense count: 10
 RSpec/BeforeAfterAll:
   Exclude:
