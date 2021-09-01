@@ -47,7 +47,6 @@ describe 'Run Smoke' do
   end
 
   describe 'Show runs' do
-
     before :each do
       @product = @user.create_new_product
       @plan = @user.create_new_plan(product_id: @product.id)

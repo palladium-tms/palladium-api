@@ -9,5 +9,4 @@ describe 'Plan Smoke' do
       expect(JSON.parse(response.body)['version'].empty?).to be_falsey
     end
   end
-
 end

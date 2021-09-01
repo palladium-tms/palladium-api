@@ -6,19 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 6
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: empty_lines, no_empty_lines
-Layout/EmptyLinesAroundBlockBody:
-  Exclude:
-    - 'spec/tests/cases/cases_smoke_spec.rb'
-    - 'spec/tests/other_methods/version_smoke_spec.rb'
-    - 'spec/tests/plans/plan_statistic_spec.rb'
-    - 'spec/tests/product_position/product_position_smoke_spec.rb'
-    - 'spec/tests/runs/run_smoke_spec.rb'
-    - 'spec/tests/user/users_smoke_spec.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Layout/EmptyLinesAroundMethodBody:

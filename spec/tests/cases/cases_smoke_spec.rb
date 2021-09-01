@@ -32,7 +32,6 @@ describe 'Cases Smoke' do
   end
 
   describe 'Case edit by case id' do
-
     before :each do
       @params = {plan_name: rand_plan_name,
                   run_name: rand_run_name,

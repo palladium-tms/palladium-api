@@ -7,7 +7,6 @@ describe 'Plan Smoke' do
   end
 
   describe 'Get plan statistic' do
-
     before :each do
       status_name = rand_status_name
       result = @user.create_new_result(plan_name: rand_plan_name,
