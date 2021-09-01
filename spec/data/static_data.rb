@@ -1,4 +1,3 @@
-
 class StaticData
   ADDRESS = '0.0.0.0'.freeze
   PORT = 80
