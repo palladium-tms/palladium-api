@@ -28,7 +28,7 @@ describe 'Run Smoke' do
     it 'check creating new run by plan_id and run_name' do
       @product = @user.create_new_product
       @plan = @user.create_new_plan(product_id: @product.id)
-      params = {plan_id:  @plan.id, name: rand_run_name}
+      params = {plan_id: @plan.id, name: rand_run_name}
       run = @user.create_new_run(params)
       expect(run.response.code).to eq('200')
       expect(run.plan.name).to eq(@plan.name)
@@ -38,7 +38,7 @@ describe 'Run Smoke' do
     it 'check creating new run by plan_name and run_name' do
       @product = @user.create_new_product
       @plan = @user.create_new_plan(product_id: @product.id)
-      params = {product_name: @product, plan_name:  @plan.name, name: rand_run_name}
+      params = {product_name: @product, plan_name: @plan.name, name: rand_run_name}
       run = @user.create_new_run(params)
       expect(run.response.code).to eq('200')
       expect(run.plan.name).to eq(@plan.name)

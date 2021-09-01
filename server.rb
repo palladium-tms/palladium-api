@@ -560,7 +560,7 @@ class Public < Sinatra::Base
 
   before do
     if env['REQUEST_METHOD'] == 'OPTIONS'
-      halt  200, { 'Access-Control-Allow-Origin' => '*', 'Access-Control-Allow-Headers' => 'Authorization, Content-Type' }, []
+      halt 200, { 'Access-Control-Allow-Origin' => '*', 'Access-Control-Allow-Headers' => 'Authorization, Content-Type' }, []
     end
     cross_origin
     body = request.body.read
