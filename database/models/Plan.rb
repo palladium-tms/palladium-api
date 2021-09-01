@@ -62,7 +62,6 @@ class Plan < Sequel::Model
   # example: data = {'plan_data': {'product_id': id, 'name': name}} or {'plan_data': {'product_name': name, 'name': name}}
   # return responce = {product: {product_data}, plan: {plan_data}, errors:: {product_errors: {}, plan_errors: {}}}
   def self.create_new(data)
-
     return { plan: Plan[id: data['run_data']['plan_id']] } if plan_id_exist?(data)
 
     product_resp = create_product(data)
