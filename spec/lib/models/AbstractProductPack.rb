@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 class AbstractProductPack
   attr_accessor :products

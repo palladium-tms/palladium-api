@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 class AbstractStatusPack
   attr_accessor :statuses, :parsed_body

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module StringHelper
   def rand_product_name
     "Product_#{Time.now.nsec}"

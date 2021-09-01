@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'management'
 class Api < Sinatra::Base
   register Sinatra::CrossOrigin

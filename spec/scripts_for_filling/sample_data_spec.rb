@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'palladium'
 token = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjI1MjQ1OTcyMDAsImlhdCI6MTU5NTgwNjc4OSwiaXNzIjoiQVBJIiwic2NvcGVzIjpbInJlc3VsdF9uZXciLCJyZXN1bHRfc2V0c19ieV9zdGF0dXMiXSwidXNlciI6eyJlbWFpbCI6IjFAZy5jb20ifX0.WWnih7_OHUyIWzDb8V-8pBiTFQw1YTvBSvQvRaVUbHk
 "

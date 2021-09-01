@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'palladium'
 require_relative '../tests/test_management'
 @user = AccountFunctions.create_and_parse

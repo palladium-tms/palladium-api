@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../test_management'
 describe 'Auth Smoke' do
   describe 'registration' do

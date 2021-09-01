@@ -125,13 +125,6 @@ Style/CaseEquality:
 Style/Documentation:
   Enabled: false
 
-# Offense count: 82
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: always, always_true, never
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
 # Offense count: 5
 # Configuration parameters: MinBodyLength.
 Style/GuardClause:

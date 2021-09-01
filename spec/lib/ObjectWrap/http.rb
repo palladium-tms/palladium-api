@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../../spec/data/static_data'
 require 'net/http'
 require_relative '../../tests/test_management'

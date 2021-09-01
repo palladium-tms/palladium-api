@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 class AbstractProduct
   attr_accessor :id, :name, :created_at, :updated_at, :is_archived, :product_errors, :suite, :response

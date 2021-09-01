@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 class AbstractResultSetPack
   attr_accessor :result_sets, :parsed_body

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'net/http'
 require 'json'
 require_relative '../../../spec/lib/ObjectWrap/http'

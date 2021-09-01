@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'models/AbstractCase'
 require_relative 'models/AbstractCasePack'
 require_relative 'models/AbstractHistory'
