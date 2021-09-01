@@ -19,7 +19,7 @@ token = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjI1MjQ1OTcyMDAsImlhdCI6MTU5NTgwNjc4OSwiaX
       end
     end
     after do |example|
-      @palladium.set_result(status: ['Passed', 'Failed'].sample(1)[0], description: 'Ok', name: example.metadata[:description_args][0])
+      @palladium.set_result(status: %w[Passed Failed].sample(1)[0], description: 'Ok', name: example.metadata[:description_args][0])
     end
   end
 end
