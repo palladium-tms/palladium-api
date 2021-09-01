@@ -11,9 +11,7 @@ end
 
 raise 'JWT keys not found' if ENV['JWT_SECRET'].nil? || ENV['JWT_ISSUER'].nil?
 
-if Sinatra::Application.environment == :production
-  raise 'JWT is to short' if ENV['JWT_SECRET'].size < 4 || ENV['JWT_ISSUER'].size < 4
-end
+raise 'JWT is to short' if Sinatra::Application.environment == :production && (ENV['JWT_SECRET'].size < 4 || ENV['JWT_ISSUER'].size < 4)
 
 configure do
   set :server, :puma

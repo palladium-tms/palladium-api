@@ -44,9 +44,8 @@ class Status < Sequel::Model
   end
 
   def self.status_exist?(data)
-    if data['result_data']
-      return !Status.find(name: data['result_data']['status']).nil? unless data['result_data']['status'].nil?
-    end
+    return !Status.find(name: data['result_data']['status']).nil? if data['result_data'] && !data['result_data']['status'].nil?
+
     false
   end
 

@@ -97,9 +97,8 @@ class Plan < Sequel::Model
   end
 
   def self.create_product(data)
-    unless data['plan_data'].nil?
-      return Product.create_new(data['plan_data']['product_id'] || data['plan_data']['product_name']) unless data['plan_data']['product_id'].nil? && data['plan_data']['product_name'].nil?
-    end
+    return Product.create_new(data['plan_data']['product_id'] || data['plan_data']['product_name']) if !data['plan_data'].nil? && !(data['plan_data']['product_id'].nil? && data['plan_data']['product_name'].nil?)
+
     { product_errors: 'product id of name not found' }
   end
 
