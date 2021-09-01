@@ -124,7 +124,6 @@ describe 'Cases Smoke' do
       expect(case_pack.cases.size).to eq(3)
     end
 
-
     it 'Delete case and check not existing in new plan' do
       @params[:name] = "First_#{@params[:name]}"
       first_result_set = @user.create_new_result_set(@params)
@@ -142,9 +141,6 @@ describe 'Cases Smoke' do
       case_pack_2 = @user.get_cases_from_plan(plan_id: result_set.run.plan.id, suite_id: result_set.run.plan.product.suite.id)
       expect(case_pack_2.cases.size).to eq(2)
     end
-
-
-
 
     # it 'result set will be delete if case delete' do
     #   result_set = @user.create_new_result_set(@params)

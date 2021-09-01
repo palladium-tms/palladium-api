@@ -12,7 +12,6 @@ gem 'sinatra-cross_origin'
 
 gem 'faker'
 
-
 gem 'debase'
 gem 'ruby-debug-ide'
 

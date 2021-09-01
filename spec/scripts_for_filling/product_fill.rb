@@ -3,7 +3,6 @@ require_relative '../tests/test_management'
 @user = AccountFunctions.create_and_parse
 @user.login
 
-
 20.times do |product_index|
   p "product_index: #{product_index}"
   product = @user.create_new_product("Product_#{product_index}")

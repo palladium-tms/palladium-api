@@ -116,5 +116,4 @@ DB.create_table? :plans_suites do
   foreign_key :suite_id, :suites
 end
 
-
 Sequel::Migrator.run(DB, 'database/migrate')
