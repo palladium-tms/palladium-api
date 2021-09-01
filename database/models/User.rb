@@ -25,7 +25,7 @@ class User < Sequel::Model
   def self.create_new(data)
     @user = User.new(email: data['email'])
     if /^[a-zA-Z0-9]{4,20}$/.match(data['password']).nil?
-      @user.errors.add(:password, 'password is uncorrent')
+      @user.errors.add(:password, 'password is incorrect')
     else
       @user.password = data['password']
       @user.password.salt
