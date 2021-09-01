@@ -16,17 +16,17 @@ class Api < Sinatra::Base
   post '/products' do
     process_request request, 'products' do |_req, username|
       positions = User[email: username].product_position
-      defarr = []
+      diff_array = []
       products = Product.all.map(&:values)
       products.delete_if do |element|
         index = positions.index(element[:id])
         if index
-          defarr[index] = element
+          diff_array[index] = element
         else
           false
         end
       end
-      { products: (defarr + products).compact }.to_json
+      { products: (diff_array + products).compact }.to_json
     end
   end
 
@@ -144,7 +144,7 @@ class Api < Sinatra::Base
     process_request request, 'run_new' do |_req, _username|
       objects = Run.create_new(params)
       if objects[:product_errors].nil? && objects[:plan_errors].nil? && objects[:run_errors].nil?
-        run = Plan.add_statictic([*objects[:run]]).first
+        run = Plan.add_statistic([*objects[:run]]).first
         result = { run: run }
         result[:product] = objects[:product].values unless objects[:product].nil?
         result[:plan] = objects[:plan].values unless objects[:plan].nil?
@@ -163,7 +163,7 @@ class Api < Sinatra::Base
   post '/runs' do
     process_request request, 'runs' do |_req, _username|
       results, suites, errors = Plan.get_runs(params['run_data']['plan_id'])
-      runs = Plan.add_statictic(results[:runs])
+      runs = Plan.add_statistic(results[:runs])
       status 422 unless errors
       { runs: runs, errors: errors, suites: suites, plan: results[:plan] }.to_json
     end
@@ -173,7 +173,7 @@ class Api < Sinatra::Base
     process_request request, 'run' do |_req, _username|
       run = Run[id: params['run_data']['id']]
       if run
-        run = Plan.add_statictic([run]).first
+        run = Plan.add_statistic([run]).first
         { run: run }.to_json
       else
         { run: { errors: 'run not found' } }.to_json

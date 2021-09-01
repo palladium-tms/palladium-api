@@ -15,7 +15,7 @@ describe 'Auth Smoke' do
       expect(JSON.parse(response.body)).to be_key('token')
     end
 
-    it 'try login with uncorrect user_data' do
+    it 'try login with incorrect user_data' do
       response = User.new(email: Faker::Internet.email, password: Faker::Lorem.characters(number: 7)).login
       expect(response.code).to eq('401')
       expect(response.body).to eq('{"errors":"User or password not correct"}')

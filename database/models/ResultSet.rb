@@ -31,7 +31,7 @@ class ResultSet < Sequel::Model
     ResultSet.find(name: name, run_id: run_id) || ResultSet.new(name: name)
   end
 
-  # ['result_set_data']['name'] can be array (if you set result by some result sets by manualy)
+  # ['result_set_data']['name'] can be array (if you set result by some result sets by manually)
   def self.create_new(data)
     return { result_sets: ResultSet.where(id: data['result_data']['result_set_id']).map { |elem| elem } } if result_set_id_exist?(data)
 

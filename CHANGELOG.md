@@ -4,28 +4,29 @@
 
 ### Added
 
-* To create plan with arrtibute :api_created
+* To create plan with attribute :api_created
 * Actualize rubocop configs and add it's extensions
 * Add `rubocop` check to CI
 * Add `markdownlint` check in CI
 
 ### Changed
 
-* Database scheme for simplificating in future
+* Database scheme for simplification in future
 * Actualize dependabot config
 * Use `palladium` from gem, not from git sources
+* Fix different typos in all parts of project
 
 ## 0.6.0
 
 ### Added
 
-* Ability for multideleting
-* Increase porformance x4 in run statistic gettings
+* Ability for multi-deleting
+* Increase performance x4 in run statistic getting
 
 ### Fix
 
 * Deleted suite now will not to be add to new plans
-* Change case delete stratage
+* Change case delete strategy
 
 ## 0.5.2
 
@@ -35,7 +36,7 @@
 
 ### Changed
 
-* Get plan method not sent plans and plan statistic. Nowm it is different methods
+* Get plan method not sent plans and plan statistic. Now it is different methods
 
 ### Added
 
@@ -47,19 +48,19 @@
 ### Changed
 
 * Change getting plans. Now you can get only 3  plan in one time,
-  or get all plans yanger plan_id
+  or get all plans younger plan_id
 
 ## 0.4.4 (2019-05-29)
 
 ### Changed
 
 * Dockerfile and docker-compose file for testing and deploy
-* Delete defould secret keys
+* Delete default secret keys
 * Rewrite all tests. Add new framework for tests
 
 ### Add
 
-* Add new database: user settings. Not inplemented to interface
+* Add new database: user settings. Not implemented to interface
 
 ## 0.4.3 (2018-11-14)
 
@@ -90,7 +91,7 @@
 
 ### Fixed
 
-* Wrond request scope in result_sets_by_status
+* Wrong request scope in result_sets_by_status
 * Fix creating nil objects after set product position and delete this product
 
 ### Changes
@@ -102,7 +103,7 @@
 
 ### Added
 
-* New method to api: gettind result_sets by statuses and etc. data
+* New method to api: getting result_sets by statuses and etc. data
 
 ## 0.2.1 (2018-03-28)
 
@@ -125,7 +126,7 @@
 
 ### Added
 
-* Oppotrunity to save product position in list
+* Opportunity to save product position in list
 
 ## 0.1.0 (2018-02-15
 
@@ -133,22 +134,22 @@
 
 * Add errors after creating product without name
 * Test for product validation
-* Chanre respons of most part requests for errors chechs
+* Change response of most part requests for errors checks
 
 ### Fixed
 
-* Fix errors after muliple result adding by case name or case id
+* Fix errors after multiple result adding by case name or case id
 * Fix errors after name change
 
 ## 0.0.1 (2018-01-30)
 
 ### Fixed
 
-* Fixed error after uncorect product name from edit product method
+* Fixed error after incorrect product name from edit product method
 
 ### Added
 
 * Rubocop files for code style
 * Changelog file
-* Public method `version`. In return curent version of application
+* Public method `version`. In return current version of application
 * Add test for `version` method
