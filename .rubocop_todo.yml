@@ -11,11 +11,6 @@ Lint/BinaryOperatorWithIdenticalOperands:
   Exclude:
     - 'spec/lib/models/AbstractProductPack.rb'
 
-# Offense count: 1
-Lint/UselessAssignment:
-  Exclude:
-    - 'core/authorization/jwt_auth.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: AllowComments.

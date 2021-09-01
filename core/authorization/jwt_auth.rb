@@ -9,7 +9,7 @@ class JwtAuth
     else
       begin
         options = { algorithm: 'HS256', iss: ENV['JWT_ISSUER'] }
-        payload, header = JWT.decode env['HTTP_AUTHORIZATION'], ENV['JWT_SECRET'], true, options
+        payload, _header = JWT.decode env['HTTP_AUTHORIZATION'], ENV['JWT_SECRET'], true, options
         env[:scopes] = payload['scopes']
         env[:user] = payload['user']
         @app.call env
