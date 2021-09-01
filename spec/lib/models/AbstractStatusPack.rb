@@ -10,7 +10,6 @@ class AbstractStatusPack
     end
   end
 
-
   def contain?(status)
     contain = false
     @statuses.each do |current_statuses|

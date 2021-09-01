@@ -13,7 +13,6 @@ class AbstractResultSetPack
     end
   end
 
-
   def contain?(result_set)
     contain = false
     @result_sets.each do |current_result_set|
