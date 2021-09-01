@@ -21,6 +21,10 @@
 * Correct logging to `STDOUT` for Docker usage
 * Cleanup unused constants in `static_data.rb`
 
+### Fixed
+
+* Fix `AbstractProductPack#diff` for created product 
+
 ## 0.6.0
 
 ### Added
