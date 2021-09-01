@@ -3,6 +3,7 @@ class Api < Sinatra::Base
   register Sinatra::CrossOrigin
   use JwtAuth
   attr_accessor :params
+
   def initialize
     super
   end

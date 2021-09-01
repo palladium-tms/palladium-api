@@ -33,6 +33,7 @@ class User
   include InviteTokenFunctions
   include StringHelper
   attr_accessor :email, :password, :token, :http
+
   def initialize(options = {})
     @email = options[:email]
     @password = options[:password]

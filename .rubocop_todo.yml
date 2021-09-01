@@ -6,18 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 5
-# Cop supports --auto-correct.
-# Configuration parameters: AllowAliasSyntax, AllowedMethods.
-# AllowedMethods: alias_method, public, protected, private
-Layout/EmptyLinesAroundAttributeAccessor:
-  Exclude:
-    - 'server.rb'
-    - 'spec/lib/User.rb'
-    - 'spec/lib/models/AbstractCasePack.rb'
-    - 'spec/lib/models/AbstractHistoryPack.rb'
-    - 'spec/lib/models/AbstractResultPack.rb'
-
 # Offense count: 6
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
