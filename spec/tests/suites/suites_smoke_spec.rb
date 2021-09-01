@@ -43,7 +43,7 @@ describe 'Suites Smoke' do
       run = @user.create_new_run(plan_name: @params[:plan_name], product_name: @params[:product_name])
       new_suite_name = rand_run_name
       @user.update_suite(id: run.plan.product.suite.id, name: new_suite_name)
-      run_pack, _ = @user.get_runs(plan_id: run.plan.id)
+      run_pack, = @user.get_runs(plan_id: run.plan.id)
       expect(run_pack.runs.first.name).to eq(new_suite_name)
     end
 
@@ -53,7 +53,7 @@ describe 'Suites Smoke' do
       first_run = @user.create_new_run(name: run_name, plan_name: @params[:plan_name], product_name: rand_product_name)
       second_run = @user.create_new_run(name: run_name, plan_name: @params[:plan_name], product_name: rand_product_name)
       new_suite = @user.update_suite(id: first_run.plan.product.suite.id, name: new_suite_name)
-      runs_in_other_product, _ = @user.get_runs(plan_id: second_run.plan.id)
+      runs_in_other_product, = @user.get_runs(plan_id: second_run.plan.id)
       expect(new_suite.name).to eq(new_suite_name)
       expect(runs_in_other_product.runs.first.name).to eq(second_run.name)
     end
