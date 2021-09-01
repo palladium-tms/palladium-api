@@ -8,7 +8,7 @@ class Status < Sequel::Model
 
   def validate
     validates_presence [:name]
-    validates_format /^.{1,40}$/, :name
+    validates_format(/^.{1,40}$/, :name)
   end
 
   # @param [Hash] data can contains only :color and :name
