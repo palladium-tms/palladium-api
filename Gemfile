@@ -13,5 +13,5 @@ gem 'sinatra-cross_origin'
 gem 'faker'
 
 
-gem 'ruby-debug-ide'
 gem 'debase'
+gem 'ruby-debug-ide'
