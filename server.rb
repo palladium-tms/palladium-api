@@ -28,7 +28,7 @@ class Api < Sinatra::Base
           false
         end
       end
-      { products: (defarr + products).compact}.to_json
+      { products: (defarr + products).compact }.to_json
     end
   end
 
@@ -228,7 +228,7 @@ class Api < Sinatra::Base
       if result_set
         { result_sets: [result_set.values] }.to_json
       else
-        { result_sets: nil}.to_json
+        { result_sets: nil }.to_json
       end
     end
   end
@@ -311,11 +311,11 @@ class Api < Sinatra::Base
       data, errors = ResultSet.get_results(params['result_data'])
       if errors
         status 422 unless errors
-        {errors: errors}.to_json
+        { errors: errors }.to_json
       else
         { results: data[:results].map(&:values),
           result_set: data[:result_set],
-          product_id: data[:product_id]}.to_json
+          product_id: data[:product_id] }.to_json
       end
     end
   end
@@ -394,7 +394,7 @@ class Api < Sinatra::Base
       end
       { suite: suite.values.merge(statistic: [{ 'suite_id' => 0, 'status' => 0, 'count' => 0 }]),
         errors: errors,
-        plan: plan.values.merge(case_count: plan.cases.count)}.to_json
+        plan: plan.values.merge(case_count: plan.cases.count) }.to_json
     end
   end
   # endregion
@@ -403,7 +403,7 @@ class Api < Sinatra::Base
   post '/cases' do
     process_request request, 'cases' do |_req, _username|
       cases, suite = Case.get_cases(params['case_data'])
-      { cases: cases.map(&:values), suite: suite.values}.to_json
+      { cases: cases.map(&:values), suite: suite.values }.to_json
     end
   end
 
@@ -441,7 +441,7 @@ class Api < Sinatra::Base
   post '/case_history' do
     process_request request, 'case_history' do |_req, _username|
       result_sets, product_id, suite_name = Case.get_history(params)
-      { result_sets_history: result_sets, product_id: product_id, suite_name: suite_name}.to_json
+      { result_sets_history: result_sets, product_id: product_id, suite_name: suite_name }.to_json
     end
   end
   # endregion
@@ -573,7 +573,7 @@ class Public < Sinatra::Base
     if !current_user.nil? && current_user.password == user_data['password']
       { token: token(user_data['email']) }.to_json
     else
-      halt 401, {errors: 'User or password not correct'}.to_json
+      halt 401, { errors: 'User or password not correct' }.to_json
     end
   end
 

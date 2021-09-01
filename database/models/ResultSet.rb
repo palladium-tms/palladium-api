@@ -105,9 +105,9 @@ class ResultSet < Sequel::Model
     result_set = ResultSet[id: args.first['result_set_id']]
     begin
       if result_set
-        [{results: result_set.results,
-          result_set: result_set.values,
-          product_id: result_set.plan.product.id}]
+        [{ results: result_set.results,
+           result_set: result_set.values,
+           product_id: result_set.plan.product.id }]
       else
         [[], 'Result Set not found']
       end

@@ -7,12 +7,12 @@ describe 'Result Smoke' do
 
   describe 'Create new result' do
     before :each do
-      @params = {plan_name: rand_plan_name,
-                 product_name: rand_product_name,
-                 run_name: rand_run_name,
-                 result_set_name: rand_result_set_name,
-                 message: rand_message,
-                 status: 'Passed'}
+      @params = { plan_name: rand_plan_name,
+                  product_name: rand_product_name,
+                  run_name: rand_run_name,
+                  result_set_name: rand_result_set_name,
+                  message: rand_message,
+                  status: 'Passed' }
     end
 
     it '1. Check creating new result with all other elements' do
@@ -146,12 +146,12 @@ describe 'Result Smoke' do
 
   describe 'Get results' do
     before :each do
-      @params = {plan_name: rand_plan_name,
-                 product_name: rand_product_name,
-                 run_name: rand_run_name,
-                 result_set_name: rand_result_set_name,
-                 message: rand_message,
-                 status: 'Passed'}
+      @params = { plan_name: rand_plan_name,
+                  product_name: rand_product_name,
+                  run_name: rand_run_name,
+                  result_set_name: rand_result_set_name,
+                  message: rand_message,
+                  status: 'Passed' }
     end
 
     it 'get results by result_set_id' do
@@ -183,12 +183,12 @@ describe 'Result Smoke' do
 
   describe 'New result custom parameters' do
     before :each do
-      @params = {plan_name: rand_plan_name,
-                 product_name: rand_product_name,
-                 run_name: rand_run_name,
-                 result_set_name: rand_result_set_name,
-                 message: rand_message_custom_data,
-                 status: 'Passed'}
+      @params = { plan_name: rand_plan_name,
+                  product_name: rand_product_name,
+                  run_name: rand_run_name,
+                  result_set_name: rand_result_set_name,
+                  message: rand_message_custom_data,
+                  status: 'Passed' }
     end
 
     it 'Create new result with custom parameters' do

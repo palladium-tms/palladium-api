@@ -137,7 +137,7 @@ class Plan < Sequel::Model
              end
     suites = Product.add_case_counts(suites, plan)
     begin
-      [{runs: plan.runs, plan: plan.values}, suites, []]
+      [{ runs: plan.runs, plan: plan.values }, suites, []]
     rescue StandardError
       [[], [], 'Run data is incorrect']
     end

@@ -7,7 +7,7 @@ describe 'Result Set Smoke' do
 
   describe 'Create new result_sets' do
     before :each do
-      @params = {plan_name: rand_plan_name, product_name: rand_product_name, run_name: rand_run_name, name: rand_run_name}
+      @params = { plan_name: rand_plan_name, product_name: rand_product_name, run_name: rand_run_name, name: rand_run_name }
     end
 
     it '1. Create product, plan, run and result set in one time' do

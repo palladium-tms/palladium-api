@@ -7,12 +7,12 @@ describe 'History Smoke' do
   # Fixme: add more checks for history
   describe 'Get history from case id' do
     before :each do
-      @params = {product_name: rand_product_name,
-                 plan_name: rand_plan_name,
-                 run_name: rand_run_name,
-                 result_set_name: rand_result_set_name,
-                 message: rand_message,
-                 status: 'Passed'}
+      @params = { product_name: rand_product_name,
+                  plan_name: rand_plan_name,
+                  run_name: rand_run_name,
+                  result_set_name: rand_result_set_name,
+                  message: rand_message,
+                  status: 'Passed' }
     end
     it '1. Check creating new result with all other elements' do
       3.times do
@@ -49,12 +49,12 @@ describe 'History Smoke' do
 
   describe 'Get history from result set id' do
     before :each do
-      @params = {product_name: rand_product_name,
-                 plan_name: rand_plan_name,
-                 run_name: rand_run_name,
-                 result_set_name: rand_result_set_name,
-                 message: rand_message,
-                 status: 'Passed'}
+      @params = { product_name: rand_product_name,
+                  plan_name: rand_plan_name,
+                  run_name: rand_run_name,
+                  result_set_name: rand_result_set_name,
+                  message: rand_message,
+                  status: 'Passed' }
     end
     it '1. Check creating new result with all other elements' do
       3.times do

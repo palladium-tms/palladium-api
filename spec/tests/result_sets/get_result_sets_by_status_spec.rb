@@ -3,12 +3,12 @@ describe 'Get result sets by status' do
   before :each do
     @user = AccountFunctions.create_and_parse
     @user.login
-    @params = {plan_name: rand_plan_name,
-               product_name: rand_product_name,
-               run_name: rand_run_name,
-               result_set_name: rand_result_set_name,
-               message: rand_message,
-               status: 'Passed'}
+    @params = { plan_name: rand_plan_name,
+                product_name: rand_product_name,
+                run_name: rand_run_name,
+                result_set_name: rand_result_set_name,
+                message: rand_message,
+                status: 'Passed' }
   end
 
   it 'get result_sets by status' do
