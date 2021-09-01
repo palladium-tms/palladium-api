@@ -1,7 +1,16 @@
 # frozen_string_literal: true
 
+require 'logger'
 require_relative 'management'
+
 class Api < Sinatra::Base
+  configure do
+    logger = Logger.new($stdout)
+    logger.level = Logger::INFO if production?
+    set :logger, logger
+    enable :logging
+  end
+
   register Sinatra::CrossOrigin
   use JwtAuth
   attr_accessor :params
@@ -247,7 +256,7 @@ class Api < Sinatra::Base
         result_set_id.each_with_index do |id, index|
           ResultSet[id: id].remove_all_results
           ResultSet[id: id].delete
-          p "Log: DELETING_RESULT_SET: #{id} (#{index + 1}/#{result_set_size})"
+          logger.info("Deleting result_set: #{id} (#{index + 1}/#{result_set_size})")
         end
       rescue StandardError => e
         errors = e
@@ -417,7 +426,7 @@ class Api < Sinatra::Base
       case_ids.each_with_index do |case_id, index|
         this_case = plan.remove_case(Case[case_id])
         this_case.update(deleted: true)
-        p "Log: DELETING_CASE: #{case_id} (#{index + 1}/#{cases_size})"
+        logger.info("Deleting case: #{case_id} (#{index + 1}/#{cases_size})")
       end
 
       { cases: case_ids, case: this_case.values }.to_json
