@@ -11,13 +11,6 @@ Lint/BinaryOperatorWithIdenticalOperands:
   Exclude:
     - 'spec/lib/models/AbstractProductPack.rb'
 
-# Offense count: 9
-# Configuration parameters: AllowKeywordBlockArguments.
-Lint/UnderscorePrefixedVariableName:
-  Exclude:
-    - 'database/models/Invite.rb'
-    - 'server.rb'
-
 # Offense count: 1
 Lint/UselessAssignment:
   Exclude:

@@ -6,15 +6,15 @@ class Invite < Sequel::Model
   plugin :timestamps, force: true, update_on_create: true
   one_to_one :user
 
-  def self.create_new(_username = nil)
-    unless _username.nil?
-      if User[email: _username].nil?
+  def self.create_new(username = nil)
+    unless username.nil?
+      if User[email: username].nil?
         halt 400, 'Username is incorrect or not exist'
       else
         invite = Invite.create(token: SecureRandom.hex)
         invite.expiration_data = invite.created_at + 10 * 60
-        User[email: _username].invite&.destroy
-        User[email: _username].invite = invite
+        User[email: username].invite&.destroy
+        User[email: username].invite = invite
       end
     end
     invite

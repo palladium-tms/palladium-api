@@ -16,8 +16,8 @@ class Api < Sinatra::Base
 
   # region products
   post '/products' do
-    process_request request, 'products' do |_req, _username|
-      positions = User[email: _username].product_position
+    process_request request, 'products' do |_req, username|
+      positions = User[email: username].product_position
       defarr = []
       products = Product.all.map(&:values)
       products.delete_if do |element|
@@ -449,18 +449,18 @@ class Api < Sinatra::Base
   # region invite_token
   # {"api_token_data" => {"name": string} }
   post '/create_invite_token' do
-    process_request request, 'get_invite_token' do |_req, _username|
-      invite = Invite.create_new(_username)
+    process_request request, 'get_invite_token' do |_req, username|
+      invite = Invite.create_new(username)
       { invite_data: invite.values }.to_json
     end
   end
 
   post '/get_invite_token' do
-    process_request request, 'get_invite_token' do |_req, _username|
-      if User[email: _username].invite.nil?
+    process_request request, 'get_invite_token' do |_req, username|
+      if User[email: username].invite.nil?
         { invite_data: nil }.to_json
       else
-        { invite_data: User[email: _username].invite.values }.to_json
+        { invite_data: User[email: username].invite.values }.to_json
       end
     end
   end
@@ -476,15 +476,15 @@ class Api < Sinatra::Base
   # region api_token
   # {"api_token_data" => {"name": string} }
   post '/token_new' do
-    process_request request, 'token_new' do |_req, _username|
-      result_token = Token.create_new(params['token_data'], JWT.encode(payload(_username), ENV['JWT_SECRET'], 'HS256'), _username)
+    process_request request, 'token_new' do |_req, username|
+      result_token = Token.create_new(params['token_data'], JWT.encode(payload(username), ENV['JWT_SECRET'], 'HS256'), username)
       { token_data: result_token.values, errors: result_token.errors }.to_json
     end
   end
 
   post '/tokens' do
-    process_request request, 'tokens' do |_req, _username|
-      result_token = User[email: _username].tokens
+    process_request request, 'tokens' do |_req, username|
+      result_token = User[email: username].tokens
       { tokens: result_token.map(&:values) }.to_json
     end
   end
@@ -499,9 +499,9 @@ class Api < Sinatra::Base
 
   # region product_position
   post '/set_product_position' do
-    process_request request, 'set_product_position' do |_req, _username|
+    process_request request, 'set_product_position' do |_req, username|
       if params['product_position'].is_a?(Array)
-        user = User[email: _username]
+        user = User[email: username]
         user.update(product_position: Sequel.pg_array(params['product_position']))
         { user: { email: user.email, product_position: user.product_position } }.to_json
       else
@@ -513,15 +513,15 @@ class Api < Sinatra::Base
 
   # region user_setting
   post '/user_setting' do
-    process_request request, 'user_setting' do |_req, _username|
-      user_setting = User[email: _username].user_setting
+    process_request request, 'user_setting' do |_req, username|
+      user_setting = User[email: username].user_setting
       { timezone: user_setting&.timezone }.to_json
     end
   end
 
   post '/user_setting_edit' do
-    process_request request, 'user_setting_edit' do |_req, _username|
-      UserSetting.edit(User[email: _username].user_setting, params['user_settings'])
+    process_request request, 'user_setting_edit' do |_req, username|
+      UserSetting.edit(User[email: username].user_setting, params['user_settings'])
     end
   end
   # endregion user_setting
