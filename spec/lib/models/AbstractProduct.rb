@@ -2,7 +2,7 @@
 
 require 'json'
 class AbstractProduct
-  attr_accessor :id, :name, :created_at, :updated_at, :is_archived, :product_errors, :suite, :response
+  attr_accessor :id, :name, :created_at, :updated_at, :product_errors, :suite, :response
 
   def initialize(product_data = default_data)
     unless product_data.is_a?(Hash)
@@ -30,6 +30,9 @@ class AbstractProduct
   end
 
   def like_a?(product)
-    product.id == @id && product.name == @name && product.created_at == @created_at && product.updated_at == @updated_at && product.is_archived === @is_archived
+    product.id == @id &&
+      product.name == @name &&
+      product.created_at == @created_at &&
+      product.updated_at == @updated_at
   end
 end
