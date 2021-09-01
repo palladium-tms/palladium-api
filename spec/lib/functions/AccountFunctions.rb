@@ -14,10 +14,8 @@ module AccountFunctions
 
   def self.create_and_parse(email = Faker::Internet.email, password = Faker::Lorem.characters(number: 7), invite = nil)
     response = AccountFunctions.create(email, password, invite)
-    if JSON.parse(response.body)['errors'].empty?
-      User.new(email: email, password: password)
-    else
-      raise 'User creation error', response.body
-    end
+    return User.new(email: email, password: password) if JSON.parse(response.body)['errors'].empty?
+
+    raise 'User creation error', response.body
   end
 end

@@ -31,11 +31,8 @@ class Plan < Sequel::Model
   end
 
   def self.plan_id_validation(plan_id)
-    if plan_id.nil?
-      return { 'plan_id' => ["plan_id can't be nil"] }
-    elsif Plan[id: plan_id].nil?
-      return { 'plan_id' => ['plan_id is not belongs to any product'] }
-    end
+    return { 'plan_id' => ["plan_id can't be nil"] } if plan_id.nil?
+    return { 'plan_id' => ['plan_id is not belongs to any product'] } if Plan[id: plan_id].nil?
 
     []
   end
