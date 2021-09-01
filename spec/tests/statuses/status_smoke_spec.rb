@@ -68,7 +68,7 @@ describe 'Status Smoke' do
     it 'check get all statuses after create' do
       status = @user.create_new_status
       statuses_pack = @user.get_all_statuses
-      expect(statuses_pack.contain?(status)).to be_truthy
+      expect(statuses_pack).to be_contain(status)
     end
 
     it 'check get not blocked statuses after create' do
@@ -76,8 +76,8 @@ describe 'Status Smoke' do
       status = @user.create_new_status
       status = @user.status_edit(id: status.id, block: true)
       statuses = @user.get_not_blocked_statuses
-      expect(statuses.contain?(status_not_blocked)).to be_truthy
-      expect(statuses.contain?(status)).to be_falsey
+      expect(statuses).to be_contain(status_not_blocked)
+      expect(statuses).not_to be_contain(status)
     end
   end
 end

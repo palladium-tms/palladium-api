@@ -34,7 +34,7 @@ describe 'Result Set Smoke' do
       @params[:product_name] = product.name
       @params[:plan_name] = plan.name
       result_set = @user.create_new_result_set(@params)
-      expect(result_set.run.plan.like_a?(plan)).to be_truthy
+      expect(result_set.run.plan).to be_like_a(plan)
       expect(result_set.run.name).to eq(@params[:run_name])
       expect(result_set.name).to eq(@params[:name])
     end
@@ -57,14 +57,14 @@ describe 'Result Set Smoke' do
 
     it 'get result_sets by run_id' do
       result_set_pack = @user.get_result_sets(id: @result_set.run.id)
-      expect(result_set_pack.result_sets.first.like_a?(@result_set)).to be_truthy
+      expect(result_set_pack.result_sets.first).to be_like_a(@result_set)
       expect(result_set_pack.result_sets.first.id).to eq(@result_set.id)
       expect(result_set_pack.result_sets.first.run_id).to eq(@result_set.run.id)
     end
 
     it 'get result_set | show method' do
       result_set_show = @user.get_result_set(id: @result_set.id)
-      expect(@result_set.like_a?(result_set_show)).to be_truthy
+      expect(@result_set).to be_like_a(result_set_show)
     end
   end
 

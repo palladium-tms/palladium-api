@@ -10,7 +10,7 @@ describe 'Auth Smoke' do
     it 'user login' do
       response = AccountFunctions.create_and_parse.login
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body).key?('token')).to be_truthy
+      expect(JSON.parse(response.body)).to be_key('token')
     end
 
     it 'try login with uncorrect user_data' do
@@ -22,7 +22,7 @@ describe 'Auth Smoke' do
     it 'create user and get token' do
       @user = AccountFunctions.create_and_parse
       @user.login
-      expect(@user.token.nil?).to be_falsey
+      expect(@user.token).not_to be_nil
     end
   end
 end

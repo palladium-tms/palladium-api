@@ -105,26 +105,6 @@ RSpec/InstanceVariable:
 RSpec/MultipleExpectations:
   Max: 7
 
-# Offense count: 33
-# Cop supports --auto-correct.
-# Configuration parameters: Strict, EnforcedStyle, AllowedExplicitMatchers.
-# SupportedStyles: inflected, explicit
-RSpec/PredicateMatcher:
-  Exclude:
-    - 'spec/tests/auth/auth_smoke_spec.rb'
-    - 'spec/tests/history/history_smoke_spec.rb'
-    - 'spec/tests/invite_token/invite_token_smoke_spec.rb'
-    - 'spec/tests/other_methods/version_smoke_spec.rb'
-    - 'spec/tests/plans/plan_offsets_spec.rb'
-    - 'spec/tests/plans/plan_smoke_spec.rb'
-    - 'spec/tests/product_position/product_position_smoke_spec.rb'
-    - 'spec/tests/products/product_smoke_spec.rb'
-    - 'spec/tests/result_sets/get_result_sets_by_status_spec.rb'
-    - 'spec/tests/result_sets/result_set_smoke_spec.rb'
-    - 'spec/tests/results/result_smoke_spec.rb'
-    - 'spec/tests/runs/run_smoke_spec.rb'
-    - 'spec/tests/statuses/status_smoke_spec.rb'
-
 # Offense count: 5
 Sequel/ColumnDefault:
   Exclude:

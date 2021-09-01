@@ -6,7 +6,7 @@ describe 'Plan Smoke' do
       request = Net::HTTP::Post.new('/public/version')
       response = http.request(request)
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['version'].empty?).to be_falsey
+      expect(JSON.parse(response.body)['version']).not_to be_empty
     end
   end
 end

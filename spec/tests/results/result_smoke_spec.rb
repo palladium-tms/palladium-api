@@ -87,7 +87,7 @@ describe 'Result Smoke' do
                                        status: 'Passed')
       expect(result.response.code).to eq('200')
       (result.result_set.result_sets.map(&:name) & names_array).each do |name|
-        expect((result.result_set.result_sets.map(&:name) & names_array).include?(name)).to be_truthy
+        expect((result.result_set.result_sets.map(&:name) & names_array)).to include(name)
       end
       expect(result.message).to eq(message)
       expect(result.status.name).to eq('Passed')

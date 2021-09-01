@@ -61,7 +61,7 @@ describe 'Run Smoke' do
 
     it 'Get one run | show method' do
       run_show = @user.get_run(id: @run.id)
-      expect(@run.like_a?(run_show)).to be_truthy
+      expect(@run).to be_like_a(run_show)
     end
   end
 

@@ -43,7 +43,7 @@ describe 'Auth Smoke' do
       parsed_body = JSON.parse(response.body)
       expect(response.code).to eq('200')
       expect(parsed_body['validation']).to be_truthy
-      expect(parsed_body['errors'].empty?).to be_truthy
+      expect(parsed_body['errors']).to be_empty
     end
 
     it 'check_link_validation | not valid' do
@@ -61,7 +61,7 @@ describe 'Auth Smoke' do
       token = JSON.parse(response.body)['invite_data']['token']
       new_user = AccountFunctions.create_and_parse(Faker::Internet.email, Faker::Lorem.characters(number: 7), token)
       new_user.login
-      expect(new_user.token.nil?).to be_falsey
+      expect(new_user.token).not_to be_nil
     end
   end
 end

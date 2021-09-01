@@ -24,8 +24,8 @@ describe 'Get result sets by status' do
                                                       run_name: @params[:run_name],
                                                       product_name: @params[:product_name],
                                                       status: 'Passed')
-    expect(result_set_pack.contain?(result_first.result_set)).to be_truthy
-    expect(result_set_pack.contain?(result_second.result_set)).to be_truthy
+    expect(result_set_pack).to be_contain(result_first.result_set)
+    expect(result_set_pack).to be_contain(result_second.result_set)
   end
 
   it 'get result_sets by status if it not found' do
@@ -102,7 +102,7 @@ describe 'Get result sets by status' do
                                                        product_name: @params[:product_name],
                                                        status: statuses)
     expect(result_sets_pack.result_sets.count).to eq(2)
-    expect(result_sets_pack.contain?(result_first.result_set)).to be_truthy
-    expect(result_sets_pack.contain?(result_second.result_set)).to be_truthy
+    expect(result_sets_pack).to be_contain(result_first.result_set)
+    expect(result_sets_pack).to be_contain(result_second.result_set)
   end
 end

@@ -17,7 +17,7 @@ describe 'Plan Smoke' do
       new_plans = @user.get_plans(product_id: @product.id).plans
       expect(plans.count).to eq(6)
       expect(new_plans.count).to eq(6)
-      expect(new_plans.first.like_a?(@plan)).to be_truthy
+      expect(new_plans.first).to be_like_a(@plan)
     end
   end
 

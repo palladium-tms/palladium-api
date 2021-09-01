@@ -65,7 +65,7 @@ describe 'Plan Smoke' do
     it 'get one plan | show method' do
       plan = @user.show_plan(id: @plan.id)
       expect(plan.response.code).to eq('200')
-      expect(plan.like_a?(@plan)).to be_truthy
+      expect(plan).to be_like_a(@plan)
     end
   end
 
@@ -79,7 +79,7 @@ describe 'Plan Smoke' do
       plan_pack = @user.get_plans(product_id: @plan.product_id)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['plan']['id']).to eq(@plan.id)
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['errors']).to be_empty
       expect(plan_pack.plans).to be_empty
     end
 
