@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
     - To create plan with arrtibute :api_created
 ### Changed
     - Database scheme for simplificating in future
+    - Actualize dependabot config
 ## [0.6.0]
 ### Added
     - Ability for multideleting
