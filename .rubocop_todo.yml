@@ -135,13 +135,6 @@ Style/GuardClause:
     - 'database/models/Run.rb'
     - 'spec/lib/functions/AccountFunctions.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: AllowSplatArgument.
-Style/HashConversion:
-  Exclude:
-    - 'server.rb'
-
 # Offense count: 6
 # Cop supports --auto-correct.
 Style/IdenticalConditionalBranches:

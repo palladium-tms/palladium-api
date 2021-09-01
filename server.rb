@@ -340,7 +340,7 @@ class Api < Sinatra::Base
     process_request request, 'statuses' do |_req, _username|
       statuses = Status.all
       statuses_ids = statuses.map(&:id)
-      { statuses: Hash[statuses_ids.zip statuses.map(&:values)] }.to_json
+      { statuses: (statuses_ids.zip statuses.map(&:values)).to_h }.to_json
     end
   end
 
@@ -348,7 +348,7 @@ class Api < Sinatra::Base
     process_request request, 'not_blocked_statuses' do |_req, _username|
       statuses = Status.where(block: false)
       statuses_ids = statuses.map(&:id)
-      { statuses: Hash[statuses_ids.zip statuses.map(&:values)] }.to_json
+      { statuses: (statuses_ids.zip statuses.map(&:values)).to_h }.to_json
     end
   end
   # endregion
