@@ -33,9 +33,9 @@
 
 ## 0.5.1
 
-### Changed 
+### Changed
 
-* Get plan method not sent plans and plan statistic. Nowm it is different methods 
+* Get plan method not sent plans and plan statistic. Nowm it is different methods
 
 ### Added
 
@@ -46,11 +46,13 @@
 
 ### Changed
 
-* Change getting plans. Now you can get only 3  plan in one time, or get all plans yanger plan_id
+* Change getting plans. Now you can get only 3  plan in one time,
+  or get all plans yanger plan_id
 
 ## 0.4.4 (2019-05-29)
 
 ### Changed
+
 * Dockerfile and docker-compose file for testing and deploy
 * Delete defould secret keys
 * Rewrite all tests. Add new framework for tests
@@ -63,7 +65,8 @@
 
 ### Changed
 
-* History os not uniq object. Now it a generic result set with new fiend - plan(with plan values)
+* History os not uniq object. Now it a generic result set
+  with new fiend - plan(with plan values)
 
 ## 0.4.2 (2018-10-30)
 
@@ -85,14 +88,15 @@
 
 ## 0.3.1 (2018-06-27)
 
-### Fixed 
- 
+### Fixed
+
 * Wrond request scope in result_sets_by_status
 * Fix creating nil objects after set product position and delete this product
 
 ### Changes
 
-* result_sets_by_status will return empty array of result sets and status_error is status not found
+* result_sets_by_status will return empty array of result sets and
+  status_error is status not found
 
 ## 0.3.0 (2018-04-05)
 
@@ -119,7 +123,7 @@
 
 ## 0.1.1 (2018-03-20)
 
-### Added 
+### Added
 
 * Oppotrunity to save product position in list
 
@@ -134,9 +138,6 @@
 ### Fixed
 
 * Fix errors after muliple result adding by case name or case id
-
-### Fixed
-
 * Fix errors after name change
 
 ## 0.0.1 (2018-01-30)
@@ -147,7 +148,7 @@
 
 ### Added
 
-* Rubocop files for code style 
+* Rubocop files for code style
 * Changelog file
 * Public method `version`. In return curent version of application
 * Add test for `version` method
