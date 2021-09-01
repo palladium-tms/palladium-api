@@ -140,14 +140,6 @@ Style/MixinUsage:
   Exclude:
     - 'spec/spec_helper.rb'
 
-# Offense count: 12
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: same_as_string_literals, single_quotes, double_quotes
-Style/QuotedSymbols:
-  Exclude:
-    - 'spec/lib/helpers/string_helper.rb'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 Style/RedundantFileExtensionInRequire:
