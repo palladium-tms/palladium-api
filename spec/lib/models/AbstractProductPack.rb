@@ -17,6 +17,6 @@ class AbstractProductPack
   end
 
   def get_product_by_id(id)
-    @products.detect { |product| product.id == id}
+    @products.detect { |product| product.id == id }
   end
 end
