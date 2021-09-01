@@ -5,8 +5,8 @@ require_relative 'server'
 
 run Rack::URLMap.new('/public' => Public, '/api' => Api)
 if Sinatra::Application.environment == :development || Sinatra::Application.environment == :test
-  ENV['JWT_SECRET'] = "JWT_SECRET"
-  ENV['JWT_ISSUER'] = "JWT_ISSUER"
+  ENV['JWT_SECRET'] = 'JWT_SECRET'
+  ENV['JWT_ISSUER'] = 'JWT_ISSUER'
 end
 
 raise 'JWT keys not found' if ENV['JWT_SECRET'].nil? || ENV['JWT_ISSUER'].nil?

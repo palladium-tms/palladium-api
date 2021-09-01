@@ -140,18 +140,6 @@ Style/MixinUsage:
   Exclude:
     - 'spec/spec_helper.rb'
 
-# Offense count: 12
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, ConsistentQuotesInMultiline.
-# SupportedStyles: single_quotes, double_quotes
-Style/StringLiterals:
-  Exclude:
-    - 'config.ru'
-    - 'core/settings/palladium_settings.rb'
-    - 'database/models/Product.rb'
-    - 'spec/scripts_for_filling/sample_data_spec.rb'
-    - 'spec/studio/all_case_history_check_spec.rb'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 # Configuration parameters: AllowNamedUnderscoreVariables.

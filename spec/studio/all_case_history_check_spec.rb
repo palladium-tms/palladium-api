@@ -17,7 +17,7 @@ describe 'Status Smoke' do
   end
 
   describe 'History' do
-    it "chech_history" do
+    it 'chech_history' do
       cases.each do |case_id|
         p case_id
         responce = HistoryFunctions.case_history(http, case_id)
