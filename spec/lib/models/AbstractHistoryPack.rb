@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require 'json'
 require_relative '../../tests/test_management'
 class AbstractHistoryPack
   attr_accessor :histories
+
   def initialize(history_pack)
     @histories = []
     JSON.parse(history_pack.body)['result_sets_history'].map do |history|
@@ -26,16 +29,16 @@ class AbstractHistoryPack
   end
 
   def plan_exist?(plan_id)
-      @histories.each do |history|
-        return true if history.plan_id == plan_id
-      end
+    @histories.each do |history|
+      return true if history.plan_id == plan_id
+    end
     false
   end
 
   def run_exist?(run_id)
-      @histories.each do |history|
-        return true if history.run_id == run_id
-      end
+    @histories.each do |history|
+      return true if history.run_id == run_id
+    end
     false
   end
 end

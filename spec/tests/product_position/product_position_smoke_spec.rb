@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'Product Position Smoke' do
-  before :each do
-
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
   end
@@ -17,14 +18,14 @@ describe 'Product Position Smoke' do
     it 'setting product position with incorrect data' do
       responce = @user.set_product_position(product_position: 'error')
       response = JSON.parse(responce.body)
-      expect(response['user'].nil?).to be_truthy
+      expect(response['user']).to be_nil
       expect(response['product_position_errors']).to eq('product position must be array')
     end
 
     it 'setting product position without data' do
       responce = @user.set_product_position({})
       response = JSON.parse(responce.body)
-      expect(response['user'].nil?).to be_truthy
+      expect(response['user']).to be_nil
       expect(response['product_position_errors']).to eq('product position must be array')
     end
 

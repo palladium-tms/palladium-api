@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'Get result sets by status' do
-  before :each do
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
-    @params = {plan_name: rand_plan_name,
-               product_name: rand_product_name,
-               run_name: rand_run_name,
-               result_set_name: rand_result_set_name,
-               message: rand_message,
-               status: 'Passed'}
+    @params = { plan_name: rand_plan_name,
+                product_name: rand_product_name,
+                run_name: rand_run_name,
+                result_set_name: rand_result_set_name,
+                message: rand_message,
+                status: 'Passed' }
   end
 
   it 'get result_sets by status' do
@@ -24,8 +26,8 @@ describe 'Get result sets by status' do
                                                       run_name: @params[:run_name],
                                                       product_name: @params[:product_name],
                                                       status: 'Passed')
-    expect(result_set_pack.contain?(result_first.result_set)).to be_truthy
-    expect(result_set_pack.contain?(result_second.result_set)).to be_truthy
+    expect(result_set_pack).to be_contain(result_first.result_set)
+    expect(result_set_pack).to be_contain(result_second.result_set)
   end
 
   it 'get result_sets by status if it not found' do
@@ -39,7 +41,7 @@ describe 'Get result sets by status' do
   end
 
   describe 'Incorrect data' do
-    before :each do
+    before do
       @user.token = @user.create_new_api_token.token
     end
 
@@ -102,7 +104,7 @@ describe 'Get result sets by status' do
                                                        product_name: @params[:product_name],
                                                        status: statuses)
     expect(result_sets_pack.result_sets.count).to eq(2)
-    expect(result_sets_pack.contain?(result_first.result_set)).to be_truthy
-    expect(result_sets_pack.contain?(result_second.result_set)).to be_truthy
+    expect(result_sets_pack).to be_contain(result_first.result_set)
+    expect(result_sets_pack).to be_contain(result_second.result_set)
   end
 end

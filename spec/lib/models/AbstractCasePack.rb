@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require 'json'
 require_relative '../../tests/test_management'
 class AbstractCasePack
   attr_accessor :cases
+
   def initialize(case_pack)
     @cases = []
     case_pack = JSON.parse(case_pack.body)['cases'] unless case_pack.is_a?(Hash) || case_pack.is_a?(Array)

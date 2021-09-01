@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'Plan Smoke' do
   before :all do
@@ -5,7 +7,7 @@ describe 'Plan Smoke' do
     @user.login
   end
 
-  before :each do
+  before do
     @product = @user.create_new_product
   end
 
@@ -42,7 +44,7 @@ describe 'Plan Smoke' do
   end
 
   describe 'Show plans' do
-    before :each do
+    before do
       @plan = @user.create_new_plan(product_name: @product.name)
     end
 
@@ -65,12 +67,12 @@ describe 'Plan Smoke' do
     it 'get one plan | show method' do
       plan = @user.show_plan(id: @plan.id)
       expect(plan.response.code).to eq('200')
-      expect(plan.like_a?(@plan)).to be_truthy
+      expect(plan).to be_like_a(@plan)
     end
   end
 
   describe 'Delete Plan' do
-    before :each do
+    before do
       @plan = @user.create_new_plan(product_name: @product.name)
     end
 
@@ -79,7 +81,7 @@ describe 'Plan Smoke' do
       plan_pack = @user.get_plans(product_id: @plan.product_id)
       expect(response.code).to eq('200')
       expect(JSON.parse(response.body)['plan']['id']).to eq(@plan.id)
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['errors']).to be_empty
       expect(plan_pack.plans).to be_empty
     end
 
@@ -94,7 +96,7 @@ describe 'Plan Smoke' do
   end
 
   describe 'Edit Plan' do
-    before :each do
+    before do
       @plan = @user.create_new_plan(product_name: @product.name)
     end
 

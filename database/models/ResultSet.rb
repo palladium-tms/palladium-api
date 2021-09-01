@@ -42,10 +42,10 @@ class ResultSet < Sequel::Model
       name = get_result_set_name(data)
       errors_stack = []
       objects[:result_sets] = []
-      [*name].map do |name|
-        new_result_set = ResultSet.find_or_new(name, objects[:run].id)
+      [*name].map do |current_name|
+        new_result_set = ResultSet.find_or_new(current_name, objects[:run].id)
         if new_result_set.valid?
-          new_result_set.save
+          new_result_set.save_changes
           if objects[:plan]
             objects[:plan].add_result_set(new_result_set)
           else
@@ -70,8 +70,8 @@ class ResultSet < Sequel::Model
   end
 
   def self.case_detected(result_set_name, run)
-    suite = Suite.find_or_create(product_id: Plan[id: run.plan_id].product_id, name: run.name) do |suite|
-      suite.name = run.name
+    suite = Suite.find_or_create(product_id: Plan[id: run.plan_id].product_id, name: run.name) do |current_suite|
+      current_suite.name = run.name
     end
     current_case = suite.cases_dataset[name: result_set_name]
     if current_case.nil?
@@ -105,9 +105,9 @@ class ResultSet < Sequel::Model
     result_set = ResultSet[id: args.first['result_set_id']]
     begin
       if result_set
-        [{results: result_set.results,
-          result_set: result_set.values,
-          product_id: result_set.plan.product.id}]
+        [{ results: result_set.results,
+           result_set: result_set.values,
+           product_id: result_set.plan.product.id }]
       else
         [[], 'Result Set not found']
       end

@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require_relative '../test_management'
 describe 'Auth Smoke' do
-  before :each do
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
   end
@@ -25,7 +27,8 @@ describe 'Auth Smoke' do
   end
 
   describe 'use api token' do
-    let (:rand_word){ Faker::TvShows::Buffy.celebrity }
+    let(:rand_word) { Faker::TvShows::Buffy.celebrity }
+
     it 'Use api token for result_new method' do
       token = @user.create_new_api_token
       @user_2 = AccountFunctions.create_and_parse

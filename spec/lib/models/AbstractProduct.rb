@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 class AbstractProduct
   attr_accessor :id, :name, :created_at, :updated_at, :is_archived, :product_errors, :suite, :response
@@ -11,6 +13,7 @@ class AbstractProduct
       @suite = AbstractSuite.new(@response) if body['suite']
     end
     return unless @product_errors.nil?
+
     @id = product_data['id']
     @name = product_data['name']
     @created_at = product_data['created_at']
@@ -19,10 +22,10 @@ class AbstractProduct
 
   def default_data
     {
-        'id': 0,
-        'name': rand_product_name,
-        'created_at': '0',
-        'updated_at': '0'
+      id: 0,
+      name: rand_product_name,
+      created_at: '0',
+      updated_at: '0'
     }
   end
 

@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'Product Smoke' do
-  before :each do
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
   end
@@ -27,7 +29,7 @@ describe 'Product Smoke' do
       expect(response.code).to eq('200')
       JSON.parse(response.body)
       expect(JSON.parse(response.body)['product']).to eq(product.id)
-      expect(JSON.parse(response.body)['errors'].empty?).to be_truthy
+      expect(JSON.parse(response.body)['errors']).to be_empty
     end
 
     it 'delete product with plans' do
@@ -55,7 +57,7 @@ describe 'Product Smoke' do
     it 'get one product | show method' do
       res_new_product = @user.create_new_product
       res_product = @user.show_product(res_new_product.id)
-      expect(res_new_product.like_a?(res_product)).to be_truthy
+      expect(res_new_product).to be_like_a(res_product)
     end
   end
 
@@ -65,7 +67,7 @@ describe 'Product Smoke' do
       product = @user.create_new_product
       @user.update_product(product.id, new_name)
       product_after_edit = @user.show_product(product.id)
-      expect(product.like_a?(product_after_edit)).not_to be_truthy
+      expect(product).not_to be_like_a(product_after_edit)
       expect(product_after_edit.name).to eq(new_name)
     end
   end

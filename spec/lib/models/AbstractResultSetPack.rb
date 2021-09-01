@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 class AbstractResultSetPack
   attr_accessor :result_sets, :parsed_body
@@ -9,10 +11,9 @@ class AbstractResultSetPack
       result_set_pack = @parsed_body['result_sets']
     end
     result_set_pack.map do |result_set|
-      @result_sets << AbstractResultSet.new('result_sets' => [ result_set ])
+      @result_sets << AbstractResultSet.new('result_sets' => [result_set])
     end
   end
-
 
   def contain?(result_set)
     contain = false

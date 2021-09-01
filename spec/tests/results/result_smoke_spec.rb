@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'Result Smoke' do
   before :all do
@@ -6,13 +8,13 @@ describe 'Result Smoke' do
   end
 
   describe 'Create new result' do
-    before :each do
-      @params = {plan_name: rand_plan_name,
-                 product_name: rand_product_name,
-                 run_name: rand_run_name,
-                 result_set_name: rand_result_set_name,
-                 message: rand_message,
-                 status: 'Passed'}
+    before do
+      @params = { plan_name: rand_plan_name,
+                  product_name: rand_product_name,
+                  run_name: rand_run_name,
+                  result_set_name: rand_result_set_name,
+                  message: rand_message,
+                  status: 'Passed' }
     end
 
     it '1. Check creating new result with all other elements' do
@@ -87,7 +89,7 @@ describe 'Result Smoke' do
                                        status: 'Passed')
       expect(result.response.code).to eq('200')
       (result.result_set.result_sets.map(&:name) & names_array).each do |name|
-        expect((result.result_set.result_sets.map(&:name) & names_array).include?(name)).to be_truthy
+        expect((result.result_set.result_sets.map(&:name) & names_array)).to include(name)
       end
       expect(result.message).to eq(message)
       expect(result.status.name).to eq('Passed')
@@ -145,13 +147,13 @@ describe 'Result Smoke' do
   end
 
   describe 'Get results' do
-    before :each do
-      @params = {plan_name: rand_plan_name,
-                 product_name: rand_product_name,
-                 run_name: rand_run_name,
-                 result_set_name: rand_result_set_name,
-                 message: rand_message,
-                 status: 'Passed'}
+    before do
+      @params = { plan_name: rand_plan_name,
+                  product_name: rand_product_name,
+                  run_name: rand_run_name,
+                  result_set_name: rand_result_set_name,
+                  message: rand_message,
+                  status: 'Passed' }
     end
 
     it 'get results by result_set_id' do
@@ -182,13 +184,13 @@ describe 'Result Smoke' do
   end
 
   describe 'New result custom parameters' do
-    before :each do
-      @params = {plan_name: rand_plan_name,
-                 product_name: rand_product_name,
-                 run_name: rand_run_name,
-                 result_set_name: rand_result_set_name,
-                 message: rand_message_custom_data,
-                 status: 'Passed'}
+    before do
+      @params = { plan_name: rand_plan_name,
+                  product_name: rand_product_name,
+                  run_name: rand_run_name,
+                  result_set_name: rand_result_set_name,
+                  message: rand_message_custom_data,
+                  status: 'Passed' }
     end
 
     it 'Create new result with custom parameters' do

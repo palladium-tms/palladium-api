@@ -20,11 +20,8 @@ class Product < Sequel::Model
   end
 
   def self.product_id_validation(product_id)
-    if product_id.nil?
-      return { product_id: ["product_id can't be empty"] }
-    elsif Product[id: product_id].nil?
-      return { product_id: ['product_id is not belongs to any product'] }
-    end
+    return { product_id: ["product_id can't be empty"] } if product_id.nil?
+    return { product_id: ['product_id is not belongs to any product'] } if Product[id: product_id].nil?
 
     {}
   end
@@ -41,7 +38,7 @@ class Product < Sequel::Model
   def self.create_new(data)
     product = Product.find_or_new(data)
     if product.valid?
-      product.save
+      product.save_changes
       { product: product }
     else
       { product_errors: product.errors.full_messages }
@@ -59,7 +56,7 @@ class Product < Sequel::Model
   end
 
   def self.get_plans(option = {})
-    limit = JSON.parse(File.read("config/palladium.json"))['count_of_plan_loading']
+    limit = JSON.parse(File.read('config/palladium.json'))['count_of_plan_loading']
     request_status = ''
     product = if option['product_id']
                 Product[id: option['product_id']]
@@ -68,16 +65,14 @@ class Product < Sequel::Model
               end
     begin
       all_plans = Plan.where(product_id: product.id).order(Sequel.desc(:id))
-      plans = if option['after_plan_id'] && option['after_plan_id'].is_a?(Numeric)
-        all_plans.where(Sequel.lit('id < ?', option['after_plan_id'].to_i)).limit(limit).all
-      elsif option['plan_id'] && option['plan_id'].is_a?(Numeric)
-        all_plans.where(Sequel.lit('id >= ?', option['plan_id'])).all
-      else
-        all_plans.limit(limit).all
+      plans = if option['after_plan_id'].is_a?(Numeric)
+                all_plans.where(Sequel.lit('id < ?', option['after_plan_id'].to_i)).limit(limit).all
+              elsif option['plan_id'].is_a?(Numeric)
+                all_plans.where(Sequel.lit('id >= ?', option['plan_id'])).all
+              else
+                all_plans.limit(limit).all
               end
-      if plans.size < limit || Plan.count < limit
-        request_status = 'Is a last plans'
-      end
+      request_status = 'Is a last plans' if plans.size < limit || Plan.count < limit
       plan_object = []
       all_case_count = Case.where(suite_id: product.suites.map(&:id)).count
       plans.each do |plan|
@@ -88,7 +83,7 @@ class Product < Sequel::Model
                      end
         plan_object << plan.values.merge(case_count: case_count)
       end
-      return { plans: plan_object, errors: [], request_status: request_status }
+      { plans: plan_object, errors: [], request_status: request_status }
     rescue StandardError
       { plans: [], errors: ['Plan data is incorrect'], request_status: request_status }
     end
@@ -112,18 +107,18 @@ class Product < Sequel::Model
   end
 
   def self.get_cases_count(suites, plan)
-    if !plan.cases.empty?
-      case_ids = plan.cases.map(&:id)
-      Case.where(id: case_ids).
-          where(suite_id: suites.map(&:id)).
-          group_and_count(:suite_id).map(&:values).group_by do |e|
-        e[:suite_id]
-      end
-
-    else
+    if plan.cases.empty?
       Case.where(suite_id: suites.map(&:id)).group_and_count(:suite_id).map(&:values).group_by do |e|
         e[:suite_id]
       end
+    else
+      case_ids = plan.cases.map(&:id)
+      Case.where(id: case_ids)
+          .where(suite_id: suites.map(&:id))
+          .group_and_count(:suite_id).map(&:values).group_by do |e|
+        e[:suite_id]
+      end
+
     end
   end
 end

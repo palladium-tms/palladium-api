@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'Users Smoke' do
   describe 'Create user' do
@@ -11,8 +13,7 @@ describe 'Users Smoke' do
   end
 
   describe 'User Settings' do
-
-    before :each do
+    before do
       @user = AccountFunctions.create_and_parse
       @user.login
     end

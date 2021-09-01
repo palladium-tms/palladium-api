@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec'
 require 'net/http'
 require 'json'
@@ -31,14 +33,11 @@ require_relative '../lib/functions/HistoryFunctions'
 require_relative '../lib/functions/ResultSetFunctions'
 require_relative '../lib/functions/ResultFunctions'
 require_relative '../lib/functions/StatusFunctions'
-require_relative '../lib/functions/AuthFunctions'
 require_relative '../lib/functions/TokenFunctions'
 require_relative '../lib/functions/InviteTokenFunctions'
 require_relative '../lib/functions/SuiteFunctions'
-require_relative '../lib/functions/ProductPositionFunctions.rb'
+require_relative '../lib/functions/ProductPositionFunctions'
 require_relative '../lib/functions/CaseFunctions'
 require_relative '../lib/functions/UserSetting'
 require_relative '../lib/functions/AccountFunctions'
 require_relative '../../spec/lib/ObjectWrap/http'
-class TestManagement
-end

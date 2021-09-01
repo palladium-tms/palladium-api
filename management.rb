@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sinatra'
 require 'sequel'
 require 'json'
@@ -5,7 +7,7 @@ require 'jwt'
 require 'pg'
 require 'sinatra/cross_origin'
 require_relative 'database/database'
-require_relative 'database/migrate/001_create_product_positions.rb'
+require_relative 'database/migrate/001_create_product_positions'
 
 # models
 require_relative 'database/models/UserSetting'
@@ -27,4 +29,3 @@ require_relative 'database/models/Case'
 require_relative 'core/authorization/auth'
 require_relative 'core/authorization/jwt_auth'
 require_relative 'core/settings/palladium_settings'
-

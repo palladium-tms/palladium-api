@@ -1,2 +1,11 @@
+require:
+    - rubocop-performance
+    - rubocop-rake
+    - rubocop-rspec
+    - rubocop-sequel
+
 inherit_from:
     - .rubocop_todo.yml
+
+AllCops:
+    NewCops: enable

@@ -49,7 +49,7 @@ class Run < Sequel::Model
       run_name = get_run_name(data)
       run = Run.find_or_new(run_name, objects[:plan].id)
       if run.valid?
-        run.save
+        run.save_changes
         suite = suite_detected(objects[:plan], run)
         objects[:plan].add_run(run)
         { run: run, suite: suite }.merge(objects)
@@ -72,35 +72,32 @@ class Run < Sequel::Model
   end
 
   def self.get_run_name(data)
-    if data['run_data']
-      return data['run_data']['name'] if data['run_data']['name']
-    end
-    if data['result_set_data']
-      return  Case[id: data['result_set_data']['case_id']].suite.name if data['result_set_data']['case_id']
-    end
+    return data['run_data']['name'] if data['run_data'] && (data['run_data']['name'])
+    return Case[id: data['result_set_data']['case_id']].suite.name if data['result_set_data'] && (data['result_set_data']['case_id'])
   end
 
   def self.get_name_by_suite_if_exist(result_set_data)
     return Case[result_set_data['case_id']].suite.name if result_set_data['case_id']
   end
 
-  def self.suite_detected(plan, run) # FIXME: need optimize
+  # FIXME: need optimize
+  def self.suite_detected(plan, run)
     suite = Suite.find(product_id: plan.product_id, name: run.name)
     if suite.nil?
       suite = Suite.create(name: run.name)
       Product[id: plan.product_id].add_suite(suite)
       plan.add_suite(suite)
     elsif !plan.suites.map(&:id).include?(suite.id)
-           plan.add_suite(suite)
-           suite.cases.each do |current_case|
-             plan.add_case(current_case)
-           end
+      plan.add_suite(suite)
+      suite.cases.each do |current_case|
+        plan.add_case(current_case)
+      end
     end
     suite
   end
 
   def self.delete(run)
-     ResultSet.where(id: run.result_sets.map(&:id)).destroy
+    ResultSet.where(id: run.result_sets.map(&:id)).destroy
   end
 
   # def self.edit(data)
@@ -115,7 +112,7 @@ class Run < Sequel::Model
   def self.get_result_sets(*args)
     run = Run[id: args.first['run_id']]
     begin
-      [{result_sets: run.result_sets, run: run.values}, []]
+      [{ result_sets: run.result_sets, run: run.values }, []]
     rescue StandardError
       [[], 'Result_set data is incorrect']
     end

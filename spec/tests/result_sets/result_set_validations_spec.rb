@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'Result Set Validations' do
-  before :each do
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
-    @params = {plan_name: rand_plan_name,
-               product_name: rand_product_name,
-               run_name: rand_run_name,
-               name: rand_result_set_name,
-               message: rand_message,
-               status: 'Passed'}
+    @params = { plan_name: rand_plan_name,
+                product_name: rand_product_name,
+                run_name: rand_run_name,
+                name: rand_result_set_name,
+                message: rand_message,
+                status: 'Passed' }
   end
 
   describe 'Create new result_sets' do

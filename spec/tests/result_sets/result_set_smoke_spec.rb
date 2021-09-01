@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'Result Set Smoke' do
-  before :each do
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
   end
 
   describe 'Create new result_sets' do
-    before :each do
-      @params = {plan_name: rand_plan_name, product_name: rand_product_name, run_name: rand_run_name, name: rand_run_name}
+    before do
+      @params = { plan_name: rand_plan_name, product_name: rand_product_name, run_name: rand_run_name, name: rand_run_name }
     end
 
     it '1. Create product, plan, run and result set in one time' do
@@ -34,7 +36,7 @@ describe 'Result Set Smoke' do
       @params[:product_name] = product.name
       @params[:plan_name] = plan.name
       result_set = @user.create_new_result_set(@params)
-      expect(result_set.run.plan.like_a?(plan)).to be_truthy
+      expect(result_set.run.plan).to be_like_a(plan)
       expect(result_set.run.name).to eq(@params[:run_name])
       expect(result_set.name).to eq(@params[:name])
     end
@@ -51,19 +53,20 @@ describe 'Result Set Smoke' do
   end
 
   describe 'Show result_set' do
-    before :each do
+    before do
       @result_set = @user.create_new_result_set(plan_name: rand_plan_name, product_name: rand_product_name, run_name: rand_run_name, name: rand_run_name)
     end
+
     it 'get result_sets by run_id' do
       result_set_pack = @user.get_result_sets(id: @result_set.run.id)
-      expect(result_set_pack.result_sets.first.like_a?(@result_set)).to be_truthy
+      expect(result_set_pack.result_sets.first).to be_like_a(@result_set)
       expect(result_set_pack.result_sets.first.id).to eq(@result_set.id)
       expect(result_set_pack.result_sets.first.run_id).to eq(@result_set.run.id)
     end
 
     it 'get result_set | show method' do
       result_set_show = @user.get_result_set(id: @result_set.id)
-      expect(@result_set.like_a?(result_set_show)).to be_truthy
+      expect(@result_set).to be_like_a(result_set_show)
     end
   end
 

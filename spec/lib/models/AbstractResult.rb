@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 require_relative '../../tests/test_management'
 class AbstractResult
@@ -6,7 +8,7 @@ class AbstractResult
   def initialize(data)
     @response = data
     @is_null = false
-    if data.class == Hash
+    if data.instance_of?(Hash)
       parsed_result = data['result'].first
     elsif data.body.empty?
       @is_null = true

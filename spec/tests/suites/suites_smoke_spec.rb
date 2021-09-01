@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'Suites Smoke' do
-  before :each do
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
-    @params = {plan_name: rand_plan_name, product_name: rand_product_name,
-               run_name: rand_run_name, name: rand_run_name}
+    @params = { plan_name: rand_plan_name, product_name: rand_product_name,
+                run_name: rand_run_name, name: rand_run_name }
   end
 
   describe 'Create suite' do
@@ -41,7 +43,7 @@ describe 'Suites Smoke' do
       run = @user.create_new_run(plan_name: @params[:plan_name], product_name: @params[:product_name])
       new_suite_name = rand_run_name
       @user.update_suite(id: run.plan.product.suite.id, name: new_suite_name)
-      run_pack, _ = @user.get_runs(plan_id: run.plan.id)
+      run_pack, = @user.get_runs(plan_id: run.plan.id)
       expect(run_pack.runs.first.name).to eq(new_suite_name)
     end
 
@@ -51,7 +53,7 @@ describe 'Suites Smoke' do
       first_run = @user.create_new_run(name: run_name, plan_name: @params[:plan_name], product_name: rand_product_name)
       second_run = @user.create_new_run(name: run_name, plan_name: @params[:plan_name], product_name: rand_product_name)
       new_suite = @user.update_suite(id: first_run.plan.product.suite.id, name: new_suite_name)
-      runs_in_other_product, _ = @user.get_runs(plan_id: second_run.plan.id)
+      runs_in_other_product, = @user.get_runs(plan_id: second_run.plan.id)
       expect(new_suite.name).to eq(new_suite_name)
       expect(runs_in_other_product.runs.first.name).to eq(second_run.name)
     end
@@ -59,8 +61,8 @@ describe 'Suites Smoke' do
 
   describe 'Delete suite' do
     it 'check deleting suite' do
-      @params = {plan_name: rand_plan_name, product_name: rand_product_name,
-                 run_name: rand_run_name, name: rand_run_name}
+      @params = { plan_name: rand_plan_name, product_name: rand_product_name,
+                  run_name: rand_run_name, name: rand_run_name }
       run = @user.create_new_run(@params)
       @params[:name] = "NEW_#{@params[:name]}"
       @user.create_new_run(@params)
@@ -74,11 +76,11 @@ describe 'Suites Smoke' do
     it 'check suite not existed in new plan after deleting' do
       product_name = rand_product_name
       plan_name = rand_plan_name
-      run_for_delete = @user.create_new_run({product_name: product_name, plan_name: plan_name, name: rand_run_name})
-      run_for_stay = @user.create_new_run({product_name: product_name, plan_name: plan_name, name: rand_run_name})
+      run_for_delete = @user.create_new_run({ product_name: product_name, plan_name: plan_name, name: rand_run_name })
+      run_for_stay = @user.create_new_run({ product_name: product_name, plan_name: plan_name, name: rand_run_name })
       _, suite_pack_before = @user.get_runs(plan_id: run_for_delete.plan.id)
       @user.delete_suite(suite_id: suite_pack_before.suites.first.id, plan_id: run_for_delete.plan.id) # deleting
-      new_plan = @user.create_new_plan({product_name: product_name})
+      new_plan = @user.create_new_plan({ product_name: product_name })
       _, suite_pack_after = @user.get_runs(plan_id: new_plan.id)
       expect(suite_pack_before.suites.size).to eq(2)
       expect(suite_pack_after.suites.size).to eq(1)

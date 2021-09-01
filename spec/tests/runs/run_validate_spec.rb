@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'Run Validation' do
   before :all do
@@ -5,7 +7,7 @@ describe 'Run Validation' do
     @user.login
   end
 
-  before :each do
+  before do
     @product = @user.create_new_product
     @plan = @user.create_new_plan(product_id: @product.id)
   end
@@ -47,7 +49,7 @@ describe 'Run Validation' do
 
     it 'create run without run name' do
       run = @user.post_request('/api/run_new',
-                              run_data: { plan_id: @plan.id })
+                               run_data: { plan_id: @plan.id })
       result = JSON.parse(run.response.body)
       expect(run.response.code).to eq('422')
       expect(result['run_errors']).to eq(['name cannot be empty'])

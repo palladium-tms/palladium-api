@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 gem 'bcrypt'
@@ -12,6 +14,13 @@ gem 'sinatra-cross_origin'
 
 gem 'faker'
 
-
-gem 'ruby-debug-ide'
 gem 'debase'
+gem 'ruby-debug-ide'
+
+group :development do
+  gem 'rubocop', require: false
+  gem 'rubocop-performance', require: false
+  gem 'rubocop-rake', require: false
+  gem 'rubocop-rspec', require: false
+  gem 'rubocop-sequel', require: false
+end

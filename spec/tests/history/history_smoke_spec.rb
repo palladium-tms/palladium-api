@@ -1,19 +1,23 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'History Smoke' do
   before :all do
     @user = AccountFunctions.create_and_parse
     @user.login
   end
-  # Fixme: add more checks for history
+  # FIXME: add more checks for history
+
   describe 'Get history from case id' do
-    before :each do
-      @params = {product_name: rand_product_name,
-                 plan_name: rand_plan_name,
-                 run_name: rand_run_name,
-                 result_set_name: rand_result_set_name,
-                 message: rand_message,
-                 status: 'Passed'}
+    before do
+      @params = { product_name: rand_product_name,
+                  plan_name: rand_plan_name,
+                  run_name: rand_run_name,
+                  result_set_name: rand_result_set_name,
+                  message: rand_message,
+                  status: 'Passed' }
     end
+
     it '1. Check creating new result with all other elements' do
       3.times do
         @first_result ||= @user.create_new_result(@params)
@@ -25,10 +29,10 @@ describe 'History Smoke' do
       case_pack = @user.get_cases(id: @first_result.product.suite.id)
       result_sets_history = @user.case_history(id: case_pack.cases.first.id)
       expect(result_sets_history.histories.size).to eq(2)
-      expect(result_sets_history.plan_exist?(@first_result.plan.id)).to be_truthy
-      expect(result_sets_history.plan_exist?(@second_result.plan.id)).to be_truthy
-      expect(result_sets_history.run_exist?(@first_result.run.id)).to be_truthy
-      expect(result_sets_history.run_exist?(@second_result.run.id)).to be_truthy
+      expect(result_sets_history).to be_plan_exist(@first_result.plan.id)
+      expect(result_sets_history).to be_plan_exist(@second_result.plan.id)
+      expect(result_sets_history).to be_run_exist(@first_result.run.id)
+      expect(result_sets_history).to be_run_exist(@second_result.run.id)
     end
 
     it 'Get history only by 30 plans' do
@@ -48,14 +52,15 @@ describe 'History Smoke' do
   end
 
   describe 'Get history from result set id' do
-    before :each do
-      @params = {product_name: rand_product_name,
-                 plan_name: rand_plan_name,
-                 run_name: rand_run_name,
-                 result_set_name: rand_result_set_name,
-                 message: rand_message,
-                 status: 'Passed'}
+    before do
+      @params = { product_name: rand_product_name,
+                  plan_name: rand_plan_name,
+                  run_name: rand_run_name,
+                  result_set_name: rand_result_set_name,
+                  message: rand_message,
+                  status: 'Passed' }
     end
+
     it '1. Check creating new result with all other elements' do
       3.times do
         @first_result ||= @user.create_new_result(@params)
@@ -66,10 +71,10 @@ describe 'History Smoke' do
       end
       result_sets_history = @user.case_history(result_set_id: @first_result.result_set.id)
       expect(result_sets_history.histories.size).to eq(2)
-      expect(result_sets_history.plan_exist?(@first_result.plan.id)).to be_truthy
-      expect(result_sets_history.plan_exist?(@second_result.plan.id)).to be_truthy
-      expect(result_sets_history.run_exist?(@first_result.run.id)).to be_truthy
-      expect(result_sets_history.run_exist?(@second_result.run.id)).to be_truthy
+      expect(result_sets_history).to be_plan_exist(@first_result.plan.id)
+      expect(result_sets_history).to be_plan_exist(@second_result.plan.id)
+      expect(result_sets_history).to be_run_exist(@first_result.run.id)
+      expect(result_sets_history).to be_run_exist(@second_result.run.id)
     end
   end
 end

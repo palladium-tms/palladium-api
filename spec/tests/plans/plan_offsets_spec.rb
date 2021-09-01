@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'Plan Smoke' do
   before :all do
@@ -5,7 +7,7 @@ describe 'Plan Smoke' do
     @user.login
   end
 
-  before :each do
+  before do
     @product = @user.create_new_product
     10.times { @user.create_new_plan(product_name: @product.name) }
   end
@@ -17,7 +19,7 @@ describe 'Plan Smoke' do
       new_plans = @user.get_plans(product_id: @product.id).plans
       expect(plans.count).to eq(6)
       expect(new_plans.count).to eq(6)
-      expect(new_plans.first.like_a?(@plan)).to be_truthy
+      expect(new_plans.first).to be_like_a(@plan)
     end
   end
 

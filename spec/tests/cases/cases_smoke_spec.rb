@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'Cases Smoke' do
-  before :each do
+  before do
     @user = AccountFunctions.create_and_parse
     @user.login
   end
@@ -25,20 +27,20 @@ describe 'Cases Smoke' do
                                                name: rand_result_set_name)
 
       case_pack = @user.get_cases_from_plan(plan_id: result_set.run.plan.id,
-                                  run_id: result_set.run.id)
+                                            run_id: result_set.run.id)
       expect(case_pack.cases.size).to eq(1)
       expect(case_pack.cases.first.name).to eq(result_set.name)
     end
   end
 
   describe 'Case edit by case id' do
-
-    before :each do
-      @params = {plan_name: rand_plan_name,
+    before do
+      @params = { plan_name: rand_plan_name,
                   run_name: rand_run_name,
                   product_name: rand_product_name,
-                  name: rand_result_set_name}
+                  name: rand_result_set_name }
     end
+
     it 'Change case name' do
       result_set = @user.create_new_result_set(plan_name: rand_plan_name,
                                                run_name: rand_run_name,
@@ -92,11 +94,11 @@ describe 'Cases Smoke' do
   end
 
   describe 'Delete case' do
-    before :each do
-      @params = {product_name: rand_product_name,
-                 plan_name: rand_plan_name,
-                 run_name: rand_run_name,
-                 name: rand_result_set_name}
+    before do
+      @params = { product_name: rand_product_name,
+                  plan_name: rand_plan_name,
+                  run_name: rand_run_name,
+                  name: rand_result_set_name }
     end
 
     it 'Delete case by id' do
@@ -124,7 +126,6 @@ describe 'Cases Smoke' do
       expect(case_pack.cases.size).to eq(3)
     end
 
-
     it 'Delete case and check not existing in new plan' do
       @params[:name] = "First_#{@params[:name]}"
       first_result_set = @user.create_new_result_set(@params)
@@ -142,9 +143,6 @@ describe 'Cases Smoke' do
       case_pack_2 = @user.get_cases_from_plan(plan_id: result_set.run.plan.id, suite_id: result_set.run.plan.product.suite.id)
       expect(case_pack_2.cases.size).to eq(2)
     end
-
-
-
 
     # it 'result set will be delete if case delete' do
     #   result_set = @user.create_new_result_set(@params)

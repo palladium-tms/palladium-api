@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'models/AbstractCase'
 require_relative 'models/AbstractCasePack'
 require_relative 'models/AbstractHistory'
@@ -18,5 +20,3 @@ require_relative 'models/AbstractSuite'
 require_relative 'models/AbstractSuitePack'
 require_relative 'models/AbstractToken'
 require_relative 'models/AbstractTokenPack'
-class Abstractions
-end

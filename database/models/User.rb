@@ -19,21 +19,20 @@ class User < Sequel::Model
 
   def validate
     validates_unique :email, message: 'Email is already taken.'
-    validates_format /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i, :email, message: 'Email format error. Please, check email.'
+    validates_format(/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i, :email, message: 'Email format error. Please, check email.')
   end
 
   def self.create_new(data)
     @user = User.new(email: data['email'])
     if /^[a-zA-Z0-9]{4,20}$/.match(data['password']).nil?
       @user.errors.add(:password, 'password is uncorrent')
-      return @user
     else
       @user.password = data['password']
       @user.password.salt
-      @user.save if @user.valid?
+      @user.save_changes if @user.valid?
       @user.user_setting = UserSetting.create
-      @user
     end
+    @user
   end
 
   def self.user_token?(email, token)

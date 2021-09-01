@@ -38,3 +38,5 @@ jobs:
         bundle install --jobs 4 --retry 3
     - name: Run tests
       run: bundle exec rspec spec/tests --fail-fast
+    - name: Check source files using `rubocop`
+      run: rubocop

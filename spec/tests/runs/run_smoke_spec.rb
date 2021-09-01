@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../tests/test_management'
 describe 'Run Smoke' do
   before :all do
@@ -7,7 +9,7 @@ describe 'Run Smoke' do
 
   describe 'Create new run' do
     it 'check creating new run, plan and product by run_name, plan_name and product_name' do
-      params = {plan_name: rand_plan_name, product_name: rand_product_name, name: rand_run_name}
+      params = { plan_name: rand_plan_name, product_name: rand_product_name, name: rand_run_name }
       run = @user.create_new_run(params)
       expect(run.response.code).to eq('200')
       expect(run.plan.product.name).to eq(params[:product_name])
@@ -17,7 +19,7 @@ describe 'Run Smoke' do
 
     it 'check creating new run and plan by plan_name, run_name and product_id' do
       @product = @user.create_new_product
-      params = {plan_name: rand_plan_name, product_id: @product.id, name: rand_run_name}
+      params = { plan_name: rand_plan_name, product_id: @product.id, name: rand_run_name }
       run = @user.create_new_run(params)
       expect(run.response.code).to eq('200')
       expect(run.plan.product.name).to eq(@product.name)
@@ -28,7 +30,7 @@ describe 'Run Smoke' do
     it 'check creating new run by plan_id and run_name' do
       @product = @user.create_new_product
       @plan = @user.create_new_plan(product_id: @product.id)
-      params = {plan_id:  @plan.id, name: rand_run_name}
+      params = { plan_id: @plan.id, name: rand_run_name }
       run = @user.create_new_run(params)
       expect(run.response.code).to eq('200')
       expect(run.plan.name).to eq(@plan.name)
@@ -38,7 +40,7 @@ describe 'Run Smoke' do
     it 'check creating new run by plan_name and run_name' do
       @product = @user.create_new_product
       @plan = @user.create_new_plan(product_id: @product.id)
-      params = {product_name: @product, plan_name:  @plan.name, name: rand_run_name}
+      params = { product_name: @product, plan_name: @plan.name, name: rand_run_name }
       run = @user.create_new_run(params)
       expect(run.response.code).to eq('200')
       expect(run.plan.name).to eq(@plan.name)
@@ -47,27 +49,26 @@ describe 'Run Smoke' do
   end
 
   describe 'Show runs' do
-
-    before :each do
+    before do
       @product = @user.create_new_product
       @plan = @user.create_new_plan(product_id: @product.id)
       @run = @user.create_new_run(plan_id: @plan.id)
     end
 
     it 'Get runs by plan_id' do
-      run_pack, _ = @user.get_runs(plan_id: @plan.id)
+      run_pack, = @user.get_runs(plan_id: @plan.id)
       expect(run_pack.runs.first.id).to eq(@run.id)
       expect(run_pack.runs.first.plan_id).to eq(@plan.id)
     end
 
     it 'Get one run | show method' do
       run_show = @user.get_run(id: @run.id)
-      expect(@run.like_a?(run_show)).to be_truthy
+      expect(@run).to be_like_a(run_show)
     end
   end
 
   describe 'Delete Run' do
-    before :each do
+    before do
       @product = @user.create_new_product
       @plan = @user.create_new_plan(product_id: @product.id)
       @run = @user.create_new_run(plan_id: @plan.id)

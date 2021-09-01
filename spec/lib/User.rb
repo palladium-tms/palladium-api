@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # require_relative '../lib/functions/AuthFunctions'
 require_relative '../lib/functions/ProductFunctions'
 require_relative '../lib/functions/PlanFunctions'
@@ -32,7 +34,9 @@ class User
   include CaseFunctions
   include InviteTokenFunctions
   include StringHelper
-  attr_accessor :email, :password, :token, :http
+  attr_accessor :email, :password, :http
+  attr_reader :token
+
   def initialize(options = {})
     @email = options[:email]
     @password = options[:password]
@@ -41,9 +45,9 @@ class User
 
   def login
     puts "Login from #{@email} #{@password}"
-    response = @http.post_request('/public/login', 'user_data': { 'email': @email, 'password': @password })
+    response = @http.post_request('/public/login', user_data: { email: @email, password: @password })
     @token = JSON.parse(response.body)['token']
-    @http = Http.new(token:  @token)
+    @http = Http.new(token: @token)
     response
   end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 class AbstractPlanPack
   attr_accessor :plans, :response

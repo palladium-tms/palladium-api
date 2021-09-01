@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 require_relative '../../tests/test_management'
 class AbstractResultSet
@@ -5,17 +7,15 @@ class AbstractResultSet
 
   def initialize(data)
     @response = data
-    if data.class == Hash
-      parsed_result_set = data['result_sets'].first
-    else
+    unless data.instance_of?(Hash)
       data = JSON.parse(data.body)
       if data['result_sets'].nil?
         @is_null = true
         @errors = data['result_sets_errors'] if data['result_sets_errors']
         return
       end
-      parsed_result_set = data['result_sets'].first
     end
+    parsed_result_set = data['result_sets'].first
     @id = parsed_result_set['id']
     @name = parsed_result_set['name']
     @run_id = parsed_result_set['run_id']

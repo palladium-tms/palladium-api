@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 require_relative '../../tests/test_management'
 class AbstractRun
@@ -5,7 +7,7 @@ class AbstractRun
 
   def initialize(data)
     @response = data
-    if data.class == Hash
+    if data.instance_of?(Hash)
       parsed_run = data['run']
     else
       data = JSON.parse(data.body)

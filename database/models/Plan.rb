@@ -31,11 +31,8 @@ class Plan < Sequel::Model
   end
 
   def self.plan_id_validation(plan_id)
-    if plan_id.nil?
-      return { 'plan_id' => ["plan_id can't be nil"] }
-    elsif Plan[id: plan_id].nil?
-      return { 'plan_id' => ['plan_id is not belongs to any product'] }
-    end
+    return { 'plan_id' => ["plan_id can't be nil"] } if plan_id.nil?
+    return { 'plan_id' => ['plan_id is not belongs to any product'] } if Plan[id: plan_id].nil?
 
     []
   end
@@ -62,7 +59,6 @@ class Plan < Sequel::Model
   # example: data = {'plan_data': {'product_id': id, 'name': name}} or {'plan_data': {'product_name': name, 'name': name}}
   # return responce = {product: {product_data}, plan: {plan_data}, errors:: {product_errors: {}, plan_errors: {}}}
   def self.create_new(data)
-
     return { plan: Plan[id: data['run_data']['plan_id']] } if plan_id_exist?(data)
 
     product_resp = create_product(data)
@@ -72,16 +68,13 @@ class Plan < Sequel::Model
       api_created = data['plan_data']['api_created']
       api_created = true if api_created.nil?
       existed_plan = Plan.find(name: data['plan_data']['name'], product_id: product_resp[:product].id)
-      if existed_plan
-        return { plan: existed_plan, request_status: 'Plan with this name is exist', product: product_resp[:product] }
-      end
+      return { plan: existed_plan, request_status: 'Plan with this name is exist', product: product_resp[:product] } if existed_plan
+
       new_plan = Plan.new(name: data['plan_data']['name'], api_created: api_created)
       if new_plan.valid?
-        new_plan.save
+        new_plan.save_changes
         product_resp[:product].add_plan(new_plan)
-        if new_plan.suites.empty? && api_created
-          associate_for_plan(new_plan, product_resp[:product])
-        end
+        associate_for_plan(new_plan, product_resp[:product]) if new_plan.suites.empty? && api_created
         { plan: new_plan }.merge(product_resp)
       else
         { plan_errors: new_plan.errors.full_messages }
@@ -90,7 +83,7 @@ class Plan < Sequel::Model
   end
 
   def self.associate_for_plan(plan, product)
-    suites = product.suites.select { |suite| !suite[:deleted]}
+    suites = product.suites.reject { |suite| suite[:deleted] }
     suites.each do |suite|
       plan.add_suite(suite)
     end
@@ -101,9 +94,8 @@ class Plan < Sequel::Model
   end
 
   def self.create_product(data)
-    unless data['plan_data'].nil?
-      return Product.create_new(data['plan_data']['product_id'] || data['plan_data']['product_name']) unless data['plan_data']['product_id'].nil? && data['plan_data']['product_name'].nil?
-    end
+    return Product.create_new(data['plan_data']['product_id'] || data['plan_data']['product_name']) if !data['plan_data'].nil? && !(data['plan_data']['product_id'].nil? && data['plan_data']['product_name'].nil?)
+
     { product_errors: 'product id of name not found' }
   end
 
@@ -137,9 +129,9 @@ class Plan < Sequel::Model
              end
     suites = Product.add_case_counts(suites, plan)
     begin
-      [{runs: plan.runs, plan: plan.values}, suites, []]
+      [{ runs: plan.runs, plan: plan.values }, suites, []]
     rescue StandardError
-      [[],[], 'Run data is incorrect']
+      [[], [], 'Run data is incorrect']
     end
   end
 
@@ -186,12 +178,12 @@ class Plan < Sequel::Model
 
   def self.runs_filling(runs, suites)
     runs.each do |run|
-      if run.result_sets.count != suites[run.name].cases.count
-        (suites[run.name].cases.map(&:name) - run.result_sets.map(&:name)).each do |result_set_name|
-          new_result_set = ResultSet.find_or_new(result_set_name, run.id)
-          run.plan.add_result_set(new_result_set)
-          run.add_result_set(new_result_set)
-        end
+      next unless run.result_sets.count != suites[run.name].cases.count
+
+      (suites[run.name].cases.map(&:name) - run.result_sets.map(&:name)).each do |result_set_name|
+        new_result_set = ResultSet.find_or_new(result_set_name, run.id)
+        run.plan.add_result_set(new_result_set)
+        run.add_result_set(new_result_set)
       end
     end
   end

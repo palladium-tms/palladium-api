@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 class AbstractStatusPack
   attr_accessor :statuses, :parsed_body
@@ -9,7 +11,6 @@ class AbstractStatusPack
       @statuses << AbstractStatus.new('status' => status[1])
     end
   end
-
 
   def contain?(status)
     contain = false
