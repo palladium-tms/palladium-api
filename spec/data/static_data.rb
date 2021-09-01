@@ -2,7 +2,11 @@
 
 class StaticData
   ADDRESS = '0.0.0.0'
-  PORT = 80
+
+  # @return [Integer] port for testing and development
+  def self.port
+    9292
+  end
 end
 
 class DefaultValues

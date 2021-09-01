@@ -18,7 +18,7 @@ class AuthFunctions
   end
 
   def self.create_user_and_get_token(email = nil, password = nil)
-    http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
+    http = Net::HTTP.new(StaticData::ADDRESS, StaticData.port)
     email ||= Faker::Internet.email
     password ||= Faker::Lorem.characters(number: 7)
     request = Net::HTTP::Post.new('/public/registration', 'Content-Type' => 'application/json')
@@ -28,7 +28,7 @@ class AuthFunctions
   end
 
   def self.get_token(email, password)
-    http = Net::HTTP.new(StaticData::ADDRESS, StaticData::PORT)
+    http = Net::HTTP.new(StaticData::ADDRESS, StaticData.port)
     request = Net::HTTP::Post.new('/public/login', 'Content-Type' => 'application/json')
     request.set_form_data({ 'user_data[email]': email, 'user_data[password]': password })
     JSON.parse(http.request(request).body)['token']

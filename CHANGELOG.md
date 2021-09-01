@@ -9,6 +9,7 @@
 * Add `rubocop` check to CI
 * Add `markdownlint` check in CI
 * Add `.bundle` folder to `gitignore`
+* Add development run instructions
 
 ### Changed
 

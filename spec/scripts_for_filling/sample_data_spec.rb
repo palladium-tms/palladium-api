@@ -13,7 +13,7 @@ token = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjI1MjQ1OTcyMDAsImlhdCI6MTU5NTgwNjc4OSwiaX
                                      product: 'Plans SampleData',
                                      plan: "v8 #{i}",
                                      run: 'Run 2',
-                                     port: 9292)
+                                     port: StaticData.port)
           expect(true).to be_truthy
         end
       end

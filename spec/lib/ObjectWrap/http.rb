@@ -6,7 +6,7 @@ require_relative '../../tests/test_management'
 class Http
   attr_accessor :http, :token
 
-  def initialize(token: nil, address: StaticData::ADDRESS, port: StaticData::PORT)
+  def initialize(token: nil, address: StaticData::ADDRESS, port: StaticData.port)
     @http = Net::HTTP.new(address, port)
     @token = token
   end
