@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
     - Database scheme for simplificating in future
     - Actualize dependabot config
+    - Use `palladium` from gem, not from git sources
 ## [0.6.0]
 ### Added
     - Ability for multideleting
