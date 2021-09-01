@@ -135,13 +135,6 @@ Style/GuardClause:
     - 'database/models/Run.rb'
     - 'spec/lib/functions/AccountFunctions.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: InverseMethods, InverseBlocks.
-Style/InverseMethods:
-  Exclude:
-    - 'database/models/Plan.rb'
-
 # Offense count: 2
 Style/MixinUsage:
   Exclude:

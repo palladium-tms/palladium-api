@@ -86,7 +86,7 @@ class Plan < Sequel::Model
   end
 
   def self.associate_for_plan(plan, product)
-    suites = product.suites.select { |suite| !suite[:deleted] }
+    suites = product.suites.reject { |suite| suite[:deleted] }
     suites.each do |suite|
       plan.add_suite(suite)
     end
