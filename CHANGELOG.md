@@ -17,6 +17,7 @@
 * Use `palladium` from gem, not from git sources
 * Fix different typos in all parts of project
 * Cleanup `Dockerfile`
+* Correct logging to `STDOUT` for Docker usage
 
 ## 0.6.0
 
