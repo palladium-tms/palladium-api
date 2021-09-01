@@ -1,7 +1,7 @@
 require 'json'
 require_relative '../../tests/test_management'
 class AbstractStatus
-  attr_accessor :id, :name, :color, :is_null, :errors, :response, :block, :errors
+  attr_accessor :id, :name, :color, :is_null, :errors, :response, :block
 
   def initialize(data)
     @response = data

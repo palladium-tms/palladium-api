@@ -32,7 +32,8 @@ class User
   include CaseFunctions
   include InviteTokenFunctions
   include StringHelper
-  attr_accessor :email, :password, :token, :http
+  attr_accessor :email, :password, :http
+  attr_reader token
 
   def initialize(options = {})
     @email = options[:email]

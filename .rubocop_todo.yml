@@ -12,12 +12,6 @@ Lint/BinaryOperatorWithIdenticalOperands:
     - 'spec/lib/models/AbstractProductPack.rb'
 
 # Offense count: 2
-Lint/DuplicateMethods:
-  Exclude:
-    - 'spec/lib/User.rb'
-    - 'spec/lib/models/AbstractStatus.rb'
-
-# Offense count: 2
 Lint/DuplicateRequire:
   Exclude:
     - 'spec/lib/functions/AccountFunctions.rb'
