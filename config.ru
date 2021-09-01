@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'sinatra'
-require_relative 'server.rb'
+require_relative 'server'
 
 run Rack::URLMap.new('/public' => Public, '/api' => Api)
 if Sinatra::Application.environment == :development || Sinatra::Application.environment == :test

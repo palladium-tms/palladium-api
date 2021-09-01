@@ -7,7 +7,7 @@ require 'jwt'
 require 'pg'
 require 'sinatra/cross_origin'
 require_relative 'database/database'
-require_relative 'database/migrate/001_create_product_positions.rb'
+require_relative 'database/migrate/001_create_product_positions'
 
 # models
 require_relative 'database/models/UserSetting'
