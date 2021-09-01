@@ -120,12 +120,6 @@ Style/CaseEquality:
   Exclude:
     - 'spec/lib/models/AbstractProduct.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/CommentedKeyword:
-  Exclude:
-    - 'database/models/Run.rb'
-
 # Offense count: 17
 # Configuration parameters: AllowedConstants.
 Style/Documentation:

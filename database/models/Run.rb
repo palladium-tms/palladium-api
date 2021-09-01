@@ -84,7 +84,8 @@ class Run < Sequel::Model
     return Case[result_set_data['case_id']].suite.name if result_set_data['case_id']
   end
 
-  def self.suite_detected(plan, run) # FIXME: need optimize
+  # FIXME: need optimize
+  def self.suite_detected(plan, run)
     suite = Suite.find(product_id: plan.product_id, name: run.name)
     if suite.nil?
       suite = Suite.create(name: run.name)
