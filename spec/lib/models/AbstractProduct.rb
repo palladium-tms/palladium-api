@@ -11,6 +11,7 @@ class AbstractProduct
       @suite = AbstractSuite.new(@response) if body['suite']
     end
     return unless @product_errors.nil?
+
     @id = product_data['id']
     @name = product_data['name']
     @created_at = product_data['created_at']

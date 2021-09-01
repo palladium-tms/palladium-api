@@ -75,6 +75,7 @@ class Plan < Sequel::Model
       if existed_plan
         return { plan: existed_plan, request_status: 'Plan with this name is exist', product: product_resp[:product] }
       end
+
       new_plan = Plan.new(name: data['plan_data']['name'], api_created: api_created)
       if new_plan.valid?
         new_plan.save

@@ -6,15 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 7
-# Cop supports --auto-correct.
-Layout/EmptyLineAfterGuardClause:
-  Exclude:
-    - 'config.ru'
-    - 'database/models/Plan.rb'
-    - 'spec/lib/models/AbstractProduct.rb'
-    - 'spec/scripts_for_filling/product_fill.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: EmptyLineBetweenMethodDefs, EmptyLineBetweenClassDefs, EmptyLineBetweenModuleDefs, AllowAdjacentOneLineDefs, NumberOfEmptyLines.
