@@ -7,7 +7,7 @@ GEM
       debase-ruby_core_source (>= 0.10.2)
     debase-ruby_core_source (0.10.12)
     diff-lcs (1.4.4)
-    faker (2.18.0)
+    faker (2.19.0)
       i18n (>= 1.6, < 2)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
