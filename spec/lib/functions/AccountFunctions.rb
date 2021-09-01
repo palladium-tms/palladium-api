@@ -2,7 +2,6 @@ require 'net/http'
 require 'json'
 require_relative '../../../spec/lib/ObjectWrap/http'
 require_relative '../User'
-require 'json'
 
 module AccountFunctions
   def self.create(email = Faker::Internet.email, password = Faker::Lorem.characters(number: 7), invite = nil)
