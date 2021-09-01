@@ -10,7 +10,6 @@ services:
       - .:/palladium
     ports:
       - "80:80"
-    command: ["bundle", "exec", "puma"]
     tty: true
     environment:
       - JWT_SECRET=abc
