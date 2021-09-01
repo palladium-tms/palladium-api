@@ -86,7 +86,7 @@ class Product < Sequel::Model
                      end
         plan_object << plan.values.merge(case_count: case_count)
       end
-      return { plans: plan_object, errors: [], request_status: request_status }
+      { plans: plan_object, errors: [], request_status: request_status }
     rescue StandardError
       { plans: [], errors: ['Plan data is incorrect'], request_status: request_status }
     end

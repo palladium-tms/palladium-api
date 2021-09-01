@@ -6,11 +6,8 @@ module Auth
   def authenticate(email, password)
     current_user = User.find(email: email)
     return false if current_user.nil?
-    if Encrypt.encrypt(password) == current_user.password
-      return true
-    else
-      return false
-    end
+
+    Encrypt.encrypt(password) == current_user.password
   end
 
   def auth_success?(user_data)
