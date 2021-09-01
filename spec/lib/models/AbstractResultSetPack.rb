@@ -9,7 +9,7 @@ class AbstractResultSetPack
       result_set_pack = @parsed_body['result_sets']
     end
     result_set_pack.map do |result_set|
-      @result_sets << AbstractResultSet.new('result_sets' => [ result_set ])
+      @result_sets << AbstractResultSet.new('result_sets' => [result_set])
     end
   end
 
