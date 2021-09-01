@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 ## [master]
 ### Added
     - To create plan with arrtibute :api_created
+    - Actualize rubocop configs and add it's extensions
 ### Changed
     - Database scheme for simplificating in future
     - Actualize dependabot config
