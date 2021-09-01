@@ -25,7 +25,7 @@ describe 'Cases Smoke' do
                                                name: rand_result_set_name)
 
       case_pack = @user.get_cases_from_plan(plan_id: result_set.run.plan.id,
-                                  run_id: result_set.run.id)
+                                            run_id: result_set.run.id)
       expect(case_pack.cases.size).to eq(1)
       expect(case_pack.cases.first.name).to eq(result_set.name)
     end

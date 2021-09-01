@@ -4,7 +4,7 @@ require_relative '../Abstractions'
 module ProductFunctions
   def create_new_product(product_name = rand_product_name)
     response = @http.post_request('/api/product_new',
-                                 product_data: { name: product_name })
+                                  product_data: { name: product_name })
     AbstractProduct.new(response)
   end
 

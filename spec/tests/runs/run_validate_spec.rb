@@ -47,7 +47,7 @@ describe 'Run Validation' do
 
     it 'create run without run name' do
       run = @user.post_request('/api/run_new',
-                              run_data: { plan_id: @plan.id })
+                               run_data: { plan_id: @plan.id })
       result = JSON.parse(run.response.body)
       expect(run.response.code).to eq('422')
       expect(result['run_errors']).to eq(['name cannot be empty'])
