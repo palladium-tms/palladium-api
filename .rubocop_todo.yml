@@ -113,13 +113,6 @@ Sequel/ColumnDefault:
     - 'database/migrate/004_create_case_suite_delete.rb'
     - 'database/migrate/006_create_plan_creation_type.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AllowOnConstant.
-Style/CaseEquality:
-  Exclude:
-    - 'spec/lib/models/AbstractProduct.rb'
-
 # Offense count: 7
 # Cop supports --auto-correct.
 # Configuration parameters: IgnoredMethods.
