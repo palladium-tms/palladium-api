@@ -8,8 +8,7 @@ class AbstractStatus
   def initialize(data)
     @response = data
     @errors = []
-    if data.instance_of?(Hash)
-    else
+    unless data.instance_of?(Hash)
       data = JSON.parse(data.body)
       if data['status'].nil?
         @is_null = true

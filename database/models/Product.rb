@@ -75,9 +75,7 @@ class Product < Sequel::Model
               else
                 all_plans.limit(limit).all
               end
-      if plans.size < limit || Plan.count < limit
-        request_status = 'Is a last plans'
-      end
+      request_status = 'Is a last plans' if plans.size < limit || Plan.count < limit
       plan_object = []
       all_case_count = Case.where(suite_id: product.suites.map(&:id)).count
       plans.each do |plan|

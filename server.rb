@@ -242,9 +242,7 @@ class Api < Sinatra::Base
       errors = []
       begin
         result_set_id = params['result_set_data']['id']
-        unless result_set_id.is_a?(Array)
-          result_set_id = [result_set_id]
-        end
+        result_set_id = [result_set_id] unless result_set_id.is_a?(Array)
         result_set_size = result_set_id.size
         result_set_id.each_with_index do |id, index|
           ResultSet[id: id].remove_all_results
@@ -378,12 +376,8 @@ class Api < Sinatra::Base
     process_request request, 'suite_delete' do |_req, _username|
       begin
         plan = Plan[params['suite_data']['plan_id']]
-        if plan.suites.empty?
-          Plan.add_all_suites(plan)
-        end
-        if plan.cases.empty?
-          Plan.add_all_cases(plan)
-        end
+        Plan.add_all_suites(plan) if plan.suites.empty?
+        Plan.add_all_cases(plan) if plan.cases.empty?
         suite = plan.remove_suite(Suite[id: params['suite_data']['id']])
         suite.update(deleted: true)
         plan = Plan.remove_cases_by_suite(plan, suite)
@@ -415,13 +409,9 @@ class Api < Sinatra::Base
   post '/case_delete' do
     process_request request, 'case_delete' do |_req, _username|
       plan = Plan[params['case_data']['plan_id']]
-      if plan.cases.empty?
-        plan = Plan.add_all_cases(plan)
-      end
+      plan = Plan.add_all_cases(plan) if plan.cases.empty?
       case_ids = params['case_data']['id']
-      unless case_ids.is_a?(Array)
-        case_ids = [case_ids]
-      end
+      case_ids = [case_ids] unless case_ids.is_a?(Array)
       cases_size = case_ids.size
       this_case = nil
       case_ids.each_with_index do |case_id, index|
@@ -553,9 +543,7 @@ class Public < Sinatra::Base
   register Sinatra::CrossOrigin
 
   before do
-    if env['REQUEST_METHOD'] == 'OPTIONS'
-      halt 200, { 'Access-Control-Allow-Origin' => '*', 'Access-Control-Allow-Headers' => 'Authorization, Content-Type' }, []
-    end
+    halt 200, { 'Access-Control-Allow-Origin' => '*', 'Access-Control-Allow-Headers' => 'Authorization, Content-Type' }, [] if env['REQUEST_METHOD'] == 'OPTIONS'
     cross_origin
     body = request.body.read
     @params = JSON.parse(body) unless body == ''

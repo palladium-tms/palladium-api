@@ -71,17 +71,13 @@ class Plan < Sequel::Model
       api_created = data['plan_data']['api_created']
       api_created = true if api_created.nil?
       existed_plan = Plan.find(name: data['plan_data']['name'], product_id: product_resp[:product].id)
-      if existed_plan
-        return { plan: existed_plan, request_status: 'Plan with this name is exist', product: product_resp[:product] }
-      end
+      return { plan: existed_plan, request_status: 'Plan with this name is exist', product: product_resp[:product] } if existed_plan
 
       new_plan = Plan.new(name: data['plan_data']['name'], api_created: api_created)
       if new_plan.valid?
         new_plan.save_changes
         product_resp[:product].add_plan(new_plan)
-        if new_plan.suites.empty? && api_created
-          associate_for_plan(new_plan, product_resp[:product])
-        end
+        associate_for_plan(new_plan, product_resp[:product]) if new_plan.suites.empty? && api_created
         { plan: new_plan }.merge(product_resp)
       else
         { plan_errors: new_plan.errors.full_messages }

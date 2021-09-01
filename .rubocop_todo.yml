@@ -135,14 +135,6 @@ Style/GuardClause:
     - 'database/models/Run.rb'
     - 'spec/lib/functions/AccountFunctions.rb'
 
-# Offense count: 9
-# Cop supports --auto-correct.
-Style/IfUnlessModifier:
-  Exclude:
-    - 'database/models/Plan.rb'
-    - 'database/models/Product.rb'
-    - 'server.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: InverseMethods, InverseBlocks.

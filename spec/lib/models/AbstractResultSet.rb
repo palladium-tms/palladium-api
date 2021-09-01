@@ -7,8 +7,7 @@ class AbstractResultSet
 
   def initialize(data)
     @response = data
-    if data.instance_of?(Hash)
-    else
+    unless data.instance_of?(Hash)
       data = JSON.parse(data.body)
       if data['result_sets'].nil?
         @is_null = true
