@@ -142,12 +142,6 @@ Style/MixinUsage:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-Style/NegatedIfElseCondition:
-  Exclude:
-    - 'database/models/Product.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, MinBodyLength.
 # SupportedStyles: skip_modifier_ifs, always
 Style/Next:
