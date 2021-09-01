@@ -518,7 +518,7 @@ class Api < Sinatra::Base
     scopes, user = req.env.values_at :scopes, :user
     username = user['email']
     user_token = true
-    user_token = User.user_token?(username, req.env['HTTP_AUTHORIZATION']) if scopes == %w(result_new result_sets_by_status)
+    user_token = User.user_token?(username, req.env['HTTP_AUTHORIZATION']) if scopes == %w[result_new result_sets_by_status]
     if scopes.include?(scope) && User[email: username].exists? && user_token
       yield req, username
     else
