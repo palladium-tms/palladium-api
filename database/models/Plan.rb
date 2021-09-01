@@ -139,7 +139,7 @@ class Plan < Sequel::Model
     begin
       [{runs: plan.runs, plan: plan.values}, suites, []]
     rescue StandardError
-      [[],[], 'Run data is incorrect']
+      [[], [], 'Run data is incorrect']
     end
   end
 
