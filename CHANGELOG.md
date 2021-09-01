@@ -23,7 +23,7 @@
 
 ### Fixed
 
-* Fix `AbstractProductPack#diff` for created product 
+* Fix `AbstractProductPack#diff` for created product
 
 ## 0.6.0
 
