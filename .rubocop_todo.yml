@@ -8,12 +8,6 @@
 
 # Offense count: 1
 # Cop supports --auto-correct.
-Layout/SpaceAfterColon:
-  Exclude:
-    - 'spec/tests/invite_token/invite_token_smoke_spec.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
 Layout/SpaceAfterComma:
   Exclude:
     - 'database/models/Plan.rb'
