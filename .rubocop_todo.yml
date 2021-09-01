@@ -6,15 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: space, no_space
-Layout/SpaceInsideParens:
-  Exclude:
-    - 'server.rb'
-    - 'spec/tests/invite_token/invite_token_smoke_spec.rb'
-
 # Offense count: 30
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.

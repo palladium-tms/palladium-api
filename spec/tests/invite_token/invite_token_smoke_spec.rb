@@ -59,7 +59,7 @@ describe 'Auth Smoke' do
     it 'registration by invite | true link' do
       response = @user.create_new_invite_token
       token = JSON.parse(response.body)['invite_data']['token']
-      new_user = AccountFunctions.create_and_parse( Faker::Internet.email, Faker::Lorem.characters(number: 7), token)
+      new_user = AccountFunctions.create_and_parse(Faker::Internet.email, Faker::Lorem.characters(number: 7), token)
       new_user.login
       expect(new_user.token.nil?).to be_falsey
     end

@@ -386,7 +386,7 @@ class Api < Sinatra::Base
         if plan.cases.empty?
           Plan.add_all_cases(plan)
         end
-        suite = plan.remove_suite( Suite[id: params['suite_data']['id']])
+        suite = plan.remove_suite(Suite[id: params['suite_data']['id']])
         suite.update(deleted: true)
         plan = Plan.remove_cases_by_suite(plan, suite)
       rescue StandardError => e
