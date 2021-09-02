@@ -35,13 +35,15 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby-version }}
-    - name: Start palladium-api
-      run: docker-compose up -d
     - name: Install bundler dependencies
       run: |
         gem install bundler
         bundle install --jobs 4 --retry 3
-    - name: Run tests
-      run: bundle exec rspec spec/tests --fail-fast
     - name: Check source files using `rubocop`
       run: rubocop
+    - name: Start palladium-api
+      run: |
+        docker-compose up -d
+        sleep 60
+    - name: Run tests
+      run: bundle exec rspec spec/tests --fail-fast
