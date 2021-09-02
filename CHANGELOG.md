@@ -10,6 +10,7 @@
 * Add `markdownlint` check in CI
 * Add `.bundle` folder to `gitignore`
 * Add development run instructions
+* Add base Docker image config to `dependabot`
 
 ### Changed
 
