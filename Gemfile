@@ -13,12 +13,12 @@ gem 'sinatra-cross_origin'
 
 group :development do
   gem 'debase'
-  gem 'ruby-debug-ide'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rake', require: false
   gem 'rubocop-rspec', require: false
   gem 'rubocop-sequel', require: false
+  gem 'ruby-debug-ide'
 end
 
 group :test do
