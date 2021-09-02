@@ -23,6 +23,7 @@
 * Cleanup unused constants in `static_data.rb`
 * Remove `AbstractProduct#is_archived` since it has no usage and not implemented
 * Move `test` and `development` dependencies in correct Gemfile group
+* Use `alpine` as base of Docker image
 
 ### Fixed
 
