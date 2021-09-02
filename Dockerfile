@@ -6,7 +6,7 @@ ADD . /palladium-api
 WORKDIR /palladium-api
 
 RUN gem update bundler
-RUN bundle config set without 'development' && \
+RUN bundle config set without 'development test' && \
     bundle install
 
 CMD ["bundle", "exec", "puma"]

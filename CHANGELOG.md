@@ -22,6 +22,7 @@
 * Correct logging to `STDOUT` for Docker usage
 * Cleanup unused constants in `static_data.rb`
 * Remove `AbstractProduct#is_archived` since it has no usage and not implemented
+* Move `test` and `development` dependencies in correct Gemfile group
 
 ### Fixed
 
