@@ -24,6 +24,7 @@
 * Remove `AbstractProduct#is_archived` since it has no usage and not implemented
 * Move `test` and `development` dependencies in correct Gemfile group
 * Use `alpine` as base of Docker image
+* Minor style fixes from `rubocop` v1.21.0
 
 ### Fixed
 

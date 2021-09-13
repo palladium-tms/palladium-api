@@ -15,7 +15,7 @@ class AbstractProductPack
   def diff(product_pack)
     self_ids = @products.map(&:id)
     other_ids = product_pack.products.map(&:id)
-    self_ids - other_ids | other_ids - self_ids
+    (self_ids - other_ids) | (other_ids - self_ids)
   end
 
   def get_product_by_id(id)
