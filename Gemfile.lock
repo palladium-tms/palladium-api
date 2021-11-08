@@ -10,7 +10,7 @@ GEM
     diff-lcs (1.4.4)
     faker (2.19.0)
       i18n (>= 1.6, < 2)
-    i18n (1.8.10)
+    i18n (1.8.11)
       concurrent-ruby (~> 1.0)
     jwt (2.3.0)
     mustermann (1.1.1)
