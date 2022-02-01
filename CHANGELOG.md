@@ -26,6 +26,7 @@
 * Move `test` and `development` dependencies in correct Gemfile group
 * Use `alpine` as base of Docker image
 * Minor style fixes from `rubocop` v1.21.0
+* Remove `travis-ci` config, since it replaced by Github Actions
 
 ### Fixed
 
