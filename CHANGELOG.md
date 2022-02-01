@@ -12,6 +12,7 @@
 * Add development run instructions
 * Add base Docker image config to `dependabot`
 * Add `ruby-3.1` and `ruby-head` to CI
+* Added `yamllint` support in CI
 
 ### Changed
 
