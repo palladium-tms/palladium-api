@@ -1,11 +1,10 @@
-
 name: Ruby
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   test:
@@ -19,25 +18,25 @@ jobs:
           - ruby: head
             allow-failures: true
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
-    - name: Check markdown files using `markdownlint`
-      run: |
-        npm install -g markdownlint-cli
-        markdownlint *.md
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-    - name: Install bundler dependencies
-      run: |
-        gem install bundler
-        bundle install --jobs 4 --retry 3
-    - name: Check source files using `rubocop`
-      run: rubocop
-    - name: Start palladium-api
-      run: |
-        docker-compose up -d
-        sleep 60
-    - name: Run tests
-      run: bundle exec rspec spec/tests --fail-fast
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - name: Check markdown files using `markdownlint`
+        run: |
+          npm install -g markdownlint-cli
+          markdownlint *.md
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - name: Install bundler dependencies
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+      - name: Check source files using `rubocop`
+        run: rubocop
+      - name: Start palladium-api
+        run: |
+          docker-compose up -d
+          sleep 60
+      - name: Run tests
+        run: bundle exec rspec spec/tests --fail-fast
