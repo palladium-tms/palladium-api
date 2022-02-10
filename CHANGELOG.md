@@ -32,6 +32,7 @@
 ### Fixed
 
 * Fix `AbstractProductPack#diff` for created product
+* Fix old version of `nodejs` in CI
 
 ## 0.6.0
 
