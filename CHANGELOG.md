@@ -30,6 +30,7 @@
 * Remove `travis-ci` config, since it replaced by Github Actions
 * Configure `markdownlint` in CI via `linting.yml`
 * Check `dependabot` at 8:00 Moscow time daily
+* Fix `rubocop-1.28.1` code issues
 
 ### Fixed
 
