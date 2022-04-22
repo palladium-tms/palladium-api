@@ -9,7 +9,7 @@ if Sinatra::Application.environment == :development || Sinatra::Application.envi
   ENV['JWT_ISSUER'] = 'JWT_ISSUER'
 end
 
-raise 'JWT keys not found' if ENV['JWT_SECRET'].nil? || ENV['JWT_ISSUER'].nil?
+raise 'JWT keys not found' unless ENV.key?('JWT_SECRET') && ENV.key?('JWT_ISSUER')
 
 raise 'JWT is to short' if Sinatra::Application.environment == :production && (ENV['JWT_SECRET'].size < 4 || ENV['JWT_ISSUER'].size < 4)
 
@@ -19,5 +19,5 @@ configure do
   enable :static
   enable :dump_errors
   set :show_exceptions, false # uncomment for testing or production
-  set :environment, ENV['RACK_ENV']
+  set :environment, ENV.fetch('RACK_ENV', 'unknown env')
 end
