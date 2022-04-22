@@ -4,6 +4,8 @@ require 'logger'
 require_relative 'management'
 
 class Api < Sinatra::Base
+  include JwtHelper
+
   configure do
     logger = Logger.new($stdout)
     logger.level = Logger::INFO if production?
@@ -474,7 +476,7 @@ class Api < Sinatra::Base
   # {"api_token_data" => {"name": string} }
   post '/token_new' do
     process_request request, 'token_new' do |_req, username|
-      result_token = Token.create_new(params['token_data'], JWT.encode(payload(username), ENV['JWT_SECRET'], 'HS256'), username)
+      result_token = Token.create_new(params['token_data'], token(username), username)
       { token_data: result_token.values, errors: result_token.errors }.to_json
     end
   end
@@ -549,6 +551,7 @@ class Api < Sinatra::Base
 end
 
 class Public < Sinatra::Base
+  include JwtHelper
   register Sinatra::CrossOrigin
 
   before do
@@ -590,7 +593,7 @@ class Public < Sinatra::Base
   post '/registration' do
     cross_origin
     valid_status = Invite.check_link_validation(user_data['invite'])
-    if User.all.empty? || (ENV['RACK_ENV'] != 'production' && params['invite'].nil?)
+    if User.all.empty? || (ENV.fetch('RACK_ENV', 'unknown env') != 'production' && params['invite'].nil?)
       valid_status[0] = true
       valid_status[1] = []
     end
@@ -613,10 +616,6 @@ class Public < Sinatra::Base
     e
   end
 
-  def token(email)
-    JWT.encode payload(email), ENV['JWT_SECRET'], 'HS256'
-  end
-
   # Timeout of payload
   # @return [Integer] time in seconds
   def payload_expiration_timeout
@@ -630,7 +629,7 @@ class Public < Sinatra::Base
     {
       exp: Time.now.to_i + payload_expiration_timeout,
       iat: Time.now.to_i,
-      iss: ENV['JWT_ISSUER'],
+      iss: ENV.fetch('JWT_ISSUER', ''),
       scopes: %w[products product product_new product_delete product_edit
                  plan_new plans plans_statistic plan_archive plans_and_statistic plan plan_edit plan_delete
                  run_new runs run run_delete

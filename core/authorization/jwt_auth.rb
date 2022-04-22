@@ -10,8 +10,8 @@ class JwtAuth
       [200, { 'Access-Control-Allow-Origin' => '*', 'Access-Control-Allow-Headers' => 'Authorization, Content-Type' }, []]
     else
       begin
-        options = { algorithm: 'HS256', iss: ENV['JWT_ISSUER'] }
-        payload, _header = JWT.decode env['HTTP_AUTHORIZATION'], ENV['JWT_SECRET'], true, options
+        options = { algorithm: 'HS256', iss: ENV.fetch('JWT_ISSUER', '') }
+        payload, _header = JWT.decode env['HTTP_AUTHORIZATION'], ENV.fetch('JWT_SECRET', ''), true, options
         env[:scopes] = payload['scopes']
         env[:user] = payload['user']
         @app.call env
