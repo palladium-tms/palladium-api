@@ -474,7 +474,7 @@ class Api < Sinatra::Base
   # {"api_token_data" => {"name": string} }
   post '/token_new' do
     process_request request, 'token_new' do |_req, username|
-      result_token = Token.create_new(params['token_data'], JWT.encode(payload(username), ENV.fetch('JWT_SECRET', ''), 'HS256'), username)
+      result_token = Token.create_new(params['token_data'], token(username), username)
       { token_data: result_token.values, errors: result_token.errors }.to_json
     end
   end
@@ -613,8 +613,11 @@ class Public < Sinatra::Base
     e
   end
 
-  def token(email)
-    JWT.encode payload(email), ENV.fetch('JWT_SECRET', ''), 'HS256'
+  # Generate a JWT token
+  # @param [String] data the data to encode in the JWT
+  # @return [String] result of encoding
+  def token(data)
+    JWT.encode(payload(data), ENV.fetch('JWT_SECRET', ''), 'HS256')
   end
 
   # Timeout of payload
