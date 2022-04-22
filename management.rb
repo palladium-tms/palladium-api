@@ -28,4 +28,5 @@ require_relative 'database/models/Case'
 # core modules
 require_relative 'core/authorization/auth'
 require_relative 'core/authorization/jwt_auth'
+require_relative 'core/helpers/jwt_helper'
 require_relative 'core/settings/palladium_settings'

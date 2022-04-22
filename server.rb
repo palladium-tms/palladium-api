@@ -4,6 +4,8 @@ require 'logger'
 require_relative 'management'
 
 class Api < Sinatra::Base
+  include JwtHelper
+
   configure do
     logger = Logger.new($stdout)
     logger.level = Logger::INFO if production?
@@ -549,6 +551,7 @@ class Api < Sinatra::Base
 end
 
 class Public < Sinatra::Base
+  include JwtHelper
   register Sinatra::CrossOrigin
 
   before do
@@ -611,13 +614,6 @@ class Public < Sinatra::Base
     params['user_data']
   rescue StandardError => e
     e
-  end
-
-  # Generate a JWT token
-  # @param [String] data the data to encode in the JWT
-  # @return [String] result of encoding
-  def token(data)
-    JWT.encode(payload(data), ENV.fetch('JWT_SECRET', ''), 'HS256')
   end
 
   # Timeout of payload
