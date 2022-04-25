@@ -24,7 +24,7 @@ GEM
     rack-protection (2.2.0)
       rack
     rainbow (3.1.1)
-    regexp_parser (2.3.0)
+    regexp_parser (2.3.1)
     rexml (3.2.5)
     rspec (3.11.0)
       rspec-core (~> 3.11.0)
