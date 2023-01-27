@@ -13,6 +13,7 @@
 * Add base Docker image config to `dependabot`
 * Add `ruby-3.1` and `ruby-head` to CI
 * Added `yamllint` support in CI
+* Add `ruby-3.2` to CI
 
 ### Changed
 
@@ -31,6 +32,7 @@
 * Configure `markdownlint` in CI via `linting.yml`
 * Check `dependabot` at 8:00 Moscow time daily
 * Fix `rubocop-1.28.1` code issues
+* `ruby-3.0` is not supported any more
 
 ### Fixed
 

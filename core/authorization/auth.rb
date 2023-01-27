@@ -4,7 +4,7 @@ require_relative '../../management'
 
 module Auth
   def authenticate(email, password)
-    current_user = User.find(email: email)
+    current_user = User.find(email:)
     return false if current_user.nil?
 
     Encrypt.encrypt(password) == current_user.password

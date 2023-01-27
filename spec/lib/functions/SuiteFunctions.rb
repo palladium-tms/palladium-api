@@ -9,7 +9,7 @@ module SuiteFunctions
   end
 
   def delete_suite(suite_id:, plan_id:)
-    @http.post_request('/api/suite_delete', suite_data: { id: suite_id, plan_id: plan_id })
+    @http.post_request('/api/suite_delete', suite_data: { id: suite_id, plan_id: })
   end
 
   def update_suite(options = {})

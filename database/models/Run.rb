@@ -36,7 +36,7 @@ class Run < Sequel::Model
   end
 
   def self.find_or_new(name, plan_id)
-    Run.find(name: name, plan_id: plan_id) || Run.new(name: name)
+    Run.find(name:, plan_id:) || Run.new(name:)
   end
 
   def self.create_new(data)
@@ -52,7 +52,7 @@ class Run < Sequel::Model
         run.save_changes
         suite = suite_detected(objects[:plan], run)
         objects[:plan].add_run(run)
-        { run: run, suite: suite }.merge(objects)
+        { run:, suite: }.merge(objects)
       else
         { run_errors: run.errors.full_messages }
       end

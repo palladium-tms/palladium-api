@@ -19,7 +19,7 @@ module ProductFunctions
   # @param [Integer] id is a id of product for deleting
   # return hash which keys - id of product, values - is a hash {'name': 'product_name'}
   def delete_product(id)
-    @http.post_request('/api/product_delete', product_data: { id: id })
+    @http.post_request('/api/product_delete', product_data: { id: })
   end
 
   def update_product(product_id, product_name)
@@ -29,6 +29,6 @@ module ProductFunctions
 
   # @param [Integer] id is a id of product for deleting
   def show_product(id)
-    AbstractProduct.new(@http.post_request('/api/product', product_data: { id: id }))
+    AbstractProduct.new(@http.post_request('/api/product', product_data: { id: }))
   end
 end

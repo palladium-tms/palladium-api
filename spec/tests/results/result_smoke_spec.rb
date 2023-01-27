@@ -81,11 +81,11 @@ describe 'Result Smoke' do
       run = @user.create_new_run(@params)
       names_array = [rand_result_set_name, rand_result_set_name, rand_result_set_name]
       result_set_array = names_array.map do |name|
-        @user.create_new_result_set(run_id: run.id, name: name).id
+        @user.create_new_result_set(run_id: run.id, name:).id
       end
       message = rand_message
       result = @user.create_new_result(result_set_id: result_set_array,
-                                       message: message,
+                                       message:,
                                        status: 'Passed')
       expect(result.response.code).to eq('200')
       (result.result_set.result_sets.map(&:name) & names_array).each do |name|
@@ -174,7 +174,7 @@ describe 'Result Smoke' do
                                                result_set_name: rand_result_set_name)
       message = rand_message
       @user.create_new_result(result_set_id: result_set.id,
-                              message: message,
+                              message:,
                               status: 'Passed')
       results_pack = @user.get_results(id: result_set.id)
       result = @user.get_result(results_pack.results.first.id)

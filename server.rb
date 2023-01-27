@@ -79,7 +79,7 @@ class Api < Sinatra::Base
       errors = Product.product_id_validation(params['product_data']['id'])
       Product[id: params['product_data']['id']].destroy if errors.empty?
       status 200
-      { product: params['product_data']['id'], errors: errors }.to_json
+      { product: params['product_data']['id'], errors: }.to_json
     end
   end
   # endregion products
@@ -110,7 +110,7 @@ class Api < Sinatra::Base
   post '/plans_statistic' do
     process_request request, 'plans_statistic' do |_req, _username|
       statistic = Product.get_statistic(params['plan_data'])
-      { statistic: statistic }.to_json
+      { statistic: }.to_json
     end
   end
 
@@ -118,7 +118,7 @@ class Api < Sinatra::Base
     process_request request, 'plan' do |_req, _username|
       plan = Plan[id: params['plan_data']['id']]
       plan = plan.values unless plan.nil?
-      { plan: plan }.to_json
+      { plan: }.to_json
     end
   end
 
@@ -138,7 +138,7 @@ class Api < Sinatra::Base
       errors = Plan.plan_id_validation(params['plan_data']['id'])
       plan = Plan[id: params['plan_data']['id']]
       plan.destroy if errors.empty?
-      { plan: plan.values, errors: errors }.to_json
+      { plan: plan.values, errors: }.to_json
     end
   end
 
@@ -156,7 +156,7 @@ class Api < Sinatra::Base
       objects = Run.create_new(params)
       if objects[:product_errors].nil? && objects[:plan_errors].nil? && objects[:run_errors].nil?
         run = Plan.add_statistic([*objects[:run]]).first
-        result = { run: run }
+        result = { run: }
         result[:product] = objects[:product].values unless objects[:product].nil?
         result[:plan] = objects[:plan].values unless objects[:plan].nil?
         result[:suite] = objects[:suite].values unless objects[:suite].nil?
@@ -176,7 +176,7 @@ class Api < Sinatra::Base
       results, suites, errors = Plan.get_runs(params['run_data']['plan_id'])
       runs = Plan.add_statistic(results[:runs])
       status 422 unless errors
-      { runs: runs, errors: errors, suites: suites, plan: results[:plan] }.to_json
+      { runs:, errors:, suites:, plan: results[:plan] }.to_json
     end
   end
 
@@ -185,7 +185,7 @@ class Api < Sinatra::Base
       run = Run[id: params['run_data']['id']]
       if run
         run = Plan.add_statistic([run]).first
-        { run: run }.to_json
+        { run: }.to_json
       else
         { run: { errors: 'run not found' } }.to_json
       end
@@ -196,7 +196,7 @@ class Api < Sinatra::Base
     process_request request, 'run_delete' do |_req, _username|
       errors = Run.run_id_validation(params['run_data']['id'])
       Run[id: params['run_data']['id']].destroy if errors.empty?
-      { run: params['run_data']['id'], errors: errors }.to_json
+      { run: params['run_data']['id'], errors: }.to_json
     end
   end
   # endregion runs
@@ -227,7 +227,7 @@ class Api < Sinatra::Base
     process_request request, 'result_sets' do |_req, _username|
       data, errors = Run.get_result_sets(params['result_set_data'])
       status 422 unless errors
-      { result_sets: data[:result_sets].map(&:values), run: data[:run], errors: errors }.to_json
+      { result_sets: data[:result_sets].map(&:values), run: data[:run], errors: }.to_json
     end
   end
 
@@ -256,14 +256,14 @@ class Api < Sinatra::Base
         result_set_id = [result_set_id] unless result_set_id.is_a?(Array)
         result_set_size = result_set_id.size
         result_set_id.each_with_index do |id, index|
-          ResultSet[id: id].remove_all_results
-          ResultSet[id: id].delete
+          ResultSet[id:].remove_all_results
+          ResultSet[id:].delete
           logger.info("Deleting result_set: #{id} (#{index + 1}/#{result_set_size})")
         end
       rescue StandardError => e
         errors = e
       end
-      { result_set: params['result_set_data'], errors: errors }.to_json
+      { result_set: params['result_set_data'], errors: }.to_json
     end
   end
 
@@ -318,7 +318,7 @@ class Api < Sinatra::Base
       data, errors = ResultSet.get_results(params['result_data'])
       if errors
         status 422 unless errors
-        { errors: errors }.to_json
+        { errors: }.to_json
       else
         { results: data[:results].map(&:values),
           result_set: data[:result_set],
@@ -367,7 +367,7 @@ class Api < Sinatra::Base
     process_request request, 'suites' do |_req, _username|
       suites = Suite.where(product_id: params['suite_data']['product_id'])
       suites = Product.add_case_counts(suites, plan)
-      { suites: suites }.to_json
+      { suites: }.to_json
     end
   end
 
@@ -396,7 +396,7 @@ class Api < Sinatra::Base
         errors = e
       end
       { suite: suite.values.merge(statistic: [{ 'suite_id' => 0, 'status' => 0, 'count' => 0 }]),
-        errors: errors,
+        errors:,
         plan: plan.values.merge(case_count: plan.cases.count) }.to_json
     end
   end
@@ -440,7 +440,7 @@ class Api < Sinatra::Base
   post '/case_history' do
     process_request request, 'case_history' do |_req, _username|
       result_sets, product_id, suite_name = Case.get_history(params)
-      { result_sets_history: result_sets, product_id: product_id, suite_name: suite_name }.to_json
+      { result_sets_history: result_sets, product_id:, suite_name: }.to_json
     end
   end
   # endregion
@@ -544,7 +544,7 @@ class Api < Sinatra::Base
       iss: 'API',
       scopes: %w[result_new result_sets_by_status],
       user: {
-        email: email
+        email:
       }
     }
   end
@@ -640,7 +640,7 @@ class Public < Sinatra::Base
                  suite_delete cases case_delete case_edit result
                  case_history get_invite_token check_link_validation set_product_position user_setting user_setting_edit],
       user: {
-        email: email
+        email:
       }
     }
   end

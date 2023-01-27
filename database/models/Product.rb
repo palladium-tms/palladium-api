@@ -39,7 +39,7 @@ class Product < Sequel::Model
     product = Product.find_or_new(data)
     if product.valid?
       product.save_changes
-      { product: product }
+      { product: }
     else
       { product_errors: product.errors.full_messages }
     end
@@ -81,11 +81,11 @@ class Product < Sequel::Model
                      else
                        plan.cases.size
                      end
-        plan_object << plan.values.merge(case_count: case_count)
+        plan_object << plan.values.merge(case_count:)
       end
-      { plans: plan_object, errors: [], request_status: request_status }
+      { plans: plan_object, errors: [], request_status: }
     rescue StandardError
-      { plans: [], errors: ['Plan data is incorrect'], request_status: request_status }
+      { plans: [], errors: ['Plan data is incorrect'], request_status: }
     end
   end
 

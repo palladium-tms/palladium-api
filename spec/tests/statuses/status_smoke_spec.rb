@@ -10,7 +10,7 @@ describe 'Status Smoke' do
   describe 'Create new status' do
     it 'check creating new status' do
       name = rand_status_name
-      status = @user.create_new_status(name: name)
+      status = @user.create_new_status(name:)
       expect(status.errors).to be_empty
       expect(status.name).to eq(name)
       expect(status.color).to eq(DefaultValues::DEFAULT_STATUS_COLOR)
@@ -18,7 +18,7 @@ describe 'Status Smoke' do
 
     it 'check creating new status with color' do
       name = rand_status_name
-      status = @user.create_new_status(name: name, color: '#aaccbb')
+      status = @user.create_new_status(name:, color: '#aaccbb')
       expect(status.response.code).to eq('200')
       expect(status.errors).to be_empty
       expect(status.name).to eq(name)
@@ -28,8 +28,8 @@ describe 'Status Smoke' do
     it 'check creating new status if it has created later' do
       name = rand_status_name
       color = '#aaccbb'
-      first_status = @user.create_new_status(name: name, color: color)
-      second_status = @user.create_new_status(name: name, color: color)
+      first_status = @user.create_new_status(name:, color:)
+      second_status = @user.create_new_status(name:, color:)
       expect(first_status.response.code).to eq('200')
       expect(second_status.response.code).to eq('200')
       expect(first_status.id).to eq(second_status.id)
@@ -37,7 +37,7 @@ describe 'Status Smoke' do
 
     it 'check block new status' do
       name = rand_status_name
-      status = @user.create_new_status(name: name)
+      status = @user.create_new_status(name:)
       status_new = @user.status_edit(id: status.id, block: true)
       expect(status_new.block).to be_truthy
       expect(status_new.id).to eq(status.id)
@@ -46,7 +46,7 @@ describe 'Status Smoke' do
 
     it 'check unblock new status' do
       name = rand_status_name
-      status = @user.create_new_status(name: name)
+      status = @user.create_new_status(name:)
       @user.status_edit(id: status.id, block: true)
       status_new = @user.status_edit(id: status.id, block: false)
       expect(status_new.block).to be_falsey
@@ -57,7 +57,7 @@ describe 'Status Smoke' do
     it 'check change name of status' do
       name = rand_status_name
       new_name = rand_status_name
-      status = @user.create_new_status(name: name)
+      status = @user.create_new_status(name:)
       status_new = @user.status_edit(id: status.id, name: new_name)
       expect(status_new.response.code).to eq('200')
       expect(status_new.errors).to be_empty

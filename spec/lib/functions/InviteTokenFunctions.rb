@@ -13,6 +13,6 @@ module InviteTokenFunctions
   end
 
   def check_link_validation(token)
-    @http.post_request('/api/check_link_validation', { token: token })
+    @http.post_request('/api/check_link_validation', { token: })
   end
 end

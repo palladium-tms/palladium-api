@@ -21,9 +21,9 @@ describe 'Suites Smoke' do
     it 'check getting suite' do
       product_name = rand_product_name
       plan_name = rand_plan_name
-      run1 = @user.create_new_run(plan_name: plan_name, product_name: product_name)
-      run2 = @user.create_new_run(plan_name: plan_name, product_name: product_name)
-      run3 = @user.create_new_run(plan_name: plan_name, product_name: product_name)
+      run1 = @user.create_new_run(plan_name:, product_name:)
+      run2 = @user.create_new_run(plan_name:, product_name:)
+      run3 = @user.create_new_run(plan_name:, product_name:)
       _, suite_pack = @user.get_runs(plan_id: run3.plan.id)
       expect(suite_pack.suites.map(&:name) & [run1.name, run2.name, run3.name]).to eq([run1.name, run2.name, run3.name])
     end
@@ -76,11 +76,11 @@ describe 'Suites Smoke' do
     it 'check suite not existed in new plan after deleting' do
       product_name = rand_product_name
       plan_name = rand_plan_name
-      run_for_delete = @user.create_new_run({ product_name: product_name, plan_name: plan_name, name: rand_run_name })
-      run_for_stay = @user.create_new_run({ product_name: product_name, plan_name: plan_name, name: rand_run_name })
+      run_for_delete = @user.create_new_run({ product_name:, plan_name:, name: rand_run_name })
+      run_for_stay = @user.create_new_run({ product_name:, plan_name:, name: rand_run_name })
       _, suite_pack_before = @user.get_runs(plan_id: run_for_delete.plan.id)
       @user.delete_suite(suite_id: suite_pack_before.suites.first.id, plan_id: run_for_delete.plan.id) # deleting
-      new_plan = @user.create_new_plan({ product_name: product_name })
+      new_plan = @user.create_new_plan({ product_name: })
       _, suite_pack_after = @user.get_runs(plan_id: new_plan.id)
       expect(suite_pack_before.suites.size).to eq(2)
       expect(suite_pack_after.suites.size).to eq(1)
