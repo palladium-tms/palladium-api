@@ -26,7 +26,7 @@ describe 'Users Smoke' do
 
     it 'check change timezone' do
       timezone = "#{Faker::Bank.name}: +0#{rand(10)}:00"
-      response_setting = @user.update_user_setting(timezone: timezone)
+      response_setting = @user.update_user_setting(timezone:)
       expect(response_setting.code).to eq('200')
       response_getting = @user.get_setting
       expect(response_getting.code).to eq('200')

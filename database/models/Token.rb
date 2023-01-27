@@ -17,7 +17,7 @@ class Token < Sequel::Model
   # @param [String] username
   # example: {"api_token_data" => {"name": string} }
   def self.create_new(data, token, username)
-    new_token = Token.create(name: data['name'], token: token)
+    new_token = Token.create(name: data['name'], token:)
     User[email: username].add_token(new_token)
     new_token
   end

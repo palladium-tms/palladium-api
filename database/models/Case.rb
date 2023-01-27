@@ -11,7 +11,7 @@ class Case < Sequel::Model
   def before_destroy
     plan_ids = [*Plan.where(product_id: suite.product.id, is_archived: false)].map(&:id)
     runs_id = Run.where(name: suite.name, plan_id: plan_ids).map(&:id)
-    ResultSet.where(name: name, plan_id: plan_ids, run_id: runs_id).each do |current_result_set|
+    ResultSet.where(name:, plan_id: plan_ids, run_id: runs_id).each do |current_result_set|
       current_result_set.remove_all_results
       current_result_set.destroy
     end
@@ -52,7 +52,7 @@ class Case < Sequel::Model
       plan_ids = product.plans.map(&:id)
       run_ids = Run.where(plan_id: plan_ids, name: result_set.run.name).map(&:id)
       suite_id = Suite[name: result_set.run.name, product_id: product.id].id
-      this_case = Case[suite_id: suite_id, name: result_set.name]
+      this_case = Case[suite_id:, name: result_set.name]
       ResultSet.where(name: result_set.name, run_id: run_ids).each do |current_result_set|
         current_result_set.update(name: case_data['name'])
       end
@@ -102,7 +102,7 @@ class Case < Sequel::Model
   end
 
   def self.get_plans(product_id, records_limit, offset)
-    Plan.dataset.where(product_id: product_id).order(Sequel.desc(:updated_at)).limit(records_limit, offset).all
+    Plan.dataset.where(product_id:).order(Sequel.desc(:updated_at)).limit(records_limit, offset).all
   end
 
   def self.get_runs(plan_ids, suite_name)
@@ -110,6 +110,6 @@ class Case < Sequel::Model
   end
 
   def self.get_result_sets(plan_ids, runs, name)
-    ResultSet.dataset.where(plan_id: plan_ids, run_id: runs, name: name).map(&:values)
+    ResultSet.dataset.where(plan_id: plan_ids, run_id: runs, name:).map(&:values)
   end
 end

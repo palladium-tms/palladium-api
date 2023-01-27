@@ -13,18 +13,18 @@ module CaseFunctions
   end
 
   def get_cases_from_plan(plan_id:, run_id: nil, suite_id: nil)
-    case_data = { plan_id: plan_id }
+    case_data = { plan_id: }
     if suite_id
       case_data[:suite_id] = suite_id
     else
       case_data[:run_id] = run_id
     end
-    response = @http.post_request('/api/cases', case_data: case_data)
+    response = @http.post_request('/api/cases', case_data:)
     AbstractCasePack.new(response)
   end
 
   def delete_case(case_id:, plan_id:)
-    http.post_request('/api/case_delete', case_data: { id: case_id, plan_id: plan_id })
+    http.post_request('/api/case_delete', case_data: { id: case_id, plan_id: })
   end
 
   def update_case(options = {})

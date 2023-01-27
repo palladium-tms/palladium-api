@@ -46,7 +46,7 @@ describe 'Result Set Smoke' do
       plan = @user.create_new_plan(product_name: product.name)
       run = @user.create_new_run(plan_id: plan.id)
       name = rand_run_name
-      result_set = @user.create_new_result_set(run_id: run.id, name: name)
+      result_set = @user.create_new_result_set(run_id: run.id, name:)
       expect(result_set.run.id).to eq(run.id)
       expect(result_set.name).to eq(name)
     end

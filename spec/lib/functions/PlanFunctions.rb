@@ -11,7 +11,7 @@ module PlanFunctions
   def create_new_plan(options)
     options[:name] ||= rand_plan_name
     plan_data = { name: options[:name] }.merge(options)
-    response = @http.post_request('/api/plan_new', plan_data: plan_data)
+    response = @http.post_request('/api/plan_new', plan_data:)
     AbstractPlan.new(response)
   end
 

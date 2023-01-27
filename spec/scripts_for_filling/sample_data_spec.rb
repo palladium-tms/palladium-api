@@ -9,7 +9,7 @@ token = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjI1MjQ1OTcyMDAsImlhdCI6MTU5NTgwNjc4OSwiaX
       describe 'Run 1' do
         it "#{i}:#{j}" do
           @palladium = Palladium.new(host: 'localhost',
-                                     token: token,
+                                     token:,
                                      product: 'Plans SampleData',
                                      plan: "v8 #{i}",
                                      run: 'Run 2',

@@ -52,7 +52,7 @@ class Plan < Sequel::Model
   end
 
   def self.find_or_new(data, product_id)
-    Plan.find(name: data, product_id: product_id) || Plan.new(name: data)
+    Plan.find(name: data, product_id:) || Plan.new(name: data)
   end
 
   # @param [Hash] data
@@ -70,7 +70,7 @@ class Plan < Sequel::Model
       existed_plan = Plan.find(name: data['plan_data']['name'], product_id: product_resp[:product].id)
       return { plan: existed_plan, request_status: 'Plan with this name is exist', product: product_resp[:product] } if existed_plan
 
-      new_plan = Plan.new(name: data['plan_data']['name'], api_created: api_created)
+      new_plan = Plan.new(name: data['plan_data']['name'], api_created:)
       if new_plan.valid?
         new_plan.save_changes
         product_resp[:product].add_plan(new_plan)

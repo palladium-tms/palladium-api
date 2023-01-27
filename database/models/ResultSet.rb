@@ -28,7 +28,7 @@ class ResultSet < Sequel::Model
   end
 
   def self.find_or_new(name, run_id)
-    ResultSet.find(name: name, run_id: run_id) || ResultSet.new(name: name)
+    ResultSet.find(name:, run_id:) || ResultSet.new(name:)
   end
 
   # ['result_set_data']['name'] can be array (if you set result by some result sets by manually)

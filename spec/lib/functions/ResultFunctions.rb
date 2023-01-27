@@ -40,7 +40,7 @@ module ResultFunctions
   end
 
   def get_result(id)
-    response = http.post_request('/api/result', result_data: { id: id })
+    response = http.post_request('/api/result', result_data: { id: })
     AbstractResult.new(response)
   end
 end

@@ -8,7 +8,7 @@ class AuthFunctions
   # @param [String] password  for account. Min size = 6 symbols. If it empty - will be generate
   # return array with request and product name [request, product_name]
   def self.create_new_account(email = Faker::Internet.email, password = Faker::Lorem.characters(number: 7))
-    Http.new.post_request('/public/registration', { user_data: { email: email, password: password } })
+    Http.new.post_request('/public/registration', { user_data: { email:, password: } })
   end
 
   def self.login(user_data)
