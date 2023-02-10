@@ -41,3 +41,7 @@ require_relative '../lib/functions/CaseFunctions'
 require_relative '../lib/functions/UserSetting'
 require_relative '../lib/functions/AccountFunctions'
 require_relative '../../spec/lib/ObjectWrap/http'
+
+def logger
+  @logger ||= Logger.new($stdout)
+end

@@ -17,6 +17,7 @@ require_relative '../lib/functions/UserSetting'
 require_relative '../lib/helpers/string_helper'
 # require_relative '../lib/functions/AccountFunctions'
 require_relative 'ObjectWrap/http'
+require 'logger'
 require 'json'
 
 class User
@@ -41,10 +42,11 @@ class User
     @email = options[:email]
     @password = options[:password]
     @http = Http.new
+    @logger = Logger.new($stdout)
   end
 
   def login
-    puts "Login from #{@email} #{@password}"
+    @logger.info("Login from #{@email} #{@password}")
     response = @http.post_request('/public/login', user_data: { email: @email, password: @password })
     @token = JSON.parse(response.body)['token']
     @http = Http.new(token: @token)

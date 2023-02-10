@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../tests/test_management'
+
 http, cases = nil
 cases = []
 describe 'Status Smoke' do
@@ -19,7 +20,7 @@ describe 'Status Smoke' do
   describe 'History' do
     it 'check_history' do
       cases.each do |case_id|
-        p case_id
+        logger.info("Case id: #{case_id}")
         responce = HistoryFunctions.case_history(http, case_id)
         expect(responce.code).to eq('200')
       end
