@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'logger'
+
 class Plan < Sequel::Model
   many_to_one :product
   one_to_many :runs
@@ -151,7 +153,8 @@ class Plan < Sequel::Model
   # Getting statistic and save in database(usually, statistic is not saving)
   # Creating result_set and run for all cases and suites, if it not be created before
   def self.archive(plan_id)
-    a = Time.now
+    logger = Logger.new($stdout)
+    start_time = Time.now
     plan = Plan[plan_id]
     runs = plan.runs
     suites = {}
@@ -172,7 +175,8 @@ class Plan < Sequel::Model
     statistic = Product.get_statistic(plan_id)[plan_id] || {}
     plan.update(statistic: statistic.to_json)
     plan.update(is_archived: true)
-    p Time.now - a
+    operation_time = Time.now - start_time
+    logger.info("Archive for plan #{plan_id} was finished in #{operation_time} seconds")
     plan
   end
 
