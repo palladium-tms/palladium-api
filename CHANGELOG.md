@@ -14,6 +14,7 @@
 * Add `ruby-3.1` and `ruby-head` to CI
 * Added `yamllint` support in CI
 * Add `ruby-3.2` to CI
+* Add `ruby-3.3` to CI
 
 ### Changed
 
@@ -33,6 +34,7 @@
 * Check `dependabot` at 8:00 Moscow time daily
 * Fix `rubocop-1.28.1` code issues
 * `ruby-3.0` is not supported any more
+* Migrate base Dockerfile to `ruby-3.3`
 
 ### Fixed
 
