@@ -6,7 +6,7 @@ GEM
     bigdecimal (3.1.6)
     concurrent-ruby (1.2.3)
     diff-lcs (1.5.1)
-    faker (3.2.0)
+    faker (3.2.3)
       i18n (>= 1.8.11, < 2)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
