@@ -9,8 +9,9 @@ GEM
     diff-lcs (1.5.1)
     faker (3.2.3)
       i18n (>= 1.8.11, < 2)
-    i18n (1.14.1)
+    i18n (1.14.3)
       concurrent-ruby (~> 1.0)
+      racc (~> 1.7)
     json (2.7.1)
     jwt (2.8.0)
       base64
