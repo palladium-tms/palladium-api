@@ -19,7 +19,7 @@ GEM
       ruby2_keywords (~> 0.0.1)
     nio4r (2.7.3)
     palladium (1.1.0)
-    parallel (1.24.0)
+    parallel (1.25.1)
     parser (3.3.2.0)
       ast (~> 2.4.1)
       racc
@@ -35,8 +35,8 @@ GEM
       rack (>= 3.0.0)
     rainbow (3.1.1)
     regexp_parser (2.9.2)
-    rexml (3.2.8)
-      strscan (>= 3.0.9)
+    rexml (3.2.9)
+      strscan
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -65,7 +65,7 @@ GEM
       parser (>= 3.3.1.0)
     rubocop-capybara (2.20.0)
       rubocop (~> 1.41)
-    rubocop-factory_bot (2.25.1)
+    rubocop-factory_bot (2.26.0)
       rubocop (~> 1.41)
     rubocop-performance (1.21.0)
       rubocop (>= 1.48.1, < 2.0)
