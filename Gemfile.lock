@@ -34,6 +34,7 @@ GEM
     rack-session (2.0.0)
       rack (>= 3.0.0)
     rainbow (3.1.1)
+    rake (13.2.1)
     regexp_parser (2.9.2)
     rexml (3.3.0)
       strscan
@@ -97,6 +98,7 @@ DEPENDENCIES
   palladium
   pg
   puma
+  rake
   rspec
   rubocop
   rubocop-performance
