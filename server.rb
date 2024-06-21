@@ -573,7 +573,6 @@ class Public < Sinatra::Base
     cross_origin
     body = request.body.read
     @params = JSON.parse(body) unless body == ''
-    @version = File.read('VERSION').strip
   end
 
   post '/login' do
