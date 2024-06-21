@@ -554,6 +554,20 @@ class Public < Sinatra::Base
   include JwtHelper
   register Sinatra::CrossOrigin
 
+  # Method to read version of appliacation from file
+  def self.load_version
+    file_path = 'VERSION'
+    if File.exist?(file_path)
+      File.read(file_path).strip
+    else
+      '0.0.0'
+    end
+  end
+
+  configure do
+    set :app_version, load_version
+  end
+
   before do
     halt 200, { 'Access-Control-Allow-Origin' => '*', 'Access-Control-Allow-Headers' => 'Authorization, Content-Type' }, [] if env['REQUEST_METHOD'] == 'OPTIONS'
     cross_origin
@@ -645,7 +659,11 @@ class Public < Sinatra::Base
     }
   end
 
+  get '/version' do
+    { version: settings.app_version }.to_json
+  end
+
   post '/version' do
-    { version: '0.6.0' }.to_json
+    { version: settings.app_version }.to_json
   end
 end

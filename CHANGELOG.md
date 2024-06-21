@@ -16,6 +16,8 @@
 * Add `ruby-3.2` to CI
 * Add `ruby-3.3` to CI
 * Add `dependabot` check for `GitHub Actions`
+* Reading product version from file, instead of hardcoded value
+* Add GET `public/version` - to get version of application, in addition to POST
 
 ### Changed
 
