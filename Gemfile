@@ -12,6 +12,7 @@ gem 'sinatra' # main web framework
 gem 'sinatra-cross_origin'
 
 group :development do
+  gem 'rake'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rake', require: false

@@ -18,6 +18,7 @@
 * Add `dependabot` check for `GitHub Actions`
 * Reading product version from file, instead of hardcoded value
 * Add GET `public/version` - to get version of application, in addition to POST
+* Add new release flow to docs and rake task
 
 ### Changed
 
