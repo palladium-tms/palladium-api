@@ -560,7 +560,7 @@ class Public < Sinatra::Base
     if File.exist?(file_path)
       File.read(file_path).strip
     else
-      'Unknown'
+      '0.0.0'
     end
   end
 
