@@ -1,7 +1,5 @@
 # palladium-api
 
-[![Build Status](https://travis-ci.org/flaminestone/palladium-api.svg?branch=master)](https://travis-ci.org/flaminestone/palladium-api)
-
 ## How to run locally
 
 1. Start temp postgresql db via

@@ -2,6 +2,10 @@
 
 ## master (unreleased)
 
+### Changes
+
+* Remove any mentions of `travis-ci` from the project (It's not used any more)
+
 ## 0.7.0 (2024-06-21)
 
 ### Added
