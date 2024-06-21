@@ -8,7 +8,9 @@ describe 'Plan Smoke' do
       request = Net::HTTP::Post.new('/public/version')
       response = http.request(request)
       expect(response.code).to eq('200')
-      expect(JSON.parse(response.body)['version']).not_to be_empty
+      value = JSON.parse(response.body)['version']
+      expect(value).not_to be_empty
+      expect(value).to eq(File.read('VERSION').strip)
     end
   end
 end
