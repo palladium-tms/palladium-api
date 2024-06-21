@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## 0.7.0 (2024-06-21)
+
 ### Added
 
 * To create plan with attribute :api_created
