@@ -5,6 +5,7 @@
 ### Changes
 
 * Remove any mentions of `travis-ci` from the project (It's not used any more)
+* Use `docker compose` instead of `docker-compose`
 
 ## 0.7.0 (2024-06-21)
 
