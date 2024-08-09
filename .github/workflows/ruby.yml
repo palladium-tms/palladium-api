@@ -31,7 +31,7 @@ jobs:
         run: rubocop
       - name: Start palladium-api
         run: |
-          docker-compose up -d
+          docker compose up -d
           sleep 60
       - name: Run tests
         run: bundle exec rspec spec/tests --fail-fast
