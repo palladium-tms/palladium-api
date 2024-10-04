@@ -12,7 +12,7 @@ GEM
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     json (2.7.2)
-    jwt (2.9.1)
+    jwt (2.9.3)
       base64
     language_server-protocol (3.17.0.3)
     mustermann (3.0.3)
