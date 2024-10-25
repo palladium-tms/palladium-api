@@ -6,6 +6,7 @@
 
 * Remove any mentions of `travis-ci` from the project (It's not used any more)
 * Use `docker compose` instead of `docker-compose`
+* Cleanup `.rubocop_todo.yml` according to changes to `rubocop-sequel-0.3.5`
 
 ### Tests
 
