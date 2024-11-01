@@ -2,7 +2,7 @@
 
 require_relative '../tests/test_management'
 
-http, cases = nil
+http, = nil
 cases = []
 describe 'Status Smoke' do
   before :all do
