@@ -4,7 +4,7 @@ require 'sinatra'
 require_relative 'server'
 
 run Rack::URLMap.new('/public' => Public, '/api' => Api)
-if Sinatra::Application.environment == :development || Sinatra::Application.environment == :test
+if %i[development test].include?(Sinatra::Application.environment)
   ENV['JWT_SECRET'] = 'JWT_SECRET'
   ENV['JWT_ISSUER'] = 'JWT_ISSUER'
 end
