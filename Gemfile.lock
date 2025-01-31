@@ -14,7 +14,7 @@ GEM
     json (2.9.1)
     jwt (2.10.1)
       base64
-    language_server-protocol (3.17.0.3)
+    language_server-protocol (3.17.0.4)
     logger (1.6.5)
     mustermann (3.0.3)
       ruby2_keywords (~> 0.0.1)
