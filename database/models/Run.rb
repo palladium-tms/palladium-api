@@ -72,9 +72,9 @@ class Run < Sequel::Model
   end
 
   def self.get_run_name(data)
-    return data['run_data']['name'] if data['run_data'] && (data['run_data']['name'])
+    return data['run_data']['name'] if data['run_data'] && data['run_data']['name']
 
-    Case[id: data['result_set_data']['case_id']].suite.name if data['result_set_data'] && (data['result_set_data']['case_id'])
+    Case[id: data['result_set_data']['case_id']].suite.name if data['result_set_data'] && data['result_set_data']['case_id']
   end
 
   def self.get_name_by_suite_if_exist(result_set_data)

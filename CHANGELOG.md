@@ -13,6 +13,7 @@
 * Cleanup `.rubocop_todo.yml` according to changes to `rubocop-sequel-0.3.5`
 * Use `ruby-3.4` as base for Docker image
 * Fix minor code issue found by `rubocop-1.70.0`
+* Fix `rubocop-1.72.0` cop `Style/RedundantParentheses`
 
 ### Tests
 
