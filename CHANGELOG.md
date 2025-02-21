@@ -15,6 +15,10 @@
 * Fix minor code issue found by `rubocop-1.70.0`
 * Fix `rubocop-1.72.0` cop `Style/RedundantParentheses`
 
+### Fixes
+
+* Run `rubocop` in CI through `bundle exec`
+
 ### Tests
 
 * Replace deprecated `faker` call for `Faker::TvShows::Buffy.celebrity`

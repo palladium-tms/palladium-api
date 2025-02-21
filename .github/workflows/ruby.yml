@@ -28,7 +28,7 @@ jobs:
           gem install bundler
           bundle install --jobs 4 --retry 3
       - name: Check source files using `rubocop`
-        run: rubocop
+        run: bundle exec rubocop
       - name: Start palladium-api
         run: |
           docker compose up -d
